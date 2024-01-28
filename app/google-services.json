@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "264306166232",
+    "project_id": "tourmanage-5f615",
+    "storage_bucket": "tourmanage-5f615.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264306166232:android:759ec876c5d63a6bd04aad",
+        "android_client_info": {
+          "package_name": "com.example.tourmanage"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDreGXVedSbwVJXnq4CtZ4ayw8d53Tk3Ho"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

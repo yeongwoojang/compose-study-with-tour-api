@@ -1,4 +1,4 @@
-package com.example.tourmanage
+package com.example.tourmanage.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
