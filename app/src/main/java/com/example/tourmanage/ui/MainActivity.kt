@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         Timber.d("onCreate()")
         testRetrofit()
         testFirebase()
+
     }
 
     private fun moveToActivity() {

@@ -7,11 +7,17 @@ import timber.log.Timber
 
 @HiltAndroidApp
 class MainApplication: Application() {
+
+    companion object {
+        var mainContext: MainApplication? = null
+    }
+
     override fun onCreate() {
         super.onCreate()
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+        mainContext = this
     }
 }
