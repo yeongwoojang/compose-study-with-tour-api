@@ -1,4 +1,4 @@
-package com.example.tourmanage.ui.theme
+package com.example.tourmanage.ui.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

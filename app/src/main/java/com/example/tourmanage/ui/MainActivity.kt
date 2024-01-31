@@ -12,6 +12,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.*
 import timber.log.Timber
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -24,8 +26,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         Timber.d("onCreate()")
-        testRetrofit()
-        testFirebase()
+        moveToActivity()
+
+
 
     }
 
