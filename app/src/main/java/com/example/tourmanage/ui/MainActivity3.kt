@@ -11,9 +11,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,9 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.DataProvider
 import com.example.tourmanage.data.Puppy
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
@@ -31,17 +33,43 @@ import com.example.tourmanage.ui.ui.theme.TourManageTheme
 class MainActivity3 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val extras = intent.extras
+        val menu = extras?.getString(Config.MAIN_MENU_KEY) ?: "MY APP"
+
         setContent {
             TourManageTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    RecyclerViewContent()
-                }
+                MainLayout(menu)
+
             }
         }
+    }
+}
+
+@Composable
+fun Header(menuName: String) {
+    val context = LocalContext.current
+    TopAppBar(
+        title = {
+            Text(text = menuName)
+        },
+        navigationIcon = {
+            IconButton(onClick = {
+                (context as? MainActivity3)?.finish()
+            }) {
+                Icon(imageVector = Icons.Filled.Home, contentDescription = "Close")
+            }
+        }
+    )
+}
+
+@Composable
+fun MainLayout(menuName: String) {
+    Scaffold(
+        topBar = {
+            Header(menuName)
+        }
+    ) {
+        RecyclerViewContent()
     }
 }
 
@@ -56,17 +84,21 @@ fun RecyclerViewContent() {
     }
 }
 
+
 @Composable
 fun PuppyListItem(puppy: Puppy) {
     Row(modifier = Modifier
         .padding(5.dp)
         .fillMaxWidth()
-        .border(border = BorderStroke(width = 1.dp, color = Color.Black), shape = RoundedCornerShape(12.5.dp))) {
+        .border(
+            border = BorderStroke(width = 1.dp, color = Color.Black),
+            shape = RoundedCornerShape(12.5.dp)
+        )) {
         PuppyImage(puppy = puppy)
         Column(modifier = Modifier
             .align(Alignment.CenterVertically)) {
-            Text(text = puppy.title)
-            Text(text = puppy.desc, modifier = Modifier.padding(top = 5.dp))
+            Text(text = puppy.title, style = MaterialTheme.typography.h6)
+            Text(text = puppy.desc, style = MaterialTheme.typography.caption, modifier = Modifier.padding(top = 5.dp))
         }
     }
 }

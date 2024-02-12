@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -69,6 +71,7 @@ fun CenterCardContainer(context: Context) {
 
 @Composable
 fun CenterBox(context: Context, type: Config.CARD_TYPE) {
+    val interactionSource = remember { MutableInteractionSource() }
     var boxColor = Color.White
     var title = ""
     var desc = ""
@@ -90,12 +93,14 @@ fun CenterBox(context: Context, type: Config.CARD_TYPE) {
     Column(modifier = Modifier
         .background(color = boxColor, shape = RoundedCornerShape(25.dp))
         .size(width = 180.dp, height = 200.dp)
-        .clickable {
-            UiController.addActivity(context, MainActivity3::class, IntentData(
-                mapOf(Config.MAIN_MENU_KEY to type.name)
-            ))
-        }
-        .padding(start = 10.dp, end = 10.dp)) {
+        .padding(start = 10.dp, end = 10.dp)
+        .clickable(interactionSource = interactionSource, indication = null) {
+            UiController.addActivity(
+                context, MainActivity3::class, IntentData(
+                    mapOf(Config.MAIN_MENU_KEY to type.name)
+                )
+            )
+        }) {
         Spacer(modifier = Modifier.height(50.dp))
         Text(text = title, fontWeight = FontWeight.Bold, fontSize = 25.sp)
         Spacer(modifier = Modifier.height(10.dp))
