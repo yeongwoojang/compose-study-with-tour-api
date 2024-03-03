@@ -1,6 +1,8 @@
 package com.example.tourmanage.ui.home
 
+import android.app.Activity
 import android.content.Context
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,8 +24,10 @@ import com.example.tourmanage.common.data.IntentData
 import com.example.tourmanage.common.util.UiController
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.ui.MainActivity3
+import com.example.tourmanage.ui.MainActivity4
 import com.example.tourmanage.ui.ui.theme.OceanBlue
 import timber.log.Timber
+import kotlin.reflect.KClass
 
 @Composable
 fun TopContainer() {
@@ -75,16 +79,19 @@ fun CenterBox(context: Context, type: Config.CARD_TYPE) {
     var boxColor = Color.White
     var title = ""
     var desc = ""
+    var targetActivity: KClass<out Activity> = MainActivity3::class
     when (type) {
         Config.CARD_TYPE.TYPE_A -> {
             boxColor = Color.White
             title = "TYPE A"
             desc = "This is Type A"
+            targetActivity = MainActivity3::class
         }
         Config.CARD_TYPE.TYPE_B -> {
             boxColor = Color.Blue
             title = "TYPE B"
             desc = "This is Type B"
+            targetActivity = MainActivity4::class
         }
         else -> {
             boxColor = Color.White
@@ -96,7 +103,7 @@ fun CenterBox(context: Context, type: Config.CARD_TYPE) {
         .padding(start = 10.dp, end = 10.dp)
         .clickable(interactionSource = interactionSource, indication = null) {
             UiController.addActivity(
-                context, MainActivity3::class, IntentData(
+                context, targetActivity, IntentData(
                     mapOf(Config.MAIN_MENU_KEY to type.name)
                 )
             )

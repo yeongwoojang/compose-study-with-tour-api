@@ -27,6 +27,11 @@
             android:label="@string/title_activity_main3"
             android:theme="@style/Theme.TourManage" />
         <activity
+            android:name=".ui.MainActivity4"
+            android:exported="false"
+            android:label="@string/title_activity_main4"
+            android:theme="@style/Theme.TourManage" />
+        <activity
             android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>

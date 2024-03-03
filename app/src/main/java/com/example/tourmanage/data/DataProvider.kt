@@ -18,4 +18,14 @@ object DataProvider {
         Puppy("별이", R.drawable.puppy7, "별.. 별.. 별.."),
         Puppy("별이", R.drawable.puppy7, "별.. 별.. 별.."),
     )
+
+    val cardList = listOf(
+        CardItem(R.drawable.puppy1),
+        CardItem(R.drawable.puppy2),
+        CardItem(R.drawable.puppy3),
+        CardItem(R.drawable.puppy4),
+        CardItem(R.drawable.puppy5),
+        CardItem(R.drawable.puppy6),
+        CardItem(R.drawable.puppy7),
+    )
 }

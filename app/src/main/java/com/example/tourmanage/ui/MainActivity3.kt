@@ -1,5 +1,6 @@
 package com.example.tourmanage.ui
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -54,7 +55,7 @@ fun Header(menuName: String) {
         },
         navigationIcon = {
             IconButton(onClick = {
-                (context as? MainActivity3)?.finish()
+                (context as? Activity)?.finish()
             }) {
                 Icon(imageVector = Icons.Filled.Home, contentDescription = "Close")
             }
