@@ -2,13 +2,14 @@ package com.example.tourmanage.ui.home
 
 import android.app.Activity
 import android.content.Context
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -16,28 +17,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.tourmanage.MainApplication
 import com.example.tourmanage.R
 import com.example.tourmanage.common.data.IntentData
 import com.example.tourmanage.common.util.UiController
 import com.example.tourmanage.common.value.Config
-import com.example.tourmanage.ui.MainActivity3
+import com.example.tourmanage.ui.StayMainActivity
 import com.example.tourmanage.ui.MainActivity4
-import com.example.tourmanage.ui.ui.theme.OceanBlue
 import timber.log.Timber
 import kotlin.reflect.KClass
 
 @Composable
 fun TopContainer() {
     Column(modifier = Modifier
-        .background(OceanBlue)
+        .background(color = Color.White)
         .fillMaxHeight(0.35f)) {
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, top = 10.dp, end = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = "가나다라마바사", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(text = "가나다라마바사", color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Row() {
                 Image(
                     painter = painterResource(id = R.drawable.baseline_settings_white_36),
@@ -51,7 +51,7 @@ fun TopContainer() {
         Spacer(modifier = Modifier.height(30.dp))
         Text(modifier = Modifier.padding(start = 20.dp),
             text = "가나다라마바사\n아자차카타파하",
-            color = Color.White,
+            color = Color.Black,
             fontSize = 20.sp,
             fontWeight = FontWeight.Medium
         )
@@ -67,7 +67,7 @@ fun CenterCardContainer(context: Context) {
             .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            CenterBox(context, Config.CARD_TYPE.TYPE_A)
+            CenterBox(context, Config.CARD_TYPE.MENU_STAY)
             CenterBox(context, Config.CARD_TYPE.TYPE_B)
         }
     }
@@ -79,13 +79,13 @@ fun CenterBox(context: Context, type: Config.CARD_TYPE) {
     var boxColor = Color.White
     var title = ""
     var desc = ""
-    var targetActivity: KClass<out Activity> = MainActivity3::class
+    var targetActivity: KClass<out Activity> = StayMainActivity::class
     when (type) {
-        Config.CARD_TYPE.TYPE_A -> {
+        Config.CARD_TYPE.MENU_STAY -> {
             boxColor = Color.White
-            title = "TYPE A"
-            desc = "This is Type A"
-            targetActivity = MainActivity3::class
+            title = "숙소 예약"
+            desc = "원하는 숙소를 검색하고 예약"
+            targetActivity = StayMainActivity::class
         }
         Config.CARD_TYPE.TYPE_B -> {
             boxColor = Color.Blue
@@ -97,21 +97,24 @@ fun CenterBox(context: Context, type: Config.CARD_TYPE) {
             boxColor = Color.White
         }
     }
-    Column(modifier = Modifier
-        .background(color = boxColor, shape = RoundedCornerShape(25.dp))
-        .size(width = 180.dp, height = 200.dp)
-        .padding(start = 10.dp, end = 10.dp)
-        .clickable(interactionSource = interactionSource, indication = null) {
-            UiController.addActivity(
-                context, targetActivity, IntentData(
-                    mapOf(Config.MAIN_MENU_KEY to type.name)
-                )
-            )
-        }) {
-        Spacer(modifier = Modifier.height(50.dp))
-        Text(text = title, fontWeight = FontWeight.Bold, fontSize = 25.sp)
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(text = desc)
+    Card(shape = RoundedCornerShape(CornerSize(25.dp)),
+        elevation = 6.dp) {
+            Column(modifier = Modifier
+                .background(color = boxColor, shape = RoundedCornerShape(25.dp))
+                .size(width = 180.dp, height = 200.dp)
+                .padding(start = 10.dp, end = 10.dp)
+                .clickable(interactionSource = interactionSource, indication = null) {
+                    UiController.addActivity(
+                        context, targetActivity, IntentData(
+                            mapOf(Config.MAIN_MENU_KEY to type.name)
+                        )
+                    )
+                }) {
+            Spacer(modifier = Modifier.height(50.dp))
+            Text(modifier = Modifier.fillMaxWidth(), text = title, fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(modifier = Modifier.fillMaxWidth(), text = desc, fontSize = 12.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
+        }
     }
 }
 

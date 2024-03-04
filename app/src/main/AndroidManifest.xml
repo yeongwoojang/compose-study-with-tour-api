@@ -22,9 +22,9 @@
             android:label="@string/title_activity_main2"
             android:theme="@style/Theme.TourManage" />
         <activity
-            android:name=".ui.MainActivity3"
+            android:name=".ui.StayMainActivity"
             android:exported="false"
-            android:label="@string/title_activity_main3"
+            android:label="@string/title_activity_stay_main"
             android:theme="@style/Theme.TourManage" />
         <activity
             android:name=".ui.MainActivity4"

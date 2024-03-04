@@ -3,6 +3,7 @@ package com.example.tourmanage.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,48 +18,41 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.tourmanage.R
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.CardItem
 import com.example.tourmanage.data.DataProvider
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
+import com.example.tourmanage.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.OkHttpClient
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity4 : ComponentActivity() {
-    @Inject lateinit var client: OkHttpClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val extras = intent.extras
         val menu = extras?.getString(Config.MAIN_MENU_KEY) ?: "MY APP"
-
+        val viewModel by viewModels<MainViewModel>()
         setContent {
             TourManageTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    MainForm(menu)
+                    MainForm(menu, viewModel)
                 }
             }
         }
@@ -66,7 +60,7 @@ class MainActivity4 : ComponentActivity() {
 }
 
 @Composable
-fun MainForm(menuName: String) {
+fun MainForm(menuName: String, viewModel: MainViewModel = hiltViewModel()) {
     val subList = mutableListOf<String>("주제1", "주제2", "주제3", "주제4", "주제5", "주제6", "주제7", "주제8")
     Scaffold(
         topBar = {
@@ -89,7 +83,7 @@ fun MainForm(menuName: String) {
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(items = subList, itemContent = { SubItem(item = it) })
+                    items(items = subList, itemContent = { SubItem(item = it, viewModel) })
                 }
             }
         }
@@ -134,7 +128,7 @@ fun CardListItem(item: CardItem) {
 }
 
 @Composable
-fun SubItem(item: String) {
+fun SubItem(item: String, viewModel: MainViewModel = hiltViewModel()) {
     Card(modifier = Modifier
         .width(80.dp)
         .clickable {
