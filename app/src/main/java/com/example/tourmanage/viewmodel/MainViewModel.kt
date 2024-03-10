@@ -3,15 +3,15 @@ package com.example.tourmanage.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
+import com.example.tourmanage.common.data.server.item.AreaItem
+import com.example.tourmanage.common.data.server.item.StayItem
 import com.example.tourmanage.common.repository.ServiceAPI
-import com.example.tourmanage.data.StayItem
+import com.example.tourmanage.toAreaInfoList
 import com.example.tourmanage.toStayInfoList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.Flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +23,10 @@ class MainViewModel @Inject constructor(
     //_ val data = mutableStateOf("TEST")
 
     val _stayInfo = MutableStateFlow<UiState<ArrayList<StayItem>>>(UiState.Ready())
-    val stayInfo: StateFlow<UiState<ArrayList<StayItem>>> = _stayInfo
+    val stayInfo = _stayInfo
+
+    val _areaInfo = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Ready())
+    val areaInfo = _areaInfo
 
     fun requestStayInfo() {
         Timber.i("requestStayInfo() is called.")
@@ -35,7 +38,22 @@ class MainViewModel @Inject constructor(
             if ("0000" == code && stayItemList.isNotEmpty()) {
                 _stayInfo.value = UiState.Success(stayItemList)
             } else {
-                _stayInfo.value = UiState.Error(msg ?: "requestStayInfo() Error")
+                _stayInfo.value = UiState.Error(msg ?: "requestStayInfo() Error.")
+            }
+        }
+    }
+
+    fun requestAreaList() {
+        Timber.i("requestAreaList() is called.")
+        viewModelScope.launch {
+            val areaInfo = client.requestAreaList()
+            val code = areaInfo.response?.header?.resultCode
+            val msg = areaInfo.response?.header?.resultMsg
+            val areaItemList = areaInfo.toAreaInfoList()
+            if ("0000" == code) {
+                _areaInfo.value = UiState.Success(areaItemList)
+            } else {
+                _areaInfo.value = UiState.Error(msg ?: "requestAreaList() Error.")
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.example.tourmanage.common.repository
 
-import com.example.tourmanage.common.data.StayInfo
+import com.example.tourmanage.common.data.server.info.AreaInfo
+import com.example.tourmanage.common.data.server.info.StayInfo
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -18,6 +19,15 @@ interface ServiceAPI {
         @Query("MobileOS") os: String = MOBILE_OS,
         @Query("MobileApp") app: String = MOBILE_APP,
         @Query("serviceKey") key: String = API_KEY,
+        @Query("arrange") arrange: String = "O",
         @Query("_type") type: String = TYPE
     ): StayInfo
+
+    @GET("areaCode1")
+    suspend fun requestAreaList(
+        @Query("MobileOS") os: String = MOBILE_OS,
+        @Query("MobileApp") app: String = MOBILE_APP,
+        @Query("serviceKey") key: String = API_KEY,
+        @Query("areaCode") areaCode: String? = "",
+    ): AreaInfo
 }
