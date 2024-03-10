@@ -8,3 +8,7 @@ fun Intent.putExtra(data: IntentData) {
         putExtra(it, data.map[it])
     }
 }
+
+fun String?.isNotNullOrEmpty(): Boolean {
+    return this != null && this.isNotEmpty()
+}

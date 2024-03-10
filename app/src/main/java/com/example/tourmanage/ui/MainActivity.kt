@@ -1,40 +1,55 @@
 package com.example.tourmanage.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import com.example.tourmanage.R
-import com.example.tourmanage.common.data.IntentData
-import com.example.tourmanage.common.di.FireBaseModule
-import com.example.tourmanage.common.util.UiController
-import com.example.tourmanage.databinding.ActivityMainBinding
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.tourmanage.ui.home.BottomContainer
+import com.example.tourmanage.ui.home.CenterCardContainer
+import com.example.tourmanage.ui.home.TopContainer
+import com.example.tourmanage.ui.ui.theme.TourManageTheme
+import com.example.tourmanage.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.*
-import timber.log.Timber
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityMainBinding
-    @Inject lateinit var database: FireBaseModule
-    @Inject lateinit var client: OkHttpClient
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        Timber.d("onCreate()")
-        moveToActivity()
+
+        val viewModel by viewModels<MainViewModel>()
+        viewModel.requestAreaList()
+
+        setContent {
+            TourManageTheme {
+                Surface(color = MaterialTheme.colors.background) {
+                    Main()
+                }
+            }
+        }
     }
+}
 
-
-    private fun moveToActivity() {
-        UiController.addActivity(this, MainActivity2::class, IntentData(
-            mapOf("key1" to "value1", "key2" to "value2")))
+@Composable
+fun Main() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        TopContainer()
+        BottomContainer(modifier = Modifier.align(Alignment.BottomEnd))
+        CenterCardContainer(LocalContext.current)
     }
+}
 
-    private fun testFirebase() {
-        val ref = database.getReference("Test")
-        ref.setValue("12345")
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    TourManageTheme {
+        TopContainer()
     }
-
 }

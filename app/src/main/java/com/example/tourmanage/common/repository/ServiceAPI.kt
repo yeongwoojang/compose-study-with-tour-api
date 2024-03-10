@@ -29,5 +29,6 @@ interface ServiceAPI {
         @Query("MobileApp") app: String = MOBILE_APP,
         @Query("serviceKey") key: String = API_KEY,
         @Query("areaCode") areaCode: String? = "",
+        @Query("_type") type: String = TYPE
     ): AreaInfo
 }
