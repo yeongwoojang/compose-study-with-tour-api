@@ -1,26 +1,8 @@
-package com.example.tourmanage.common.data
+package com.example.tourmanage.common.data.server.item
 
 import com.squareup.moshi.Json
 
-data class StayInfo(
-    @Json(name = "response") val response: ResponseItem?
-)
-
-data class ResponseItem(
-    @Json(name = "header") val header: HeaderItem?,
-    @Json(name = "body") val body: Body?
-)
-
-data class Body(
-    @Json(name = "items") val items: BodyList?
-)
-
-data class BodyList (
-    @Json(name = "item") val item: List<BodyItem>?
-)
-
-data class
-BodyItem(
+data class StayItem(
     @Json(name = "addr1") val addr1: String?,
     @Json(name = "areacode") val areaCode: String?,
     @Json(name = "contentid") val contentId: String?,
@@ -33,4 +15,4 @@ BodyItem(
     @Json(name = "tel") val tel: String?,
     @Json(name = "title") val title: String?,
     @Json(name = "sigungucode") val sigunCode: String?,
-)
+): CommonBodyItem()
