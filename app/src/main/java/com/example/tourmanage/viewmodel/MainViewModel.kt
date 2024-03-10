@@ -3,6 +3,7 @@ package com.example.tourmanage.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
+import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.data.server.item.StayItem
 import com.example.tourmanage.common.repository.ServiceAPI
@@ -51,6 +52,7 @@ class MainViewModel @Inject constructor(
             val msg = areaInfo.response?.header?.resultMsg
             val areaItemList = areaInfo.toAreaInfoList()
             if ("0000" == code) {
+                ServerGlobal.setAreaCodeMap(areaItemList)
                 _areaInfo.value = UiState.Success(areaItemList)
             } else {
                 _areaInfo.value = UiState.Error(msg ?: "requestAreaList() Error.")

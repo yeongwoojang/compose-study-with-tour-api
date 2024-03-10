@@ -2,7 +2,6 @@
     <string name="app_name">TourManage</string>
     <string name="title_activity_compose_test">ComposeTestActivity</string>
     <string name="title_activity_stay_main">StayMainActivity</string>
-    <string name="title_activity_main2">MainActivity2</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_main4">MainActivity4</string>
 </resources>
