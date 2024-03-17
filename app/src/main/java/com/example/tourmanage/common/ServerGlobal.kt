@@ -13,6 +13,10 @@ object ServerGlobal {
         return result
     }
 
+    fun getAreaName(name: String): String? {
+        return areaCodeMap.entries.find { it.value == name }?.key
+    }
+
     fun setAreaCodeMap(areaCodeList: ArrayList<AreaItem>) {
         Timber.i("setAreaCodeMap() | areaCodeList: $areaCodeList")
         areaCodeList.forEach {

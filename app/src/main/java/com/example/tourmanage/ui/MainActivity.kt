@@ -25,8 +25,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val viewModel by viewModels<MainViewModel>()
-        viewModel.requestAreaList()
-
         setContent {
             TourManageTheme {
                 Surface(color = MaterialTheme.colors.background) {
