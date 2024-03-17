@@ -9,11 +9,15 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Cache
+import okhttp3.CacheControl
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.create
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 /**
@@ -28,9 +32,28 @@ class RetrofitModule {
 
     @Provides
     @Singleton
-    fun getOkHttpClient(@ApplicationContext context: Context, interceptor: HttpLoggingInterceptor)
+    fun getNetworkInterceptor() = Interceptor {
+        //FIXME Cache-control: private로 내려오는데, response 캐시 안되나? 검토 필요 (ywjang)
+        Timber.d("OkHttp Intercept")
+        val request = it.request()
+        val response = it.proceed(request)
+        val cacheControl = CacheControl.Builder()
+            .maxAge(1, TimeUnit.HOURS)
+            .build()
+        response.newBuilder()
+            .removeHeader("Cache-Control")
+            .addHeader("Cache-Control", cacheControl.toString())
+            .build()
+        response
+    }
+
+    @Provides
+    @Singleton
+    fun getOkHttpClient(@ApplicationContext context: Context, loggingIntercepter: HttpLoggingInterceptor, networkInterceptor: Interceptor)
     = OkHttpClient.Builder().apply {
-        interceptors().add(interceptor)
+        cache(Cache(context.cacheDir, 1024 * 1024 * 10))
+        addInterceptor(loggingIntercepter)
+        addNetworkInterceptor(networkInterceptor)
     }.build()
 
     @Provides

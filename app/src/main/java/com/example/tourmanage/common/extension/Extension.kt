@@ -1,7 +1,10 @@
 package com.example.tourmanage.common.extension
 
 import android.content.Intent
+import androidx.compose.runtime.State
+import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.IntentData
+import kotlinx.coroutines.flow.StateFlow
 
 fun Intent.putExtra(data: IntentData) {
     data.map.keys.forEach {
@@ -11,4 +14,19 @@ fun Intent.putExtra(data: IntentData) {
 
 fun String?.isNotNullOrEmpty(): Boolean {
     return this != null && this.isNotEmpty()
+}
+
+fun String?.getPureText(): String {
+    val result = this ?: ""
+    val regex = Regex("""\((.*?)\)|\[(.*?)\]""")
+    val newText = result.replace(regex, "").trim()
+    return newText
+}
+
+fun State<UiState<*>>.isLoading(): Boolean {
+    return value is UiState.Ready || value is UiState.Loading
+}
+
+fun State<UiState<*>>.isSuccess(): Boolean {
+    return value is UiState.Success
 }
