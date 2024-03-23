@@ -33,7 +33,6 @@ class RetrofitModule {
     @Provides
     @Singleton
     fun getNetworkInterceptor() = Interceptor {
-        //FIXME Cache-control: private로 내려오는데, response 캐시 안되나? 검토 필요 (ywjang)
         Timber.d("OkHttp Intercept")
         val request = it.request()
         val response = it.proceed(request)
@@ -44,14 +43,13 @@ class RetrofitModule {
             .removeHeader("Cache-Control")
             .addHeader("Cache-Control", cacheControl.toString())
             .build()
-        response
     }
 
     @Provides
     @Singleton
     fun getOkHttpClient(@ApplicationContext context: Context, loggingIntercepter: HttpLoggingInterceptor, networkInterceptor: Interceptor)
     = OkHttpClient.Builder().apply {
-        cache(Cache(context.cacheDir, 1024 * 1024 * 10))
+//        cache(Cache(context.cacheDir, 1024 * 1024 * 10))
         addInterceptor(loggingIntercepter)
         addNetworkInterceptor(networkInterceptor)
     }.build()
