@@ -17,6 +17,10 @@ object ServerGlobal {
         return areaCodeMap.entries.find { it.value == name }?.key
     }
 
+    fun isValidAreaName(name: String): Boolean {
+        return areaCodeMap.entries.find { it.value == name } != null
+    }
+
     fun setAreaCodeMap(areaCodeList: ArrayList<AreaItem>) {
         Timber.i("setAreaCodeMap() | areaCodeList: $areaCodeList")
         areaCodeList.forEach {

@@ -1,7 +1,9 @@
 package com.example.tourmanage.ui
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -14,7 +16,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -23,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,7 +33,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,16 +43,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.tourmanage.UiState
+import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.StayItem
 import com.example.tourmanage.common.extension.getPureText
+import com.example.tourmanage.common.extension.isError
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
 import com.example.tourmanage.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -88,11 +90,8 @@ fun Header(menuName: String) {
 
 @Composable
 fun MainLayout(viewModel: MainViewModel = hiltViewModel(), menuName: String) {
-//    val stayInfo = viewModel.stayInfo.collectAsStateWithLifecycle()
     val areaCodes = viewModel.areaInfo.collectAsStateWithLifecycle()
     val stayInfos = viewModel.stayInfo.collectAsStateWithLifecycle()
-
-    val searchText = remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         viewModel.requestAreaList()
@@ -109,7 +108,7 @@ fun MainLayout(viewModel: MainViewModel = hiltViewModel(), menuName: String) {
                 .fillMaxHeight()
                 .padding(10.dp)) {
             //_ 지역 코드 로드될 때까지 로딩표시
-            if (areaCodes.isLoading()) {
+            if (areaCodes.isLoading() || stayInfos.isLoading()) {
                 Timber.i("지역 코드 로드중")
                 loading()
             } else if (areaCodes.isSuccess()){
@@ -124,8 +123,17 @@ fun MainLayout(viewModel: MainViewModel = hiltViewModel(), menuName: String) {
                 if (stayInfos.isSuccess()){
                     val stayItemList = stayInfos.value.data
                     StayListLayout(stayItemList!!, viewModel)
-                } else {
-                    //TODO 서버 응답 에러 시 디폴트 이미지 노출 필요 (ywjang)
+                } else if (stayInfos.isError()){
+                    Box(modifier = Modifier
+                        .fillMaxHeight(),
+                        contentAlignment = Alignment.Center) {
+                        Text(text = "검색 결과가 없습니다.",
+                            fontSize = 30.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+                    }
                 }
             }
         }
@@ -136,6 +144,7 @@ fun MainLayout(viewModel: MainViewModel = hiltViewModel(), menuName: String) {
 fun AnimatedSearchLayout(viewModel: MainViewModel = hiltViewModel()) {
     var isSearchMode by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     AnimatedVisibility(
         visible = isSearchMode,
@@ -182,7 +191,7 @@ fun AnimatedSearchLayout(viewModel: MainViewModel = hiltViewModel()) {
                     IconButton(
                         onClick = {
                             viewModel.requestStayInfo(searchText)
-                            //TODO 아이콘 클릭시 동작
+                            keyboardController?.hide()
                         }
                     ) {
                         Icon(
@@ -247,7 +256,6 @@ fun StayListItem(stayItem: StayItem, viewModel: MainViewModel = hiltViewModel())
         )
         .clickable {
             //TODO 클릭 이벤트
-            viewModel.requestStayInfo(stayItem.areaCode!!)
         }) {
         StayImage(stayItem = stayItem)
         Column(modifier = Modifier
@@ -339,6 +347,10 @@ fun ShimmerGridItem(brush: Brush) {
             )
         }
     }
+}
+
+fun DismissKeyboard(context: Context) {
+
 }
 
 @Preview(showBackground = true)

@@ -6,6 +6,7 @@ import com.example.tourmanage.UiState
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.data.server.item.StayItem
+import com.example.tourmanage.common.extension.isNotNullOrEmpty
 import com.example.tourmanage.model.ServerDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,14 +31,21 @@ class MainViewModel @Inject constructor(
     val areaInfo = _areaInfo
 
     fun requestStayInfo(areaName: String? = "", areaCode: String? = "") {
+        var code = areaCode
         Timber.i("areaName: $areaName")
-        if (areaName != null) {
-            val a = ServerGlobal.getAreaName(areaName)
-            Timber.i("${a}")
+        if (areaName.isNotNullOrEmpty()) {
+            val isValidArea = ServerGlobal.isValidAreaName(areaName!!)
+            if (isValidArea) {
+                Timber.i("requestStayInfo() | $code")
+                code = ServerGlobal.getAreaName(areaName)
+            } else {
+                _stayInfo.value = UiState.Error("INVALID_AREA")
+                return
+            }
         }
         Timber.i("requestStayInfo() is called.")
         viewModelScope.launch {
-            serverRepo.requestStayInfo(areaCode)
+            serverRepo.requestStayInfo(code)
                 .onStart { _stayInfo.value = UiState.Loading() }
                 .catch { _stayInfo.value = UiState.Error(it.message!!) }
                 .collect { _stayInfo.value = it }
