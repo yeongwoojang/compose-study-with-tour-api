@@ -36,7 +36,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.TourManage" />
         <activity
-            android:name=".ui.MainActivity4"
+            android:name=".ui.LocalTourActivity"
             android:exported="false"
             android:label="@string/title_activity_main4"
             android:theme="@style/Theme.TourManage" />

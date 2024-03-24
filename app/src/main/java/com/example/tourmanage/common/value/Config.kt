@@ -9,8 +9,8 @@ object Config {
         REMOVE("REMOVE")
     }
 
-    enum class CARD_TYPE(value: String) {
+    enum class CARD_TYPE(val value: String) {
         MENU_STAY("STAY"),
-        TYPE_B("TYPE_B"),
+        MENU_TOUR("TOUR"),
     }
 }

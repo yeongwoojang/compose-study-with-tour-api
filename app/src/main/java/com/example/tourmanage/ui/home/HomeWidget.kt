@@ -6,7 +6,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -24,20 +34,30 @@ import com.example.tourmanage.R
 import com.example.tourmanage.common.data.IntentData
 import com.example.tourmanage.common.util.UiController
 import com.example.tourmanage.common.value.Config
+import com.example.tourmanage.ui.LocalTourActivity
 import com.example.tourmanage.ui.StayMainActivity
-import com.example.tourmanage.ui.MainActivity4
 import timber.log.Timber
 import kotlin.reflect.KClass
 
 @Composable
 fun TopContainer() {
-    Column(modifier = Modifier
-        .background(color = Color.White)
-        .fillMaxHeight(0.35f)) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 20.dp, top = 10.dp, end = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = "가나다라마바사", color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+    Column(
+        modifier = Modifier
+            .background(color = Color.White)
+            .fillMaxHeight(0.35f)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp, top = 10.dp, end = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "가나다라마바사",
+                color = Color.Black,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
             Row() {
                 Image(
                     painter = painterResource(id = R.drawable.baseline_settings_white_36),
@@ -49,7 +69,8 @@ fun TopContainer() {
             }
         }
         Spacer(modifier = Modifier.height(30.dp))
-        Text(modifier = Modifier.padding(start = 20.dp),
+        Text(
+            modifier = Modifier.padding(start = 20.dp),
             text = "가나다라마바사\n아자차카타파하",
             color = Color.Black,
             fontSize = 20.sp,
@@ -60,15 +81,18 @@ fun TopContainer() {
 
 @Composable
 fun CenterCardContainer(context: Context) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(top = 150.dp)) {
-        Row(modifier = Modifier
-            .fillMaxWidth(),
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 150.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             CenterBox(context, Config.CARD_TYPE.MENU_STAY)
-            CenterBox(context, Config.CARD_TYPE.TYPE_B)
+            CenterBox(context, Config.CARD_TYPE.MENU_TOUR)
         }
     }
 }
@@ -87,46 +111,63 @@ fun CenterBox(context: Context, type: Config.CARD_TYPE) {
             desc = "원하는 숙소를 검색하고 예약"
             targetActivity = StayMainActivity::class
         }
-        Config.CARD_TYPE.TYPE_B -> {
-            boxColor = Color.Blue
-            title = "TYPE B"
-            desc = "This is Type B"
-            targetActivity = MainActivity4::class
+
+        Config.CARD_TYPE.MENU_TOUR -> {
+            boxColor = Color.White
+            title = "관광지 추천"
+            desc = "지역별 관광지 추천"
+            targetActivity = LocalTourActivity::class
         }
+
         else -> {
             boxColor = Color.White
         }
     }
-    Card(shape = RoundedCornerShape(CornerSize(25.dp)),
-        elevation = 6.dp) {
-            Column(modifier = Modifier
-                .background(color = boxColor, shape = RoundedCornerShape(25.dp))
-                .size(width = 180.dp, height = 200.dp)
-                .padding(start = 10.dp, end = 10.dp)
-                .clickable(interactionSource = interactionSource, indication = null) {
-                    UiController.addActivity(
-                        context, targetActivity, IntentData(
-                            mapOf(Config.MAIN_MENU_KEY to type.name)
-                        )
+    Card(
+        shape = RoundedCornerShape(CornerSize(25.dp)),
+        elevation = 6.dp
+    ) {
+        Column(modifier = Modifier
+            .background(color = boxColor, shape = RoundedCornerShape(25.dp))
+            .size(width = 180.dp, height = 200.dp)
+            .padding(start = 10.dp, end = 10.dp)
+            .clickable(interactionSource = interactionSource, indication = null) {
+                UiController.addActivity(
+                    context, targetActivity, IntentData(
+                        mapOf(Config.MAIN_MENU_KEY to type.name)
                     )
-                }) {
+                )
+            }) {
             Spacer(modifier = Modifier.height(50.dp))
-            Text(modifier = Modifier.fillMaxWidth(), text = title, fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = title,
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
             Spacer(modifier = Modifier.height(10.dp))
-            Text(modifier = Modifier.fillMaxWidth(), text = desc, fontSize = 12.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = desc,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
 
 @Composable
 fun BottomContainer(modifier: Modifier = Modifier) {
-    Box(modifier = modifier
-        .fillMaxWidth()
-        .fillMaxHeight(0.7f)
-        .background(
-            color = Color.Yellow,
-            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
-        )
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.7f)
+            .background(
+                color = Color.Yellow,
+                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+            )
     ) {
 
     }
