@@ -1,6 +1,8 @@
 package com.example.tourmanage.common.extension
 
 import android.content.Intent
+import android.os.Build
+import android.os.Parcelable
 import androidx.compose.runtime.State
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.IntentData
@@ -8,7 +10,19 @@ import kotlinx.coroutines.flow.StateFlow
 
 fun Intent.putExtra(data: IntentData) {
     data.map.keys.forEach {
-        putExtra(it, data.map[it])
+        if (data.map[it] is String) {
+            putExtra(it, data.map[it] as String)
+        } else {
+            putExtra(it, data.map[it] as java.io.Serializable)
+        }
+    }
+}
+
+fun <T: java.io.Serializable> Intent.intentSerializable(key: String, clazz: Class<T>): T? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        this.getSerializableExtra(key, clazz)
+    } else {
+        this.getSerializableExtra(key) as T?
     }
 }
 
