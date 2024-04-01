@@ -1,16 +1,21 @@
 package com.example.tourmanage.viewmodel
 
+import androidx.compose.material3.TimeInput
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.ServerGlobal
+import com.example.tourmanage.common.data.server.info.StayDetailInfo
 import com.example.tourmanage.common.data.server.item.AreaItem
+import com.example.tourmanage.common.data.server.item.DetailItem
+import com.example.tourmanage.common.data.server.item.StayDetailItem
 import com.example.tourmanage.common.data.server.item.StayItem
 import com.example.tourmanage.common.extension.isNotNullOrEmpty
 import com.example.tourmanage.model.ServerDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -30,11 +35,18 @@ class MainViewModel @Inject constructor(
     val _areaInfo = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Ready())
     val areaInfo = _areaInfo
 
+    val _stayDetailInfo = MutableStateFlow<UiState<StayDetailItem>>(UiState.Ready())
+    val stayDetailInfo = _stayDetailInfo
+
+    val _detailInfo = MutableStateFlow<UiState<ArrayList<DetailItem>>>(UiState.Ready())
+    val detailInfo = _detailInfo
+
     fun requestStayInfo(areaName: String? = "", areaCode: String? = "") {
         var code = areaCode
         Timber.i("areaName: $areaName")
         if (areaName.isNotNullOrEmpty()) {
             val isValidArea = ServerGlobal.isValidAreaName(areaName!!)
+            Timber.i("isValidArea: $isValidArea")
             if (isValidArea) {
                 Timber.i("requestStayInfo() | $code")
                 code = ServerGlobal.getAreaName(areaName)
@@ -61,4 +73,48 @@ class MainViewModel @Inject constructor(
                 .collect { _areaInfo.value = it }
         }
     }
+
+    fun requestStayDetailInfo(contentId: String?, contentType: String?) {
+        Timber.i("requestStayDetailInfo | contentId: $contentId | contentType: $contentType")
+        if (contentId == null || contentType == null) {
+            return
+        }
+        viewModelScope.launch {
+            serverRepo.requestStayDetailInfo(contentId, contentType)
+                .onStart {}
+                .catch { _stayDetailInfo.value = UiState.Error(it.message!!) }
+                .collect { _stayDetailInfo.value = it}
+        }
+    }
+
+    fun requestDetailInfo(contentId: String?, contentType: String?) {
+        Timber.i("requestDetailInfo() | contentId: $contentId | contentType: $contentType")
+        if (contentId == null || contentType == null) {
+            _detailInfo.value = UiState.Error("Invalid Parameter")
+            return
+        }
+
+        viewModelScope.launch {
+            serverRepo.requestDetailInfo(contentId, contentType)
+                .onStart { _detailInfo.value = UiState.Loading() }
+                .catch { _detailInfo.value = UiState.Error(it.message!!) }
+                .collect { _detailInfo.value = it }
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

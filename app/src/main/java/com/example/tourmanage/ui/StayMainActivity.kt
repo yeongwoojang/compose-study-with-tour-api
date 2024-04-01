@@ -43,12 +43,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.example.tourmanage.UiState
 import com.example.tourmanage.common.ServerGlobal
+import com.example.tourmanage.common.data.IntentData
+import com.example.tourmanage.common.data.server.item.StayDetailItem
 import com.example.tourmanage.common.data.server.item.StayItem
-import com.example.tourmanage.common.extension.getPureText
-import com.example.tourmanage.common.extension.isError
-import com.example.tourmanage.common.extension.isLoading
-import com.example.tourmanage.common.extension.isSuccess
+import com.example.tourmanage.common.extension.*
+import com.example.tourmanage.common.util.UiController
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
 import com.example.tourmanage.viewmodel.MainViewModel
@@ -233,6 +234,30 @@ fun AnimatedSearchLayout(viewModel: MainViewModel = hiltViewModel()) {
 }
 
 @Composable
+fun moveToDetail(viewModel: MainViewModel = hiltViewModel(), contentId: String?) {
+    val context = LocalContext.current
+    val stayDetailItem = viewModel.stayDetailInfo.collectAsStateWithLifecycle()
+    if (contentId != stayDetailItem.value.data?.contentId) {
+        Timber.i("stayDetailItem is Not Equal")
+        return
+    }
+    LaunchedEffect(stayDetailItem.value) {
+        if (stayDetailItem.isSuccess()) {
+            Timber.i("stayDetailItem is Success")
+            UiController.addActivity(
+                context,
+                StayDetailActivity::class,
+                IntentData(mapOf(Config.STAY_INFO to stayDetailItem.value.data!!)))
+            viewModel._stayDetailInfo.value = UiState.Ready() //FIXME 꼭 이렇게 flow를 초기화 시키는 방법밖에는 없을까 컴포즈에서 제공하는게 있는지 알아 볼 필요 있음.
+        } else if (stayDetailItem.isReady()){
+            Timber.i("stayDetailItem is READY")
+        } else {
+            Timber.e("stayDetailItem is failed.")
+
+        }
+    }
+}
+@Composable
 fun StayListLayout(stayItemList: ArrayList<StayItem>, viewModel: MainViewModel = hiltViewModel()) {
     val size = stayItemList.size
     Timber.i("StayListLayout() | list size: $size")
@@ -240,13 +265,15 @@ fun StayListLayout(stayItemList: ArrayList<StayItem>, viewModel: MainViewModel =
     LazyColumn() {
         items(
             items = stayItemList,
-            itemContent = { StayListItem(it, viewModel)}
+            itemContent = { StayListItem(it, viewModel) { contentId, contentType ->
+                viewModel.requestStayDetailInfo(contentId, contentType)
+            } }
         )
     }
 }
 
 @Composable
-fun StayListItem(stayItem: StayItem, viewModel: MainViewModel = hiltViewModel()) {
+fun StayListItem(stayItem: StayItem, viewModel: MainViewModel = hiltViewModel(), clickEvent: (contentId: String?, contentType: String?) -> Unit) {
     Row(modifier = Modifier
         .padding(5.dp)
         .fillMaxWidth()
@@ -255,8 +282,9 @@ fun StayListItem(stayItem: StayItem, viewModel: MainViewModel = hiltViewModel())
             shape = RoundedCornerShape(12.5.dp)
         )
         .clickable {
-            //TODO 클릭 이벤트
-        }) {
+            clickEvent(stayItem.contentId, stayItem.contentTypeId)
+        })
+    {
         StayImage(stayItem = stayItem)
         Column(modifier = Modifier
             .align(Alignment.CenterVertically)) {
@@ -264,6 +292,7 @@ fun StayListItem(stayItem: StayItem, viewModel: MainViewModel = hiltViewModel())
             Text(text = stayItem.addr1!!, style = MaterialTheme.typography.caption, modifier = Modifier.padding(top = 5.dp))
         }
     }
+    moveToDetail(viewModel, stayItem.contentId)
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
