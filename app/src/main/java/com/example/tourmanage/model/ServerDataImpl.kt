@@ -82,15 +82,15 @@ class ServerDataImpl @Inject constructor(
 
     }
 
-    override fun requestDetailInfo(contentId: String, contentType: String): Flow<UiState<ArrayList<DetailItem>>> {
+    override fun requestOptionInfo(contentId: String, contentType: String): Flow<UiState<ArrayList<DetailItem>>> {
         return callbackFlow {
             try {
-                val detailInfo = client.requestDetailInfo(contentId = contentId, contentTypeId = contentType)
+                val detailInfo = client.requestOptionInfo(contentId = contentId, contentTypeId = contentType)
                 val code = detailInfo.response?.header?.resultCode
                 val msg = detailInfo.response?.header?.resultMsg
-                val detailItems = detailInfo.toDetailItems()
-                if ("0000" == code && detailItems.isNotEmpty()) {
-                    trySend(UiState.Success(detailItems))
+                val optionItem = detailInfo.toDetailItems()
+                if ("0000" == code && optionItem != null) {
+                    trySend(UiState.Success(optionItem))
                 } else {
                     trySend(UiState.Error(msg ?: "requestDetailInfo() Error."))
                 }

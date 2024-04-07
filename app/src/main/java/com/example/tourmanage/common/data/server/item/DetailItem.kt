@@ -10,6 +10,7 @@ data class DetailItem(
     @Json(name = "roomsize1") val roomSize: String?,
     @Json(name = "roomcount") val roomCount: String?,
     @Json(name = "roombasecount") val roomBaseCount: String?,
+    @Json(name = "roommaxcount") val roomMaxCount: String?,
     @Json(name = "roomoffseasonminfee1") val offWeekDayFee: String?,
     @Json(name = "roomoffseasonminfee2") val offWeekendDayFee: String?,
     @Json(name = "roompeakseasonminfee1") val peakWeekDayFee: String?,

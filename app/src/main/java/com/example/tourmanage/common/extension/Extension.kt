@@ -7,6 +7,8 @@ import androidx.compose.runtime.State
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.IntentData
 import kotlinx.coroutines.flow.StateFlow
+import java.text.NumberFormat
+import java.util.Locale
 
 fun Intent.putExtra(data: IntentData) {
     data.map.keys.forEach {
@@ -52,3 +54,29 @@ fun State<UiState<*>>.isSuccess(): Boolean {
 fun State<UiState<*>>.isError(): Boolean {
     return value is UiState.Error
 }
+
+fun String?.isEmptyString(value: String = ""): String {
+    if (this.isNullOrEmpty()) {
+        return value
+    } else {
+        return this
+    }
+}
+
+fun String.downsizeString(): String {
+    var result = this
+    if (this.length > 80) {
+       result = this.subSequence(0, 80).toString() + "..."
+    }
+    return result
+}
+
+fun String?.isBooleanYn() = "Y" == this
+
+fun String.convertKRW(): String {
+    val formatter = NumberFormat.getCurrencyInstance(Locale.KOREA)
+    return formatter.format(this.toLong())
+}
+
+
+

@@ -53,7 +53,7 @@ interface ServiceAPI {
     ): StayDetailInfo
 
     @GET("detailInfo1")
-    suspend fun requestDetailInfo(
+    suspend fun requestOptionInfo(
         @Query("MobileOS") os: String = MOBILE_OS,
         @Query("MobileApp") app: String = MOBILE_APP,
         @Query("serviceKey") key: String = API_KEY,
