@@ -28,7 +28,7 @@ fun StayDetailInfo.toStayDetail(): StayDetailItem?{
     }
 }
 
-fun DetailInfo.toDetailItems(): ArrayList<DetailItem> {
+fun DetailInfo.toDetailItems(): ArrayList<DetailItem>? {
     return response?.body?.items?.item?.let {
         it as ArrayList<DetailItem>
     } ?: ArrayList(emptyList())

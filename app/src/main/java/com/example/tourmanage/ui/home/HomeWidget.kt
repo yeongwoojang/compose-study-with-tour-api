@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -75,6 +76,7 @@ fun CenterCardContainer(context: Context) {
 
 @Composable
 fun CenterBox(context: Context, type: Config.CARD_TYPE) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val interactionSource = remember { MutableInteractionSource() }
     var boxColor = Color.White
     var title = ""
@@ -101,7 +103,7 @@ fun CenterBox(context: Context, type: Config.CARD_TYPE) {
         elevation = 6.dp) {
             Column(modifier = Modifier
                 .background(color = boxColor, shape = RoundedCornerShape(25.dp))
-                .size(width = 180.dp, height = 200.dp)
+                .size(width = screenWidth * 0.48f, height = 200.dp)
                 .padding(start = 10.dp, end = 10.dp)
                 .clickable(interactionSource = interactionSource, indication = null) {
                     UiController.addActivity(
@@ -111,9 +113,9 @@ fun CenterBox(context: Context, type: Config.CARD_TYPE) {
                     )
                 }) {
             Spacer(modifier = Modifier.height(50.dp))
-            Text(modifier = Modifier.fillMaxWidth(), text = title, fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+            Text(modifier = Modifier.fillMaxWidth(), text = title, color = Color.Black, fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(10.dp))
-            Text(modifier = Modifier.fillMaxWidth(), text = desc, fontSize = 12.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
+            Text(modifier = Modifier.fillMaxWidth(), text = desc, color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
         }
     }
 }

@@ -12,5 +12,5 @@ interface ServerDataRepository {
     fun requestAreaCode(): Flow<UiState<ArrayList<AreaItem>>>
 
     fun requestStayDetailInfo(contentId: String, contentType: String): Flow<UiState<StayDetailItem>>
-    fun requestDetailInfo(contentId: String, contentType: String): Flow<UiState<ArrayList<DetailItem>>>
+    fun requestOptionInfo(contentId: String, contentType: String): Flow<UiState<ArrayList<DetailItem>>>
 }
