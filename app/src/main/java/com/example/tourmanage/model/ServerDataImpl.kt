@@ -6,6 +6,7 @@ import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.data.server.item.DetailItem
 import com.example.tourmanage.common.data.server.item.StayDetailItem
 import com.example.tourmanage.common.data.server.item.StayItem
+import com.example.tourmanage.common.data.server.item.TourItem
 import com.example.tourmanage.common.repository.ServiceAPI
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -97,6 +98,27 @@ class ServerDataImpl @Inject constructor(
                 awaitClose()
             } catch (e: Exception) {
                 trySend(UiState.Error(e.message ?: "requestDetailInfo() Error."))
+            } finally {
+                close()
+            }
+        }
+    }
+
+    override fun requestTourInfo(areaCode: String?): Flow<UiState<ArrayList<TourItem>>> {
+        return callbackFlow {
+            try {
+                val tourInfo = client.requestTourInfo(areaCode = areaCode)
+                val code = tourInfo.response?.header?.resultCode
+                val msg = tourInfo.response?.header?.resultMsg
+                val tourItemList =  tourInfo.toTourInfoList()
+                if ("0000" == code && tourItemList.isNotEmpty()) {
+                    trySend(UiState.Success(tourItemList))
+                } else {
+                    trySend(UiState.Error(msg ?: "requestTourInfo() Error."))
+                }
+                awaitClose()
+            } catch (e: Exception) {
+                trySend(UiState.Error(e.message ?: "requestTourInfo() Error."))
             } finally {
                 close()
             }

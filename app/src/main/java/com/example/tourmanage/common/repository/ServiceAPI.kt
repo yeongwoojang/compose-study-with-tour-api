@@ -4,6 +4,7 @@ import com.example.tourmanage.common.data.server.info.AreaInfo
 import com.example.tourmanage.common.data.server.info.DetailInfo
 import com.example.tourmanage.common.data.server.info.StayDetailInfo
 import com.example.tourmanage.common.data.server.info.StayInfo
+import com.example.tourmanage.common.data.server.info.TourInfo
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -61,4 +62,14 @@ interface ServiceAPI {
         @Query("contentTypeId") contentTypeId: String? = "",
         @Query("_type") type: String = TYPE
     ): DetailInfo
+
+    @GET("areaBasedList1")
+    suspend fun requestTourInfo(
+        @Query("MobileOS") os: String = MOBILE_OS,
+        @Query("MobileApp") app: String = MOBILE_APP,
+        @Query("serviceKey") key: String = API_KEY,
+        @Query("arrange") arrange: String = "O",
+        @Query("areaCode") areaCode: String?,
+        @Query("_type") type: String = TYPE
+    ): TourInfo
 }

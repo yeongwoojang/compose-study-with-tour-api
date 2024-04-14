@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,12 +34,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.tourmanage.common.data.server.item.AreaItem
+import com.example.tourmanage.common.extension.isError
+import com.example.tourmanage.common.extension.isLoading
+import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.CardItem
 import com.example.tourmanage.data.DataProvider
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
 import com.example.tourmanage.viewmodel.LocalTourViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class LocalTourActivity : ComponentActivity() {
@@ -65,12 +71,11 @@ class LocalTourActivity : ComponentActivity() {
 @Composable
 fun MainForm(menuName: String, viewModel: LocalTourViewModel = hiltViewModel()) {
     val areaInfos = viewModel.areaInfo.collectAsStateWithLifecycle()
-
     // TODO 지역 이름만 가져 와서 셋팅
-    val areaList = areaInfos.value.data
-    // val areaNameList = mutableListOf<String>()
 
-    val areaNameList = mutableListOf<String>("서울", "인천", "대전", "광주", "부산")
+    LaunchedEffect(Unit) {
+        viewModel.requestAreaList()
+    }
 
     Scaffold(
         topBar = {
@@ -84,17 +89,22 @@ fun MainForm(menuName: String, viewModel: LocalTourViewModel = hiltViewModel()) 
                 Spacer(modifier = Modifier.height(10.dp))
             }
             item {
-                LazyHorizontalGrid(
-                    rows = GridCells.Fixed(2),
-                    modifier = Modifier
-                        .height(90.dp)
-                        .fillMaxWidth(),
-                    contentPadding = PaddingValues(start = 25.dp, top = 10.dp, bottom = 10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(items = areaNameList, itemContent = { SubItem(item = it, viewModel) })
+                Timber.i("areaInfo.siSucce  :${areaInfos}")
+                when{
+                    areaInfos.isLoading() -> {
+
+                    }
+                    areaInfos.isSuccess() -> {
+                        val areaInfo = areaInfos.value.data?: emptyList()
+                        Timber.i("areaInfos ${viewModel.areaInfo}")
+                        AreaListUi(list = areaInfo.toList())
+                    }
+                    areaInfos.isError() -> {
+
+                    }
+
                 }
+
             }
         }
     }
@@ -146,6 +156,21 @@ fun CardListItem(item: CardItem) {
                     .padding(20.dp)
             )
         }
+    }
+}
+
+@Composable
+fun AreaListUi(list: List<AreaItem>) {
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        modifier = Modifier
+            .height(90.dp)
+            .fillMaxWidth(),
+        contentPadding = PaddingValues(start = 25.dp, top = 10.dp, bottom = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        items(items = list, itemContent = { SubItem(item = it.name?:"") })
     }
 }
 

@@ -25,8 +25,8 @@ import com.example.tourmanage.R
 import com.example.tourmanage.common.data.IntentData
 import com.example.tourmanage.common.util.UiController
 import com.example.tourmanage.common.value.Config
+import com.example.tourmanage.ui.LocalTourActivity
 import com.example.tourmanage.ui.StayMainActivity
-import com.example.tourmanage.ui.MainActivity4
 import timber.log.Timber
 import kotlin.reflect.KClass
 
@@ -69,7 +69,7 @@ fun CenterCardContainer(context: Context) {
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             CenterBox(context, Config.CARD_TYPE.MENU_STAY)
-            CenterBox(context, Config.CARD_TYPE.TYPE_B)
+            CenterBox(context, Config.CARD_TYPE.MENU_TOUR)
         }
     }
 }
@@ -89,11 +89,11 @@ fun CenterBox(context: Context, type: Config.CARD_TYPE) {
             desc = "원하는 숙소를 검색하고 예약"
             targetActivity = StayMainActivity::class
         }
-        Config.CARD_TYPE.TYPE_B -> {
-            boxColor = Color.Blue
-            title = "TYPE B"
-            desc = "This is Type B"
-            targetActivity = MainActivity4::class
+        Config.CARD_TYPE.MENU_TOUR -> {
+            boxColor = Color.White
+            title = "관광지 추천"
+            desc = "지역별 관광지 추천"
+            targetActivity = LocalTourActivity::class
         }
         else -> {
             boxColor = Color.White

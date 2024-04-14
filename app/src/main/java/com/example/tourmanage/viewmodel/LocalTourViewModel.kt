@@ -1,11 +1,15 @@
 package com.example.tourmanage.viewmodel
 
+import androidx.compose.material3.TimeInput
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.data.server.item.StayItem
+import com.example.tourmanage.common.data.server.item.TourItem
 import com.example.tourmanage.common.extension.isNotNullOrEmpty
 import com.example.tourmanage.model.ServerDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +28,7 @@ class LocalTourViewModel @Inject constructor(
     val _areaInfo = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Ready())
     val areaInfo = _areaInfo
 
-    val _tourInfo = MutableStateFlow<UiState<ArrayList<StayItem>>>(UiState.Ready())
+    val _tourInfo = MutableStateFlow<UiState<ArrayList<TourItem>>>(UiState.Ready())
     val tourInfo = _tourInfo
 
     /**
@@ -36,7 +40,13 @@ class LocalTourViewModel @Inject constructor(
             serverRepo.requestAreaCode()
                 .onStart { _areaInfo.value = UiState.Loading() }
                 .catch { _areaInfo.value = UiState.Error(it.message!!) }
-                .collect { _areaInfo.value = it }
+                .collect {
+                    if(!it.data.isNullOrEmpty()){
+                        _areaInfo.value = it
+                    }else{
+                        // empty 일때
+                    }
+                }
         }
     }
 
@@ -59,7 +69,7 @@ class LocalTourViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            serverRepo.requestStayInfo(code)
+            serverRepo.requestTourInfo(code)
                 .onStart { _tourInfo.value = UiState.Loading() }
                 .catch { _tourInfo.value = UiState.Error(it.message!!) }
                 .collect { _tourInfo.value = it }
