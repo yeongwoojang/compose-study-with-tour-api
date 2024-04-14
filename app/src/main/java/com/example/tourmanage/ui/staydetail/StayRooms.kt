@@ -92,12 +92,4 @@ fun StayRooms(optionItem: DetailItem, index: Int, size: Int, paddingModifier: Mo
         }
     }
     Spacer(modifier = Modifier.height(10.dp))
-
-//    if (index != size - 1) {
-//        Spacer(modifier = Modifier.height(10.dp))
-//        Divider(
-//            modifier = Modifier.fillMaxWidth(),
-//            color = colorResource(id = R.color.white_smoke),
-//            thickness = 8.dp,)
-//    }
 }
