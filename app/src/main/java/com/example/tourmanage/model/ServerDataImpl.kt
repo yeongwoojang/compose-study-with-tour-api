@@ -91,6 +91,8 @@ class ServerDataImpl @Inject constructor(
                 val optionItem = detailInfo.toDetailItems()
                 if ("0000" == code && optionItem != null) {
                     trySend(UiState.Success(optionItem))
+                } else if (optionItem.isNullOrEmpty()){
+                    trySend(UiState.Error(msg ?: "requestDetailInfo() | Empty()"))
                 } else {
                     trySend(UiState.Error(msg ?: "requestDetailInfo() Error."))
                 }

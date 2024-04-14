@@ -17,7 +17,7 @@ import javax.inject.Inject
 class StayDetailViewModel @Inject constructor(
     private val serverRepo: ServerDataRepository
 ): ViewModel() {
-    val _optionInfo = MutableStateFlow<UiState<ArrayList<DetailItem>>>(UiState.Ready())
+    private val _optionInfo = MutableStateFlow<UiState<ArrayList<DetailItem>>>(UiState.Ready())
     val optionInfo = _optionInfo
 
     fun requestOptionInfo(contentId: String?, contentType: String?) {
@@ -29,7 +29,7 @@ class StayDetailViewModel @Inject constructor(
 
         viewModelScope.launch {
             serverRepo.requestOptionInfo(contentId, contentType)
-                .onStart { }
+                .onStart { _optionInfo.value = UiState.Loading()}
                 .catch { _optionInfo.value = UiState.Error(it.message!!) }
                 .collect { _optionInfo.value = it }
         }
