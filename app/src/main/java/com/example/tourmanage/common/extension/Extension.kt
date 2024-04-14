@@ -3,10 +3,13 @@ package com.example.tourmanage.common.extension
 import android.content.Intent
 import android.os.Build
 import android.os.Parcelable
+import androidx.compose.foundation.lazy.LazyListLayoutInfo
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.State
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.IntentData
 import kotlinx.coroutines.flow.StateFlow
+import timber.log.Timber
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -55,6 +58,9 @@ fun State<UiState<*>>.isError(): Boolean {
     return value is UiState.Error
 }
 
+fun State<UiState<*>>.isComplete(): Boolean {
+    return value is UiState.Error || value is UiState.Success
+}
 fun String?.isEmptyString(value: String = ""): String {
     if (this.isNullOrEmpty()) {
         return value
@@ -77,6 +83,4 @@ fun String.convertKRW(): String {
     val formatter = NumberFormat.getCurrencyInstance(Locale.KOREA)
     return formatter.format(this.toLong())
 }
-
-
 
