@@ -40,6 +40,11 @@
             android:exported="false"
             android:label="@string/title_activity_main4"
             android:theme="@style/Theme.TourManage" />
+        <activity
+            android:name=".ui.StayDetailActivity"
+            android:exported="false"
+            android:label="@string/title_activity_stay_detail"
+            android:theme="@style/Theme.TourManage" />
     </application>
 
 </manifest>

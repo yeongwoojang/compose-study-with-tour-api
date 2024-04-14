@@ -1,12 +1,12 @@
 package com.example.tourmanage.model
 
-import com.example.tourmanage.UiState
+import com.example.tourmanage.*
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
+import com.example.tourmanage.common.data.server.item.DetailItem
+import com.example.tourmanage.common.data.server.item.StayDetailItem
 import com.example.tourmanage.common.data.server.item.StayItem
 import com.example.tourmanage.common.repository.ServiceAPI
-import com.example.tourmanage.toAreaInfoList
-import com.example.tourmanage.toStayInfoList
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -58,4 +58,68 @@ class ServerDataImpl @Inject constructor(
             }
         }
     }
+
+
+    override fun requestStayDetailInfo(contentId: String, contentType: String): Flow<UiState<StayDetailItem>> {
+        return callbackFlow {
+            try {
+                val stayDetailInfo = client.requestStayDetailInfo(contentId = contentId, contentTypeId = contentType)
+                val code = stayDetailInfo.response?.header?.resultCode
+                val msg = stayDetailInfo.response?.header?.resultMsg
+                val stayDetailItem = stayDetailInfo.toStayDetail()
+                if ("0000" == code && stayDetailItem != null) {
+                    trySend(UiState.Success(stayDetailItem))
+                } else {
+                    trySend(UiState.Error(msg ?: "requestStayDetailInfo() Error."))
+                }
+                awaitClose()
+            } catch (e: Exception) {
+                trySend(UiState.Error(e.message ?: "requestDetailInfo() Error."))
+            } finally {
+                close()
+            }
+        }
+
+    }
+
+    override fun requestOptionInfo(contentId: String, contentType: String): Flow<UiState<ArrayList<DetailItem>>> {
+        return callbackFlow {
+            try {
+                val detailInfo = client.requestOptionInfo(contentId = contentId, contentTypeId = contentType)
+                val code = detailInfo.response?.header?.resultCode
+                val msg = detailInfo.response?.header?.resultMsg
+                val optionItem = detailInfo.toDetailItems()
+                if ("0000" == code && optionItem != null) {
+                    trySend(UiState.Success(optionItem))
+                } else {
+                    trySend(UiState.Error(msg ?: "requestDetailInfo() Error."))
+                }
+                awaitClose()
+            } catch (e: Exception) {
+                trySend(UiState.Error(e.message ?: "requestDetailInfo() Error."))
+            } finally {
+                close()
+            }
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
