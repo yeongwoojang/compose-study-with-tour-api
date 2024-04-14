@@ -83,11 +83,20 @@ fun DetailLayout(detailData: StayDetailItem?, viewModel: StayDetailViewModel = h
                 val optionInfos = optionItem.value.data!!
                 totalRoomCount = optionInfos.size
                 item {
-                    OptionLayout(optionInfos, Modifier.padding(start = 15.dp, top = 15.dp, end = 15.dp))
+                    Column(modifier = Modifier
+                        .background(colorResource(id = R.color.white_smoke))
+                        .padding(start = 10.dp, end = 10.dp, top = 8.dp))
+                    {
+                        optionInfos.forEachIndexed { index, optionItem ->
+                            StayRooms(optionItem, index, totalRoomCount, Modifier.padding(start = 15.dp, top = 15.dp, end = 15.dp))
+                        }
+                    }
                 }
             }
             item {
-                Spacer(modifier = Modifier.height(60.dp))
+                Spacer(modifier = Modifier
+                    .background(colorResource(id = R.color.white_smoke))
+                    .height(60.dp))
             }
         }
     }
@@ -107,7 +116,8 @@ fun DetailLayout(detailData: StayDetailItem?, viewModel: StayDetailViewModel = h
         ) {
             Row(
                 modifier = Modifier
-                    .background(Color.White)
+                    .height(60.dp)
+                    .background(colorResource(id = R.color.white_smoke))
                     .padding(top = 5.dp, start = 10.dp, end = 10.dp, bottom = 5.dp)
             )
             {
@@ -116,8 +126,7 @@ fun DetailLayout(detailData: StayDetailItem?, viewModel: StayDetailViewModel = h
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = colorResource(id = R.color.lightpink),
-                        contentColor = Color.White
+                        backgroundColor = colorResource(id = R.color.lightpink)
                     ),
                     onClick = {
                         coroutineScope.launch {

@@ -49,7 +49,7 @@ class RetrofitModule {
     @Singleton
     fun getOkHttpClient(@ApplicationContext context: Context, loggingIntercepter: HttpLoggingInterceptor, networkInterceptor: Interceptor)
     = OkHttpClient.Builder().apply {
-        cache(Cache(context.cacheDir, 1024 * 1024 * 10))
+//        cache(Cache(context.cacheDir, 1024 * 1024 * 10))
         addInterceptor(loggingIntercepter)
         addNetworkInterceptor(networkInterceptor)
     }.build()
