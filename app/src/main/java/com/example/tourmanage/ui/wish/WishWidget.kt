@@ -1,9 +1,9 @@
-package com.example.tourmanage.ui.home
+package com.example.tourmanage.ui.wish
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun HomeWidget() {
-    Text(text = "Home")
+fun WishWidget() {
+    Text(text = "Wish")
 }
