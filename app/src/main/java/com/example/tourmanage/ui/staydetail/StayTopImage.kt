@@ -15,9 +15,8 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.common.data.server.item.StayDetailItem
 import com.example.tourmanage.ui.StayDetailActivity
-import com.google.accompanist.pager.ExperimentalPagerApi
 
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun StayTopImage(detailData: StayDetailItem, activity: StayDetailActivity) {
     Box(

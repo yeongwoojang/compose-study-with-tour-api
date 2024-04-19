@@ -50,7 +50,6 @@
     import com.example.tourmanage.ui.ui.theme.TourManageTheme
     import com.example.tourmanage.viewmodel.MainViewModel
     import com.example.tourmanage.viewmodel.StayDetailViewModel
-    import com.google.accompanist.pager.ExperimentalPagerApi
     import dagger.hilt.android.AndroidEntryPoint
     import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
     import timber.log.Timber

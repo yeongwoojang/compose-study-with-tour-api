@@ -1,14 +1,8 @@
 package com.example.tourmanage
 
 import com.example.tourmanage.common.data.server.common.CommonResponse
-import com.example.tourmanage.common.data.server.info.AreaInfo
-import com.example.tourmanage.common.data.server.info.DetailInfo
-import com.example.tourmanage.common.data.server.info.StayDetailInfo
-import com.example.tourmanage.common.data.server.info.StayInfo
-import com.example.tourmanage.common.data.server.item.AreaItem
-import com.example.tourmanage.common.data.server.item.DetailItem
-import com.example.tourmanage.common.data.server.item.StayDetailItem
-import com.example.tourmanage.common.data.server.item.StayItem
+import com.example.tourmanage.common.data.server.info.*
+import com.example.tourmanage.common.data.server.item.*
 import com.example.tourmanage.common.extension.isBooleanYn
 
 fun StayInfo.toStayInfoList(): ArrayList<StayItem> {
@@ -29,9 +23,15 @@ fun StayDetailInfo.toStayDetail(): StayDetailItem?{
     }
 }
 
-fun DetailInfo.toDetailItems(): ArrayList<DetailItem>? {
+fun DetailInfo.toDetailItems(): ArrayList<DetailItem> {
     return response?.body?.items?.item?.let {
         it as ArrayList<DetailItem>
+    } ?: ArrayList(emptyList())
+}
+
+fun FestivalInfo.toFestivalItems(): ArrayList<FestivalItem> {
+    return response?.body?.items?.item?.let {
+        it as ArrayList<FestivalItem>
     } ?: ArrayList(emptyList())
 }
 

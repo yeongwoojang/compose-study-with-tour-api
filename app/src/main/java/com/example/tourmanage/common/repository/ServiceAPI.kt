@@ -1,9 +1,7 @@
 package com.example.tourmanage.common.repository
 
-import com.example.tourmanage.common.data.server.info.AreaInfo
-import com.example.tourmanage.common.data.server.info.DetailInfo
-import com.example.tourmanage.common.data.server.info.StayDetailInfo
-import com.example.tourmanage.common.data.server.info.StayInfo
+import com.example.tourmanage.common.data.server.info.*
+import com.example.tourmanage.common.value.Config
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -61,4 +59,16 @@ interface ServiceAPI {
         @Query("contentTypeId") contentTypeId: String? = "",
         @Query("_type") type: String = TYPE
     ): DetailInfo
+
+    @GET("searchFestival1")
+    suspend fun requestFestivalInfo(
+        @Query("MobileOS") os: String = MOBILE_OS,
+        @Query("MobileApp") app: String = MOBILE_APP,
+        @Query("serviceKey") key: String = API_KEY,
+        @Query("areaCode") areaCode: String? = "",
+        @Query("_type") type: String = TYPE,
+        @Query("eventStartDate") eventStartDate: String? = "",
+        @Query("listYN") listYn: String = "Y",
+        @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.name,
+    ): FestivalInfo
 }
