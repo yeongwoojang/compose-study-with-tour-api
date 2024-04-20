@@ -11,6 +11,5 @@ interface ServerDataRepository {
 
     fun requestStayDetailInfo(contentId: String, contentType: String): Flow<UiState<StayDetailItem>>
     fun requestOptionInfo(contentId: String, contentType: String): Flow<UiState<ArrayList<DetailItem>>>
-
     fun requestFestivalInfo(areaCode: String? = "", eventStartDate: String? = "", arrange: Config.ARRANGE_TYPE): Flow<UiState<ArrayList<FestivalItem>>>
 }

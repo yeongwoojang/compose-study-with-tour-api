@@ -29,4 +29,13 @@ object Config {
         Q("Q"), //_ 제목순
         R("R")//_ 생성일순
     }
+
+    enum class HOME_MENU_TYPE(value: String) {
+        FESTIVAL("FESTIVAL"),
+        STAY("FESTIVAL"),
+        WALK("WALK"),
+        RIDING("RIDING"),
+        TOUR_SPOT("TOUR_SPOT"),
+        CULTURE("CULTURE"),
+    }
 }

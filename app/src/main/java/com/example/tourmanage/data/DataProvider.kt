@@ -1,6 +1,7 @@
 package com.example.tourmanage.data
 
 import com.example.tourmanage.R
+import com.example.tourmanage.common.value.Config
 
 object DataProvider {
     val puppyList = listOf(
@@ -27,5 +28,14 @@ object DataProvider {
         CardItem(R.drawable.puppy5),
         CardItem(R.drawable.puppy6),
         CardItem(R.drawable.puppy7),
+    )
+
+    val homeMenuList = listOf<HomeMenuItem>(
+        HomeMenuItem("축제", Config.HOME_MENU_TYPE.FESTIVAL, R.drawable.festival_menu),
+        HomeMenuItem("숙소", Config.HOME_MENU_TYPE.STAY, R.drawable.stay_menu),
+        HomeMenuItem("걷기", Config.HOME_MENU_TYPE.WALK, R.drawable.walk_menu),
+        HomeMenuItem("자전거", Config.HOME_MENU_TYPE.RIDING, R.drawable.riding_menu),
+        HomeMenuItem("관광지", Config.HOME_MENU_TYPE.TOUR_SPOT, R.drawable.tour_spot_menu),
+        HomeMenuItem("문화 시설", Config.HOME_MENU_TYPE.CULTURE, R.drawable.culture_menu),
     )
 }

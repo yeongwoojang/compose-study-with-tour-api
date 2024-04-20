@@ -24,16 +24,24 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.extension.isEmptyString
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import timber.log.Timber
+import androidx.compose.material.Divider
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import com.example.tourmanage.R
 
 
 @Composable
-fun PageIndicator(pageCount: Int, currentPage: Int, modifier: Modifier) {
+fun PageIndicator(pageCount: Int, currentPage: Int, ) {
     Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(1.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(
+            space = 3.dp,
+            alignment = Alignment.CenterHorizontally
+        )
     ) {
         repeat(pageCount) {
             IndicatorDots(isSelected = it == currentPage)
@@ -43,12 +51,11 @@ fun PageIndicator(pageCount: Int, currentPage: Int, modifier: Modifier) {
 
 @Composable
 fun IndicatorDots(isSelected: Boolean) {
-    val size = animateDpAsState(targetValue = if (isSelected) 12.dp else 10.dp, label = "")
+    val size = animateDpAsState(targetValue = if (isSelected) 8.dp else 6.dp, label = "")
     Box(modifier = Modifier
-        .padding(2.dp)
         .size(size.value)
         .clip(CircleShape)
-        .background(if (isSelected) Color(0xff373737) else Color(0xff373737))
+        .background(Color.Black)
     ) {
 
     }
@@ -64,58 +71,88 @@ fun MainImageRow(festivalItems: ArrayList<FestivalItem>) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
 
-    LazyRow(
-        modifier = Modifier.fillMaxWidth(),
-        state = scrollState
-    ) {
-        itemsIndexed(festivalItems) {index, item ->
-            Card(
-                modifier = Modifier
-                    .width(screenWidth)
-                    .height(120.dp)
-                    .padding(start = 16.dp, end = 16.dp)
+    Column() {
+        Row(
+            modifier = Modifier.padding(start = 18.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "이달의 축제",
+                style = TextStyle(
+                    color = colorResource(id = R.color.light_coral),
+                    fontWeight = FontWeight.Light,
+                    fontFamily = FontFamily.Serif
+                ),
+                fontSize = 16.sp
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Divider(
+                Modifier
+                    .weight(2f)
+                    .height(1.5.dp)
+                    .padding(end = 20.dp)
+                    .background(colorResource(id = R.color.white_smoke)))
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            state = scrollState
+        ) {
+            itemsIndexed(festivalItems) {index, item ->
+                Card(
+                    modifier = Modifier
+                        .width(screenWidth)
+                        .height(120.dp)
+                        .padding(start = 16.dp, end = 16.dp),
+                    elevation = CardDefaults.cardElevation(8.dp)
                 ) {
-                Box {
-                    GlideImage(
-                        contentScale = ContentScale.Crop,
-                        model = item.mainImage,
-                        contentDescription = null,
-                    )
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(16.dp)
-                            .shadow(10.dp, shape = RoundedCornerShape(8.dp)),
-                    ) {
-                        Text(
-                            color = Color.White,
-                            text = item.title.isEmptyString(),
-                            fontSize = 18.sp
+                    Box {
+                        GlideImage(
+                            contentScale = ContentScale.Crop,
+                            model = item.mainImage,
+                            contentDescription = null,
                         )
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(16.dp)
+                                .shadow(10.dp, shape = RoundedCornerShape(8.dp)),
+                        ) {
+                            Text(
+                                color = Color.White,
+                                text = item.title.isEmptyString(),
+                                fontSize = 18.sp
+                            )
+                        }
                     }
                 }
             }
         }
+        PageIndicator(
+            pageCount = festivalItems.size,
+            currentPage = curIdx
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Divider(
+            Modifier
+                .fillMaxWidth()
+                .height(1.5.dp)
+                .padding(start = 25.dp, end = 20.dp)
+                .background(colorResource(id = R.color.white_smoke)))
     }
-    PageIndicator(
-        modifier = Modifier.fillMaxWidth(),
-        pageCount = festivalItems.size,
-        currentPage = curIdx
-    )
 
-    if (scrollState.isScrollInProgress) {
-        isAnimating = true
-        Timber.i("Scroll isAnimating")
-    } else {
-        isAnimating = false
-        curIdx = scrollState.firstVisibleItemIndex
-        Timber.i("Scroll end")
+    LaunchedEffect(scrollState.isScrollInProgress) {
+        if (scrollState.isScrollInProgress) {
+            isAnimating = true
+        } else {
+            isAnimating = false
+            curIdx = scrollState.firstVisibleItemIndex
+        }
     }
 
     LaunchedEffect(curIdx) {
-        Timber.i("curIdx: $curIdx")
         while (true) {
-            delay(1000L)
+            delay(2000L)
             if (!isAnimating) {
                 val nextIndex = (curIdx + 1) % festivalItems.size
                 scrollState.animateScrollToItem(nextIndex)
