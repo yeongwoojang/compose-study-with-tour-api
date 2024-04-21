@@ -1,5 +1,6 @@
 package com.example.tourmanage.ui.home
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,12 +25,16 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tourmanage.common.data.IntentData
+import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.util.UiController
+import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.DataProvider
 import com.example.tourmanage.ui.FestivalMainActivity
+import kotlin.reflect.KClass
 
 @Composable
-fun HomeMenu() {
+fun HomeMenu(festivalItems: ArrayList<FestivalItem>) {
     val context = LocalContext.current
     LazyHorizontalGrid(rows = GridCells.Fixed(3),
         modifier = Modifier
@@ -47,7 +52,22 @@ fun HomeMenu() {
                     elevation = CardDefaults.cardElevation(6.dp),
                     modifier = Modifier.width(150.dp)
                         .clickable {
-                            UiController.addActivity(context, FestivalMainActivity::class)
+                            var intentData: IntentData? = null
+                            val targetActivity: KClass<out Activity> = when (it.type) {
+                                Config.HOME_MENU_TYPE.FESTIVAL -> {
+                                    intentData = IntentData(
+                                        mapOf(Config.PASS_DATA to festivalItems)
+                                    )
+                                    FestivalMainActivity::class
+                                }
+//                                Config.HOME_MENU_TYPE.WALK ->
+//                                Config.HOME_MENU_TYPE.RIDING ->
+//                                Config.HOME_MENU_TYPE.CULTURE ->
+//                                Config.HOME_MENU_TYPE.TOUR_SPOT ->
+//                                Config.HOME_MENU_TYPE.STAY ->
+                                else -> FestivalMainActivity::class
+                            }
+                            UiController.addActivity(context, targetActivity, intentData)
                         }
                     ) {
                     Box(

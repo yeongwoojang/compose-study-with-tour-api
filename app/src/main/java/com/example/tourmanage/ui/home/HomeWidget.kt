@@ -53,7 +53,7 @@ fun HomeWidget(viewModel: HomeViewModel = hiltViewModel()) {
                     MainImageRow(festivalList)
                 }
                 item {
-                    HomeMenu()
+                    HomeMenu(festivalList)
                 }
             }
         }   

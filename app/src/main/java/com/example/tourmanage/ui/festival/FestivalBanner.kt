@@ -1,7 +1,7 @@
 package com.example.tourmanage.ui.festival
 
-import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.fadeIn
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -22,47 +24,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.tourmanage.ui.common.Header
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.R
+import com.example.tourmanage.common.data.server.item.FestivalItem
+import com.example.tourmanage.common.extension.isEmptyString
+import com.example.tourmanage.ui.common.Header
 import com.example.tourmanage.viewmodel.FestivalViewModel
 import kotlinx.coroutines.delay
-import androidx.compose.animation.*
-import androidx.compose.animation.core.LinearEasing
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel()) {
-    val imageResources = listOf(
-        R.drawable.festival_menu,
-        R.drawable.walk_menu,
-        R.drawable.riding_menu,
-    )
-
+fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel(), festivalItems: ArrayList<FestivalItem>) {
     var imageIndex by remember { mutableStateOf(0) }
 
-    val fadeInSpec = remember {
-        fadeIn(animationSpec = TweenSpec(1000, easing = LinearEasing))
+    LaunchedEffect(Unit) {
+        while(true) {
+            delay(3000)
+            imageIndex = (imageIndex + 1) % festivalItems.size
+        }
     }
-
-    val fadeOutSpec = remember {
-        fadeOut(animationSpec = TweenSpec(2500, easing = LinearEasing))
-    }
-
-    var isVisible by remember{ mutableStateOf(true) }
-
-    var isShowAnim by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = imageIndex, key2 = isVisible) {
-        delay(3000)
-        isVisible = false
-        delay(10)
-        imageIndex = (imageIndex + 1) % imageResources.size
-        isVisible = true
-    }
-
-//    LaunchedEffect(Unit) {
-//        delay(2000)
-//        isVisible = false
-//    }
-
 
     Scaffold(
         topBar = { Header(menuName = "Festival") },
@@ -79,15 +60,29 @@ fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel()) {
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize()) {//_ box1
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = isVisible,
-                            enter = fadeInSpec,
-                            exit = fadeOutSpec
-                        ) {
-                            Image(
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop,
-                                painter = painterResource(id = imageResources[imageIndex]), contentDescription = ""
+                        Crossfade(
+                            targetState = imageIndex,
+                            animationSpec = tween(1000)
+                        ) {targetState ->
+                            Box {
+                                GlideImage(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop,
+                                    model = festivalItems[targetState].mainImage,
+                                    contentDescription = "")
+                            }
+                            Text(
+                                modifier = Modifier
+                                    .align(Alignment.TopStart)
+                                    .padding(start = 10.dp, top = 10.dp)
+                                    .shadow(10.dp, shape = RoundedCornerShape(8.dp)),
+                                text = festivalItems[targetState].title.isEmptyString(),
+                                style = TextStyle(
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    fontFamily = FontFamily.Monospace,
+                                    color = Color.White
+                                )
                             )
                         }
                         Box(modifier = Modifier
