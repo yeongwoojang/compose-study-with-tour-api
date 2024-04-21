@@ -22,7 +22,7 @@ object Config {
         MENU_TOUR("TOUR"),
     }
 
-    enum class ARRANGE_TYPE(value: String) {
+    enum class ARRANGE_TYPE(val value: String) {
         A("A"), //_ 제목순
         C("C"), //_ 수정일순
         D("D"), //_ 생성일순
@@ -32,7 +32,18 @@ object Config {
         R("R")//_ 생성일순
     }
 
-    enum class HOME_MENU_TYPE(value: String) {
+    enum class CONTENT_TYPE_ID(val value: String) {
+        TOUR_SPOT("12"),
+        CULTURE("14"),
+        FESTIVAL("15"),
+        TOUR_COURSE("25"),
+        LEISURE_SPORTS("28"),
+        STAY("32"),
+        SHOPPING("38"),
+        FOOD("39"),
+    }
+
+    enum class HOME_MENU_TYPE(val value: String) {
         FESTIVAL("FESTIVAL"),
         STAY("FESTIVAL"),
         WALK("WALK"),

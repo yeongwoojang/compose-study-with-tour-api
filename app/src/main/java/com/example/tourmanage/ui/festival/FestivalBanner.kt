@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -51,12 +52,21 @@ fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel(), festivalItems
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 25.dp, top = 70.dp, end = 25.dp)) {
+                .padding(start = 16.dp, top = 70.dp)) {
             item {
+                Text(text = "이번 달 진행중인 축제",
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = FontFamily.Monospace,
+                        color = Color.Black
+                    ))
+                Spacer(modifier = Modifier.height(10.dp))
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(350.dp),
+                        .height(350.dp)
+                        .padding(end = 16.dp),
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize()) {//_ box1
@@ -109,6 +119,20 @@ fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel(), festivalItems
                         }
                     }
                 }
+            }
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+                Divider(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.5.dp)
+                    .background(color = colorResource(id = R.color.white_smoke))
+                    .padding(end = 16.dp),
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                MyLocationFestival()
+            }
+            item {
+
             }
         }
     }
