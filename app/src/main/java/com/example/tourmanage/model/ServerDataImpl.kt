@@ -154,6 +154,34 @@ class ServerDataImpl @Inject constructor(
             }
         }
     }
+
+    override fun requestLocationBasedList(
+        contentTypeId: Config.CONTENT_TYPE_ID?,
+        mapX: String?,
+        mapY: String?,
+        radius: String?,
+        arrange: Config.ARRANGE_TYPE
+    ): Flow<UiState<ArrayList<LocationBasedItem>>> {
+        return callbackFlow {
+            try {
+                val locationBasedInfo = client.requestLocationBasedList(contentTypeId = contentTypeId?.value, mapX = mapX, mapY = mapY, radius = radius, arrange = arrange.value)
+                val code = locationBasedInfo.response?.header?.resultCode
+                val msg = locationBasedInfo.response?.header?.resultMsg
+                val locationBasedItemList =  locationBasedInfo.toLocationBasedList()
+                if ("0000" == code && locationBasedItemList.isNotEmpty()) {
+                    trySend(UiState.Success(locationBasedItemList))
+                } else {
+                    trySend(UiState.Error(msg ?: "requestLocationBasedList() Error."))
+                }
+                awaitClose()
+            } catch (e: Exception) {
+                trySend(UiState.Error(e.message ?: "requestLocationBasedList() Error."))
+
+            }finally {
+                close()
+            }
+        }
+    }
 }
 
 

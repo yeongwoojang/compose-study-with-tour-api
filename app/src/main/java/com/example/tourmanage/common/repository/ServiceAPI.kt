@@ -19,7 +19,7 @@ interface ServiceAPI {
         @Query("MobileOS") os: String = MOBILE_OS,
         @Query("MobileApp") app: String = MOBILE_APP,
         @Query("serviceKey") key: String = API_KEY,
-        @Query("arrange") arrange: String = "O",
+        @Query("arrange") arrange: String = Config.ARRANGE_TYPE.O.value,
         @Query("areaCode") areaCode: String?,
         @Query("_type") type: String = TYPE
     ): StayInfo
@@ -69,7 +69,7 @@ interface ServiceAPI {
         @Query("_type") type: String = TYPE,
         @Query("eventStartDate") eventStartDate: String? = "",
         @Query("listYN") listYn: String = "Y",
-        @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.name,
+        @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.value,
     ): FestivalInfo
 
     @GET("areaBasedList1")
@@ -80,4 +80,18 @@ interface ServiceAPI {
         @Query("areaCode") areaCode: String?,
         @Query("_type") type: String = TYPE
     ): TourInfo
+
+    @GET("locationBasedList1")
+    suspend fun requestLocationBasedList(
+        @Query("MobileOS") os: String = MOBILE_OS,
+        @Query("MobileApp") app: String = MOBILE_APP,
+        @Query("_type") type: String = TYPE,
+        @Query("listYN") listYn: String = "Y",
+        @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.value,
+        @Query("mapX") mapX: String? = "",
+        @Query("mapY") mapY: String? = "",
+        @Query("radius") radius: String? = "5000",
+        @Query("contentTypeId") contentTypeId: String? = Config.CONTENT_TYPE_ID.FESTIVAL.value,
+        @Query("serviceKey") key: String = API_KEY,
+    ): LocationBasedInfo
 }

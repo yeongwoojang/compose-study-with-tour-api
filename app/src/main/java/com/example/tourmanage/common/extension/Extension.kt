@@ -69,10 +69,10 @@ fun String?.isEmptyString(value: String = ""): String {
     }
 }
 
-fun String.downsizeString(): String {
+fun String.downsizeString(endLength: Int): String {
     var result = this
-    if (this.length > 80) {
-       result = this.subSequence(0, 80).toString() + "..."
+    if (this.length > endLength) {
+       result = this.subSequence(0, endLength).toString() + "..."
     }
     return result
 }
