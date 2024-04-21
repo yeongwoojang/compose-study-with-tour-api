@@ -50,7 +50,9 @@ fun HomeMenu() {
                     elevation = CardDefaults.cardElevation(6.dp),
                     modifier = Modifier.width(150.dp)
                         .clickable {
-                            UiController.addActivity(context, LocalTourActivity::class)
+                            UiController.addActivity(context, FestivalMainActivity::class)
+                            // TODO 메뉴 타입 별로 구분 짓기
+                            //UiController.addActivity(context, LocalTourActivity::class)
                         }
                     ) {
                     Box(
