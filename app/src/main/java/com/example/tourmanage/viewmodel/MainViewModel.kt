@@ -24,7 +24,6 @@ class MainViewModel @Inject constructor(
 ): ViewModel() {
     //_ viewModel은 Activity lifeCycle을 따르기 때문에 remember 필요x
     //_ Activity에서 mutable변수에 remember를 사용하는 이유는 re-composition이 일어날 때 변수가 초기화되기 때문
-    //_ val data = mutableStateOf("TEST")
 
     val _stayInfo = MutableStateFlow<UiState<ArrayList<StayItem>>>(UiState.Ready())
     val stayInfo = _stayInfo

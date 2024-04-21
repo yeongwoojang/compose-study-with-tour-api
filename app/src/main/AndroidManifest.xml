@@ -18,6 +18,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".FestivalMainActivity"
+            android:exported="false"
+            android:label="@string/title_activity_festival_main"
+            android:theme="@style/Theme.TourManage" />
+        <activity
             android:name=".ui.MainActivity"
             android:exported="true"
             android:label="@string/title_activity_main"
@@ -44,6 +49,11 @@
             android:name=".ui.StayDetailActivity"
             android:exported="false"
             android:label="@string/title_activity_stay_detail"
+            android:theme="@style/Theme.TourManage" />
+        <activity
+            android:name=".ui.FestivalMainActivity"
+            android:exported="false"
+            android:label="@string/title_activity_festival_main"
             android:theme="@style/Theme.TourManage" />
     </application>
 
