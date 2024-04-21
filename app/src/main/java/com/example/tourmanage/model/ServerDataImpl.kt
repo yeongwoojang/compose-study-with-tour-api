@@ -133,6 +133,27 @@ class ServerDataImpl @Inject constructor(
             }
         }
     }
+
+    override fun requestTourInfo(areaCode: String?): Flow<UiState<ArrayList<TourItem>>> {
+        return callbackFlow {
+            try {
+                val tourInfo = client.requestTourInfo(areaCode = areaCode)
+                val code = tourInfo.response?.header?.resultCode
+                val msg = tourInfo.response?.header?.resultMsg
+                val tourItemList =  tourInfo.toTourInfoList()
+                if ("0000" == code && tourItemList.isNotEmpty()) {
+                    trySend(UiState.Success(tourItemList))
+                } else {
+                    trySend(UiState.Error(msg ?: "requestTourInfo() Error."))
+                }
+                awaitClose()
+            } catch (e: Exception) {
+                trySend(UiState.Error(e.message ?: "requestTourInfo() Error."))
+            } finally {
+                close()
+            }
+        }
+    }
 }
 
 

@@ -34,7 +34,6 @@ class LocalTourViewModel @Inject constructor(
     /**
      * 지역별 관광지 리스트 불러오기
      */
-    // TODO AreaList 불러 오는거 HomeWidget 에서 공통 처리 후 진행 했으면 좋겠다. (둘 다 사용 하기 때문)
     fun requestAreaList() {
         viewModelScope.launch {
             serverRepo.requestAreaCode()
@@ -53,21 +52,11 @@ class LocalTourViewModel @Inject constructor(
     /**
      * 지역별 관광지 리스트 불러오기
      *
-     * @param areaName 지역 이름
      * @param areaCode 지역 코드
      */
-    fun requestTourInfo(areaName: String? = "", areaCode: String? = "") {
+    fun requestTourInfo(areaCode: String? = "") {
         var code = areaCode
 
-        if (areaName.isNotNullOrEmpty()) {
-            val isValidArea = ServerGlobal.isValidAreaName(areaName!!)
-            if (isValidArea) {
-                code = ServerGlobal.getAreaName(areaName)
-            } else {
-                // 지역 이름 값이 잘못 들어갈 때 예외 처리
-                return
-            }
-        }
         viewModelScope.launch {
             serverRepo.requestTourInfo(code)
                 .onStart { _tourInfo.value = UiState.Loading() }

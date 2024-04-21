@@ -25,8 +25,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tourmanage.common.util.UiController
+import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.DataProvider
 import com.example.tourmanage.ui.FestivalMainActivity
+import com.example.tourmanage.ui.LocalTourActivity
+import com.example.tourmanage.ui.StayMainActivity
 
 @Composable
 fun HomeMenu() {
@@ -47,7 +50,7 @@ fun HomeMenu() {
                     elevation = CardDefaults.cardElevation(6.dp),
                     modifier = Modifier.width(150.dp)
                         .clickable {
-                            UiController.addActivity(context, FestivalMainActivity::class)
+                            UiController.addActivity(context, LocalTourActivity::class)
                         }
                     ) {
                     Box(

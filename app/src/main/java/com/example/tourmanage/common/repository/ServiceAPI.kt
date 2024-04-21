@@ -71,4 +71,13 @@ interface ServiceAPI {
         @Query("listYN") listYn: String = "Y",
         @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.name,
     ): FestivalInfo
+
+    @GET("areaBasedList1")
+    suspend fun requestTourInfo(
+        @Query("MobileOS") os: String = MOBILE_OS,
+        @Query("MobileApp") app: String = MOBILE_APP,
+        @Query("serviceKey") key: String = API_KEY,
+        @Query("areaCode") areaCode: String?,
+        @Query("_type") type: String = TYPE
+    ): TourInfo
 }

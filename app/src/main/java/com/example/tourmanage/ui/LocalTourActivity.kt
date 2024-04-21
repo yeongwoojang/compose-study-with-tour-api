@@ -10,7 +10,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -20,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,13 +34,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.server.item.AreaItem
+import com.example.tourmanage.common.data.server.item.TourItem
 import com.example.tourmanage.common.extension.isError
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.common.value.Config
-import com.example.tourmanage.data.CardItem
-import com.example.tourmanage.data.DataProvider
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
 import com.example.tourmanage.viewmodel.LocalTourViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -75,6 +77,7 @@ fun MainForm(menuName: String, viewModel: LocalTourViewModel = hiltViewModel()) 
 
     LaunchedEffect(Unit) {
         viewModel.requestAreaList()
+
     }
 
     Scaffold(
@@ -89,46 +92,64 @@ fun MainForm(menuName: String, viewModel: LocalTourViewModel = hiltViewModel()) 
                 Spacer(modifier = Modifier.height(10.dp))
             }
             item {
-                Timber.i("areaInfo.siSucce  :${areaInfos}")
                 when{
                     areaInfos.isLoading() -> {
 
                     }
                     areaInfos.isSuccess() -> {
                         val areaInfo = areaInfos.value.data?: emptyList()
-                        Timber.i("areaInfos ${viewModel.areaInfo}")
-                        AreaListUi(list = areaInfo.toList())
+                        AreaListUi(list = areaInfo.toList(), viewModel)
                     }
                     areaInfos.isError() -> {
 
                     }
 
                 }
-
+                CardListView(viewModel)
             }
+
         }
     }
 }
 
+
 @Composable
-fun TopCardListView() {
-    val cardLit = remember { DataProvider.cardList }
-    LazyRow(
-        contentPadding = PaddingValues(start = 25.dp, top = 20.dp, end = 20.dp, bottom = 10.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(250.dp),
-        horizontalArrangement = Arrangement.spacedBy(15.dp)
-    ) {
-        items(
-            items = cardLit,
-            itemContent = { CardListItem(it) }
-        )
+fun CardListView(viewModel: LocalTourViewModel) {
+    val tourInfos = viewModel.tourInfo.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        viewModel.requestTourInfo()
+    }
+
+    when{
+        tourInfos.isLoading() -> {
+
+        }
+        tourInfos.isSuccess() -> {
+            val tourInfo = tourInfos.value.data?: emptyList()
+            Timber.i("tourInfo $tourInfo")
+            val cardList = remember { tourInfo }
+            LazyColumn(
+                contentPadding = PaddingValues(start = 25.dp, top = 20.dp, end = 20.dp, bottom = 10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(500.dp),
+                verticalArrangement = Arrangement.spacedBy(15.dp)
+            ) {
+                items(
+                    items = cardList,
+                    itemContent = { CardListItem(it) }
+                )
+            }
+        }
+        tourInfos.isError() -> {
+            Timber.i("투어 정보 에러")
+        }
+
     }
 }
 
 @Composable
-fun CardListItem(item: CardItem) {
+fun CardListItem(item: TourItem) {
     Card(
         modifier = Modifier
             .aspectRatio(2f),
@@ -142,16 +163,9 @@ fun CardListItem(item: CardItem) {
                     shape = RoundedCornerShape(CornerSize(16.dp))
                 )
         ) {
-            Image(
-                painter = painterResource(id = item.res),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize() // 이미지가 카드의 전체 영역을 채우도록 함
-                    .clip(RoundedCornerShape(CornerSize(16.dp)))
-            )
+            TourImage(item)
             Text(
-                text = "컨텐츠 설명이 들어가는 곳", color = Color.Gray, fontSize = 20.sp,
+                text = item.title!!, color = Color.Gray, fontSize = 20.sp,
                 modifier = Modifier
                     .padding(20.dp)
             )
@@ -160,22 +174,34 @@ fun CardListItem(item: CardItem) {
 }
 
 @Composable
-fun AreaListUi(list: List<AreaItem>) {
+fun AreaListUi(list: List<AreaItem>, viewModel: LocalTourViewModel) {
     LazyHorizontalGrid(
-        rows = GridCells.Fixed(2),
+        rows = GridCells.Fixed(3),
         modifier = Modifier
-            .height(90.dp)
+            .height(100.dp)
             .fillMaxWidth(),
         contentPadding = PaddingValues(start = 25.dp, top = 10.dp, bottom = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(items = list, itemContent = { SubItem(item = it.name?:"") })
+        items(items = list, itemContent = { SubItem(item = it.name?:""){viewModel.requestTourInfo(it.code)} })
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun SubItem(item: String, viewModel: LocalTourViewModel = hiltViewModel()) {
+fun TourImage(tourItem: TourItem) {
+    GlideImage(contentScale = ContentScale.Crop,
+        model = tourItem.fullImageUrl,
+        contentDescription = null,
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight() )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun SubItem(item: String, onClick:() -> Unit) {
     Card(
         modifier = Modifier
             .width(80.dp)
@@ -183,7 +209,8 @@ fun SubItem(item: String, viewModel: LocalTourViewModel = hiltViewModel()) {
 
             },
         shape = RoundedCornerShape(CornerSize(20.dp)),
-        elevation = 2.dp
+        elevation = 2.dp,
+        onClick = onClick
     ) {
         Box(
             modifier = Modifier
