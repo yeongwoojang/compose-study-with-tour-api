@@ -125,14 +125,32 @@ fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel(), festivalItems
                 Divider(modifier = Modifier
                     .fillMaxWidth()
                     .height(1.5.dp)
+                    .padding(end = 16.dp)
                     .background(color = colorResource(id = R.color.white_smoke))
-                    .padding(end = 16.dp),
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 MyLocationFestival()
             }
             item {
-
+                Spacer(modifier = Modifier.height(20.dp))
+                Divider(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.5.dp)
+                    .padding(end = 16.dp)
+                    .background(color = colorResource(id = R.color.white_smoke))
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                OtherLocationFestival()
+            }
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+                Divider(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.5.dp)
+                    .padding(end = 16.dp)
+                    .background(color = colorResource(id = R.color.white_smoke))
+                )
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
