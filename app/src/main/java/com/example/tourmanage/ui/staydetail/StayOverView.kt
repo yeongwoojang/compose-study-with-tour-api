@@ -25,7 +25,7 @@ import timber.log.Timber
 @Composable
 fun StayOverview(detailData: StayDetailItem, paddingModifier: Modifier) {
     Timber.i("OverViewLayout")
-    val overviewText = detailData.overview.isEmptyString().downsizeString()
+    val overviewText = detailData.overview.isEmptyString().downsizeString(80)
     val moreViewText = "더보기"
     var annotatedString: AnnotatedString? = null
     //_ LazyColumn은 뷰들이 재사용 되기 때문에 remember로 상태를 저장해도 뷰를 보이지 않을떄까지 스크롤했다가 다시 돌아오도록 스크롤하면 상태 값이 초기화되어있음.

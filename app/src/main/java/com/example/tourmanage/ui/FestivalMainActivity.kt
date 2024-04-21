@@ -1,5 +1,7 @@
 package com.example.tourmanage.ui
 
+import android.annotation.SuppressLint
+import android.location.Location
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +18,8 @@ import com.example.tourmanage.common.extension.intentSerializable
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.ui.festival.FestivalBanner
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
