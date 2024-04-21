@@ -5,4 +5,14 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_main4">MainActivity4</string>
     <string name="title_activity_stay_detail">StayDetailActivity</string>
+    <string name="title_activity_festival_main">FestivalMainActivity</string>
+
+
+    <string name="bottom_nav_item_home">Home</string>
+    <string name="bottom_nav_item_wish">찜</string>
+    <string name="bottom_nav_item_area">지역</string>
+
+    <string name="home_intro_title">이번달 축제 일정</string>
+    <string name="home_intro_more_festival">축제 더 알아보기</string>
+
 </resources>

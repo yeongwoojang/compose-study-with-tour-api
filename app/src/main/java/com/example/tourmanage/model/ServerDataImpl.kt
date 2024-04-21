@@ -2,15 +2,16 @@ package com.example.tourmanage.model
 
 import com.example.tourmanage.*
 import com.example.tourmanage.common.ServerGlobal
-import com.example.tourmanage.common.data.server.item.AreaItem
-import com.example.tourmanage.common.data.server.item.DetailItem
-import com.example.tourmanage.common.data.server.item.StayDetailItem
-import com.example.tourmanage.common.data.server.item.StayItem
+import com.example.tourmanage.common.data.server.item.*
 import com.example.tourmanage.common.repository.ServiceAPI
+import com.example.tourmanage.common.value.Config
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 class ServerDataImpl @Inject constructor(
     private val client: ServiceAPI
@@ -89,9 +90,9 @@ class ServerDataImpl @Inject constructor(
                 val code = detailInfo.response?.header?.resultCode
                 val msg = detailInfo.response?.header?.resultMsg
                 val optionItem = detailInfo.toDetailItems()
-                if ("0000" == code && optionItem != null) {
+                if ("0000" == code && optionItem.isNotEmpty()) {
                     trySend(UiState.Success(optionItem))
-                } else if (optionItem.isNullOrEmpty()){
+                } else if (optionItem.isEmpty()){
                     trySend(UiState.Error(msg ?: "requestDetailInfo() | Empty()"))
                 } else {
                     trySend(UiState.Error(msg ?: "requestDetailInfo() Error."))
@@ -99,6 +100,34 @@ class ServerDataImpl @Inject constructor(
                 awaitClose()
             } catch (e: Exception) {
                 trySend(UiState.Error(e.message ?: "requestDetailInfo() Error."))
+            } finally {
+                close()
+            }
+        }
+    }
+
+    override fun requestFestivalInfo(areaCode: String?, eventStartDate: String?, arrange: Config.ARRANGE_TYPE): Flow<UiState<ArrayList<FestivalItem>>> {
+        return callbackFlow {
+            try {
+                var date = eventStartDate
+                if (date.isNullOrEmpty()) {
+                    val format = SimpleDateFormat("yyyyMMdd", Locale.KOREA)
+                    date = format.format(Date().time)
+                }
+
+                val festivalInfo = client.requestFestivalInfo(areaCode = areaCode, eventStartDate = date!!, arrange = arrange.name)
+                val code = festivalInfo.response?.header?.resultCode
+                val msg = festivalInfo.response?.header?.resultMsg
+                val festivalItems = festivalInfo.toFestivalItems()
+                if ("0000" == code && festivalItems.isNotEmpty()) {
+                    trySend(UiState.Success(festivalItems))
+                } else {
+                    trySend(UiState.Error(msg ?: "requestFestivalInfo() Error."))
+
+                }
+                awaitClose()
+            } catch (e: java.lang.Exception) {
+                trySend(UiState.Error(e.message ?: "requestFestivalInfo() Error."))
             } finally {
                 close()
             }
