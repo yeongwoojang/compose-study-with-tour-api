@@ -80,6 +80,6 @@ interface ServiceAPI {
         @Query("areaCode") areaCode: String?,
         @Query("_type") type: String = TYPE,
         @Query("contentTypeId") contentType: String = "12",
-        @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.name,
+        @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.value
     ): TourInfo
 }

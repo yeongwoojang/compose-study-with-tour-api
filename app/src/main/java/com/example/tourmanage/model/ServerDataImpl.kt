@@ -8,6 +8,7 @@ import com.example.tourmanage.common.value.Config
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -138,9 +139,13 @@ class ServerDataImpl @Inject constructor(
         return callbackFlow {
             try {
                 val tourInfo = client.requestTourInfo(areaCode = areaCode)
+                Timber.i("tourInfo: $tourInfo")
                 val code = tourInfo.response?.header?.resultCode
+                Timber.i("tourInfo: $code")
                 val msg = tourInfo.response?.header?.resultMsg
+                Timber.i("tourInfo: $msg")
                 val tourItemList =  tourInfo.toTourInfoList()
+                Timber.i("tourInfo: $tourItemList")
                 if ("0000" == code && tourItemList.isNotEmpty()) {
                     trySend(UiState.Success(tourItemList))
                 } else {
@@ -148,8 +153,10 @@ class ServerDataImpl @Inject constructor(
                 }
                 awaitClose()
             } catch (e: Exception) {
+                Timber.i("tourInfo: $e")
                 trySend(UiState.Error(e.message ?: "requestTourInfo() Error."))
             } finally {
+                Timber.i("tourInfo: finally")
                 close()
             }
         }
