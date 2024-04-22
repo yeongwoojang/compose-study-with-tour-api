@@ -31,6 +31,7 @@ import com.example.tourmanage.common.util.UiController
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.DataProvider
 import com.example.tourmanage.ui.FestivalMainActivity
+import com.example.tourmanage.ui.StayMainActivity
 import kotlin.reflect.KClass
 
 @Composable
@@ -60,11 +61,17 @@ fun HomeMenu(festivalItems: ArrayList<FestivalItem>) {
                                     )
                                     FestivalMainActivity::class
                                 }
+                                Config.HOME_MENU_TYPE.STAY -> {
+//                                    intentData = IntentData(
+//                                        mapOf
+//                                    )
+                                    StayMainActivity::class
+                                }
+
 //                                Config.HOME_MENU_TYPE.WALK ->
 //                                Config.HOME_MENU_TYPE.RIDING ->
 //                                Config.HOME_MENU_TYPE.CULTURE ->
 //                                Config.HOME_MENU_TYPE.TOUR_SPOT ->
-//                                Config.HOME_MENU_TYPE.STAY ->
                                 else -> FestivalMainActivity::class
                             }
                             UiController.addActivity(context, targetActivity, intentData)
