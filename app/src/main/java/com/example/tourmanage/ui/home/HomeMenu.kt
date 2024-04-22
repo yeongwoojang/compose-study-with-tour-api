@@ -63,22 +63,17 @@ fun HomeMenu(festivalItems: ArrayList<FestivalItem>) {
                                     FestivalMainActivity::class
                                 }
                                 Config.HOME_MENU_TYPE.STAY -> {
-//                                    intentData = IntentData(
-//                                        mapOf
-//                                    )
                                     StayMainActivity::class
                                 }
-
-//                                Config.HOME_MENU_TYPE.WALK ->
-//                                Config.HOME_MENU_TYPE.RIDING ->
-//                                Config.HOME_MENU_TYPE.CULTURE ->
                                 Config.HOME_MENU_TYPE.TOUR_SPOT -> {
                                     intentData = IntentData(
                                         mapOf(Config.PASS_DATA to festivalItems)
                                     )
                                     LocalTourActivity::class
                                 }
-//                                Config.HOME_MENU_TYPE.STAY ->
+//                                Config.HOME_MENU_TYPE.WALK ->
+//                                Config.HOME_MENU_TYPE.RIDING ->
+//                                Config.HOME_MENU_TYPE.CULTURE ->
                                 else -> FestivalMainActivity::class
                             }
                             UiController.addActivity(context, targetActivity, intentData)
