@@ -31,6 +31,7 @@ import com.example.tourmanage.common.util.UiController
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.DataProvider
 import com.example.tourmanage.ui.FestivalMainActivity
+import com.example.tourmanage.ui.LocalTourActivity
 import com.example.tourmanage.ui.StayMainActivity
 import kotlin.reflect.KClass
 
@@ -71,7 +72,13 @@ fun HomeMenu(festivalItems: ArrayList<FestivalItem>) {
 //                                Config.HOME_MENU_TYPE.WALK ->
 //                                Config.HOME_MENU_TYPE.RIDING ->
 //                                Config.HOME_MENU_TYPE.CULTURE ->
-//                                Config.HOME_MENU_TYPE.TOUR_SPOT ->
+                                Config.HOME_MENU_TYPE.TOUR_SPOT -> {
+                                    intentData = IntentData(
+                                        mapOf(Config.PASS_DATA to festivalItems)
+                                    )
+                                    LocalTourActivity::class
+                                }
+//                                Config.HOME_MENU_TYPE.STAY ->
                                 else -> FestivalMainActivity::class
                             }
                             UiController.addActivity(context, targetActivity, intentData)
