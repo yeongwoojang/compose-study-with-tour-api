@@ -2,14 +2,15 @@ package com.example.tourmanage.common.extension
 
 import android.content.Intent
 import android.os.Build
-import android.os.Parcelable
-import androidx.compose.foundation.lazy.LazyListLayoutInfo
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.State
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.IntentData
-import kotlinx.coroutines.flow.StateFlow
-import timber.log.Timber
+import kotlinx.coroutines.flow.*
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -84,3 +85,18 @@ fun String.convertKRW(): String {
     return formatter.format(this.toLong())
 }
 
+suspend fun <T>Flow<UiState<T>>.setDefaultCollect(state: MutableStateFlow<UiState<T>>) {
+    onStart { state.value = UiState.Loading() }
+        .catch { state.value = UiState.Error(it.message!!) }
+        .collect {state.value = it }
+}
+
+/**
+ * Clickable에서 click 이벤트 실행 시 effect 제거
+ */
+fun Modifier.noRippleClickable(onClick: ()->Unit): Modifier = composed {
+    clickable(indication = null,
+        interactionSource = remember { MutableInteractionSource() }) {
+        onClick()
+    }
+}

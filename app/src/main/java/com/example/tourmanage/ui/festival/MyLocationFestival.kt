@@ -27,71 +27,63 @@ import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.viewmodel.FestivalViewModel
 import timber.log.Timber
 import com.example.tourmanage.R
+import com.example.tourmanage.common.data.server.item.LocationBasedItem
+import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun MyLocationFestival(viewModel: FestivalViewModel = hiltViewModel()) {
-    LaunchedEffect(Unit) {
-        viewModel.requestFestival()
-    }
-
-    val festivalItemsByArea = viewModel.festivalItem.collectAsStateWithLifecycle()
-
-    if (festivalItemsByArea.isSuccess()) {
-        val festivalItems = festivalItemsByArea.value.data!!
-        Timber.i("TEST_LOG | festivalItemsByArea: ${festivalItemsByArea.value.data!!}")
-        Column {
-            Text(
-                text = "우리 동네에서 열리는 축제",
-                style = TextStyle(
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium,
-                    fontFamily = FontFamily.Monospace,
-                    color = Color.Black
-                )
+fun MyLocationFestival(viewModel: FestivalViewModel = hiltViewModel(), myLocFestival: ArrayList<LocationBasedItem>) {
+    Column {
+        Text(
+            text = "우리 동네에서 열리는 축제",
+            style = TextStyle(
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = spoqaHanSansNeoFont,
+                color = Color.Black
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                itemsIndexed(festivalItems) { index, item ->
-                    Column(modifier = Modifier
-                        .width(150.dp)
-                    ) {
-                        GlideImage(
-                            model = item.mainImage,
-                            contentDescription = "",
-                            contentScale = ContentScale.FillBounds,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(150.dp)
-                                .clip(RoundedCornerShape(12.dp)),
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            itemsIndexed(myLocFestival) { index, item ->
+                Column(modifier = Modifier
+                    .width(150.dp)
+                ) {
+                    GlideImage(
+                        model = item.mainImage,
+                        contentDescription = "",
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(150.dp)
+                            .clip(RoundedCornerShape(12.dp)),
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = item.title.isEmptyString(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontFamily =  spoqaHanSansNeoFont,
+                            fontWeight = FontWeight.Medium,
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = item.title.isEmptyString(),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = TextStyle(
-                                fontSize = 12.sp,
-                                fontFamily =  FontFamily.Monospace,
-                                fontWeight = FontWeight.Medium,
-                            )
+                    )
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(
+                        text = item.addr1.isEmptyString(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = TextStyle(
+                            fontSize = 8.sp,
+                            fontFamily =  spoqaHanSansNeoFont,
+                            fontWeight = FontWeight.Medium,
+                            color = colorResource(id = R.color.dark_gray)
                         )
-                        Spacer(modifier = Modifier.height(3.dp))
-                        Text(
-                            text = item.addr1.isEmptyString(),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = TextStyle(
-                                fontSize = 8.sp,
-                                fontFamily =  FontFamily.Monospace,
-                                fontWeight = FontWeight.Medium,
-                                color = colorResource(id = R.color.dark_gray)
-                            )
-                        )
-                    }
+                    )
                 }
             }
         }

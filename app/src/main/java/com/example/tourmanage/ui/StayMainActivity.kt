@@ -51,6 +51,7 @@ import com.example.tourmanage.common.data.server.item.StayItem
 import com.example.tourmanage.common.extension.*
 import com.example.tourmanage.common.util.UiController
 import com.example.tourmanage.common.value.Config
+import com.example.tourmanage.ui.stay.StayMainWidget
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
 import com.example.tourmanage.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -66,7 +67,8 @@ class StayMainActivity : ComponentActivity() {
         val viewModel by viewModels<MainViewModel>()
         setContent {
             TourManageTheme {
-                MainLayout(viewModel, menu)
+                StayMainWidget()
+//                MainLayout(viewModel, menu)
             }
         }
     }

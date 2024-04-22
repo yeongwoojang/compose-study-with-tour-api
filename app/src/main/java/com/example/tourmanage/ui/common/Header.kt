@@ -10,6 +10,9 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 
 @Composable
 fun Header(menuName: String) {
@@ -18,7 +21,12 @@ fun Header(menuName: String) {
         backgroundColor = Color.White,
         title = {
             Text(
-                text = menuName,)
+                text = menuName,
+                style = TextStyle(
+                    fontFamily = spoqaHanSansNeoFont,
+                    fontWeight = FontWeight.Medium
+                )
+            )
         },
         navigationIcon = {
             IconButton(onClick = {
