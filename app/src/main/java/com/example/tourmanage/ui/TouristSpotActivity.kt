@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,6 +53,8 @@ import com.example.tourmanage.common.data.server.item.TourItem
 import com.example.tourmanage.common.extension.isError
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
+import com.example.tourmanage.common.util.UiController
+import com.example.tourmanage.ui.components.LoadingWidget
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
 import com.example.tourmanage.viewmodel.LocalTourViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -98,7 +101,7 @@ fun MainForm(viewModel: LocalTourViewModel = hiltViewModel()) {
             item {
                 when {
                     areaInfos.isLoading() -> {
-
+                        LoadingWidget()
                     }
 
                     areaInfos.isSuccess() -> {
@@ -125,7 +128,7 @@ fun TourListView(viewModel: LocalTourViewModel) {
 
     when {
         tourInfos.isLoading() -> {
-
+            LoadingWidget()
         }
 
         tourInfos.isSuccess() -> {
@@ -144,6 +147,7 @@ fun TourListView(viewModel: LocalTourViewModel) {
 
 @Composable
 fun TourListUi(list: List<TourItem>) {
+    val context = LocalContext.current
     LazyColumn(
         contentPadding = PaddingValues(
             start = 25.dp,
@@ -158,7 +162,12 @@ fun TourListUi(list: List<TourItem>) {
     ) {
         items(
             items = list,
-            itemContent = { TourListItem(it) { } }
+            itemContent = { TourListItem(it) {
+                UiController.addActivity(
+                    context,
+                    StayDetailActivity::class,
+                    null)
+            } }
         )
     }
 }
