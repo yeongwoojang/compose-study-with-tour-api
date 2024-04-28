@@ -55,6 +55,10 @@ fun State<UiState<*>>.isSuccess(): Boolean {
     return value is UiState.Success
 }
 
+fun State<UiState<*>>.isCompleteSuccess(requestKey: String): Boolean {
+    return value is UiState.Success && requestKey == value.requestKey
+}
+
 fun State<UiState<*>>.isError(): Boolean {
     return value is UiState.Error
 }

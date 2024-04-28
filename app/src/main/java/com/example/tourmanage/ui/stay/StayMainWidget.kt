@@ -1,82 +1,104 @@
 package com.example.tourmanage.ui.stay
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.BottomDrawer
-import androidx.compose.material.BottomDrawerValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.rememberBottomDrawerState
-import androidx.compose.material3.Scaffold
+import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.tourmanage.ui.common.AnimatedTextField
+import com.example.tourmanage.ui.common.DrawerOpenTextField
 import com.example.tourmanage.ui.common.Header
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.StayViewModel
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material.Divider
+import androidx.compose.ui.Alignment
+import com.example.tourmanage.common.ServerGlobal
+import com.example.tourmanage.common.extension.isEmptyString
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import timber.log.Timber
 
 @Composable
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 fun StayMainWidget(viewModel: StayViewModel = hiltViewModel()) {
-    val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
-    val coroutineScope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var isSheetOpen by rememberSaveable { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    var currentAreaCode by rememberSaveable { mutableStateOf(ServerGlobal.getAreaCodeList().first().code.isEmptyString()) }
 
-    BottomDrawer(
-        gesturesEnabled = drawerState.isOpen,
-        drawerState = drawerState,
-        drawerContent = {
-            // 아래에서 위로 슬라이딩하는 컨텐츠를 정의합니다.
-            Text(text = "asdasdasdasd")
-        },
-        // BottomDrawer의 내용을 정의합니다.
-        content = {
-            // Scaffold의 content 영역에 배치될 내용을 정의합니다.
-            // 여기에는 일반적으로 메인 화면의 내용이 위치합니다.
-            Scaffold(
-                topBar = {
-                    Header("숙소 찾기")
-                }
-            ) {
-                LazyColumn(
-                    modifier = Modifier
+    LaunchedEffect(key1 = currentAreaCode) {
+        Timber.i("Change Area | currentAreaCode: $currentAreaCode")
+        viewModel.requestAreaList(currentAreaCode)
+    }
+
+    Scaffold(
+        topBar = {
+            Header("숙소 찾기")
+        }
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .systemBarsPadding()
+                .padding(start = 16.dp, end = 16.dp)
+        ) {
+            item {
+                Spacer(modifier = Modifier.height(80.dp))
+                Text(text = "여행지를 찾아보세요.",
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        fontFamily = spoqaHanSansNeoFont,
+                        fontWeight = FontWeight.Medium
+                    )
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                DrawerOpenTextField("지역명 검색", onClick = {
+                    isSheetOpen = true
+                })
+            }
+        }
+
+        if (isSheetOpen) {
+            ModalBottomSheet(
+                modifier = Modifier.height(600.dp),
+                sheetState = sheetState,
+                scrimColor = Color.Black.copy(alpha = .7f),
+                windowInsets = WindowInsets(0, 0, 0, 0),
+                onDismissRequest = {
+                    scope.launch {
+                        sheetState.hide()
+                    }.invokeOnCompletion { isSheetOpen = false }
+                },
+                dragHandle = {
+                    Column(modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp)
-                ) {
-                    item {
-                        Spacer(modifier = Modifier.height(80.dp))
-                        Text(text = "여행지를 찾아보세요.",
+                        .padding(top = 10.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                        Text(
+                            text = "지역선택",
                             style = TextStyle(
-                                fontSize = 15.sp,
+                                fontSize = 16.sp,
                                 fontFamily = spoqaHanSansNeoFont,
                                 fontWeight = FontWeight.Medium
                             )
                         )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        AnimatedTextField("지역명 검색", onClick = {
-                            if (drawerState.currentValue == BottomDrawerValue.Closed) {
-                                coroutineScope.launch {
-                                    drawerState.open()
-                                }
-                            }
-                        })
                     }
+                }
+                ) {
+                StayAreaDrawerContent(currentAreaCode = currentAreaCode) { areaItem, requestKey ->
+                    currentAreaCode = areaItem.code!!
                 }
             }
         }
-    )
-}
-
-@Composable
-fun BottomDrawerDemo() {
-    // BottomDrawer의 상태를 유지하기 위해 rememberDrawerState를 사용합니다.
-
+    }
 }

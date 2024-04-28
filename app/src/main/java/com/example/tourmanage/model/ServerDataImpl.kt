@@ -3,6 +3,7 @@ package com.example.tourmanage.model
 import com.example.tourmanage.*
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.*
+import com.example.tourmanage.common.extension.isEmptyString
 import com.example.tourmanage.common.repository.ServiceAPI
 import com.example.tourmanage.common.value.Config
 import kotlinx.coroutines.channels.awaitClose
@@ -38,16 +39,18 @@ class ServerDataImpl @Inject constructor(
         }
     }
 
-    override fun requestAreaCode(): Flow<UiState<ArrayList<AreaItem>>> {
+    override fun requestAreaCode(areaCode: String?, isInit: Boolean): Flow<UiState<ArrayList<AreaItem>>> {
         return callbackFlow {
             try {
-                val areaInfo = client.requestAreaList()
+                val areaInfo = client.requestAreaList(areaCode = areaCode)
                 val code = areaInfo.response?.header?.resultCode
                 val msg = areaInfo.response?.header?.resultMsg
                 val areaItemList = areaInfo.toAreaInfoList()
                 if ("0000" == code && areaItemList.isNotEmpty()) {
-                    ServerGlobal.setAreaCodeMap(areaItemList)
-                    trySend(UiState.Success(areaItemList))
+                    if (isInit) {
+                        ServerGlobal.setAreaCodeList(areaItemList)
+                    }
+                    trySend(UiState.Success(areaItemList, requestKey = areaCode!!))
                 } else {
                     trySend(UiState.Error(msg ?: "requestAreaList() Error."))
                 }

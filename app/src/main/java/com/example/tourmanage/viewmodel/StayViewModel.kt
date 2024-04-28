@@ -3,11 +3,13 @@ package com.example.tourmanage.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
-import com.example.tourmanage.common.ServerGlobal
+import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.data.server.item.StayItem
-import com.example.tourmanage.common.extension.isNotNullOrEmpty
 import com.example.tourmanage.model.ServerDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
@@ -19,31 +21,30 @@ import javax.inject.Inject
 class StayViewModel @Inject constructor(
     private val serverRepo: ServerDataRepository
 ) : ViewModel() {
+    private var currentJob: Job? = null
+
     val _stayInfo = MutableStateFlow<UiState<ArrayList<StayItem>>>(UiState.Ready())
     val stayInfo = _stayInfo
 
+    val _areaInfo = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Ready())
+    val areaInfo = _areaInfo
 
-    fun requestStayInfo(areaName: String? = "", areaCode: String? = "") {
-        var code = areaCode
-        Timber.i("areaName: $areaName")
-        if (areaName.isNotNullOrEmpty()) {
-            val isValidArea = ServerGlobal.isValidAreaName(areaName!!)
-            Timber.i("isValidArea: $isValidArea")
-            if (isValidArea) {
-                Timber.i("requestStayInfo() | $code")
-                code = ServerGlobal.getAreaName(areaName)
-            } else {
-                _stayInfo.value = UiState.Error("INVALID_AREA")
-                return
+    fun requestAreaList(areaCode: String?) {
+        Timber.i("requestAreaList() | areaCode: $areaCode")
+        if (areaCode != null) {
+            currentJob?.cancel() // 이전에 실행 중인 요청 취소
+            currentJob = viewModelScope.launch {
+                delay(200)
+                serverRepo.requestAreaCode(areaCode = areaCode)
+//                    .onStart { _areaInfo.value = UiState.Loading()}
+                    .catch { _areaInfo.value = UiState.Error(it.message!!) }
+                    .collect { _areaInfo.value = it }
             }
-        }
-        Timber.i("requestStayInfo() is called.")
-        viewModelScope.launch {
-            serverRepo.requestStayInfo(code)
-                .onStart { _stayInfo.value = UiState.Loading() }
-                .catch { _stayInfo.value = UiState.Error(it.message!!) }
-                .collect { _stayInfo.value = it }
         }
     }
 
+    override fun onCleared() {
+        currentJob?.cancel()
+        super.onCleared()
+    }
 }
