@@ -9,10 +9,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Cache
-import okhttp3.CacheControl
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -36,20 +33,27 @@ class RetrofitModule {
         Timber.d("OkHttp Intercept")
         val request = it.request()
         val response = it.proceed(request)
-        val cacheControl = CacheControl.Builder()
-            .maxAge(1, TimeUnit.HOURS)
-            .build()
-        response.newBuilder()
-            .removeHeader("Cache-Control")
-            .addHeader("Cache-Control", cacheControl.toString())
-            .build()
+
+        val isSuccess = response.body?.contentType().toString() == "application/json"
+        if (isSuccess) {
+            val cacheControl = CacheControl.Builder()
+                .maxAge(1, TimeUnit.HOURS)
+                .build()
+
+            response.newBuilder()
+                .removeHeader("Cache-Control")
+                .addHeader("Cache-Control", cacheControl.toString())
+                .build()
+        } else {
+            response
+        }
     }
 
     @Provides
     @Singleton
     fun getOkHttpClient(@ApplicationContext context: Context, loggingIntercepter: HttpLoggingInterceptor, networkInterceptor: Interceptor)
     = OkHttpClient.Builder().apply {
-//        cache(Cache(context.cacheDir, 1024 * 1024 * 10))
+        cache(Cache(context.cacheDir, 1024 * 1024 * 10))
         addInterceptor(loggingIntercepter)
         addNetworkInterceptor(networkInterceptor)
     }.build()

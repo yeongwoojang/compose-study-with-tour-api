@@ -7,34 +7,16 @@ import com.example.tourmanage.common.extension.isNotNullOrEmpty
 import timber.log.Timber
 
 object ServerGlobal {
-    private val areaCodeMap = HashMap<String, String>()
     private var currentGPS = Pair<String, String>("", "")
+    private val parentAreaList = ArrayList<AreaItem>()
 
-
-    fun getAreaCode(code: String): String? {
-        val result = areaCodeMap[code]
-        Timber.i("getAreaCode() | code: $code | result: $result")
-        return result
+    fun setAreaCodeList(areaCodeList: ArrayList<AreaItem>) {
+        parentAreaList.addAll(areaCodeList)
     }
 
-    fun getAreaName(name: String): String? {
-        return areaCodeMap.entries.find { it.value == name }?.key
-    }
+    fun getAreaCodeList(): ArrayList<AreaItem> = parentAreaList
 
-    fun isValidAreaName(name: String): Boolean {
-        return areaCodeMap.entries.find { it.value == name } != null
-    }
-
-    fun setAreaCodeMap(areaCodeList: ArrayList<AreaItem>) {
-        Timber.i("setAreaCodeMap() | areaCodeList: $areaCodeList")
-        areaCodeList.forEach {
-            if (it.code.isNotNullOrEmpty() && it.name.isNotNullOrEmpty()) {
-                val code = it.code!!
-                val name = it.name!!
-                areaCodeMap[code] = name
-            }
-        }
-    }
+    fun getAreaCode(areaName: String) = parentAreaList.find { it.name == areaName }?.code
 
     fun setGPS(location: Location) {
         val longitude = location.longitude.toString().isEmptyString("")
