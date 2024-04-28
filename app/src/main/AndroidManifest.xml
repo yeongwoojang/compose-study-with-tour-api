@@ -45,12 +45,17 @@
         <activity
             android:name=".ui.LocalTourActivity"
             android:exported="false"
-            android:label="@string/title_activity_main4"
+            android:label="@string/title_activity_local_tour"
             android:theme="@style/Theme.TourManage" />
         <activity
             android:name=".ui.StayDetailActivity"
             android:exported="false"
             android:label="@string/title_activity_stay_detail"
+            android:theme="@style/Theme.TourManage" />
+        <activity
+            android:name=".ui.TouristSpotDetailActivity"
+            android:exported="false"
+            android:label="@string/title_activity_local_tour_detail"
             android:theme="@style/Theme.TourManage" />
     </application>
 

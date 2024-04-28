@@ -2,10 +2,11 @@
     <string name="app_name">TourManage</string>
     <string name="title_activity_compose_test">ComposeTestActivity</string>
     <string name="title_activity_stay_main">StayMainActivity</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="title_activity_main4">MainActivity4</string>
     <string name="title_activity_stay_detail">StayDetailActivity</string>
+    <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_festival_main">FestivalMainActivity</string>
+    <string name="title_activity_local_tour">LocalTourActivity</string>
+    <string name="title_activity_local_tour_detail">LocalTourDetailActivity</string>
 
 
     <string name="bottom_nav_item_home">Home</string>
