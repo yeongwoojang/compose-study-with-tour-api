@@ -2,6 +2,7 @@ package com.example.tourmanage.ui.stay
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material3.*
 import androidx.compose.material3.Text
@@ -19,12 +20,11 @@ import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.StayViewModel
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.material.Divider
 import androidx.compose.ui.Alignment
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.tourmanage.common.ServerGlobal
-import com.example.tourmanage.common.extension.isEmptyString
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
+import com.example.tourmanage.common.data.server.item.AreaItem
+import com.example.tourmanage.common.extension.isSuccess
 import timber.log.Timber
 
 @Composable
@@ -33,11 +33,15 @@ fun StayMainWidget(viewModel: StayViewModel = hiltViewModel()) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    var currentAreaCode by rememberSaveable { mutableStateOf(ServerGlobal.getAreaCodeList().first().code.isEmptyString()) }
+    var currentParentArea by rememberSaveable { mutableStateOf(ServerGlobal.getParentAreaList().first()) }
+    var currentChildArea by rememberSaveable { mutableStateOf<AreaItem?>(null) }
 
-    LaunchedEffect(key1 = currentAreaCode) {
-        Timber.i("Change Area | currentAreaCode: $currentAreaCode")
-        viewModel.requestAreaList(currentAreaCode)
+    var stayInfoList = viewModel.stayInfo.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = currentParentArea) {
+        Timber.i("Change Area | currentParentArea: $currentParentArea")
+        viewModel.requestAreaList(currentParentArea.code)
+        currentChildArea = null
     }
 
     Scaffold(
@@ -45,25 +49,27 @@ fun StayMainWidget(viewModel: StayViewModel = hiltViewModel()) {
             Header("숙소 찾기")
         }
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .systemBarsPadding()
-                .padding(start = 16.dp, end = 16.dp)
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+            .padding(start = 16.dp, end = 16.dp)
         ) {
-            item {
-                Spacer(modifier = Modifier.height(80.dp))
-                Text(text = "여행지를 찾아보세요.",
-                    style = TextStyle(
-                        fontSize = 15.sp,
-                        fontFamily = spoqaHanSansNeoFont,
-                        fontWeight = FontWeight.Medium
-                    )
+            Spacer(modifier = Modifier.height(80.dp))
+            Text(text = "여행지를 찾아보세요.",
+                style = TextStyle(
+                    fontSize = 15.sp,
+                    fontFamily = spoqaHanSansNeoFont,
+                    fontWeight = FontWeight.Medium
                 )
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            DrawerOpenTextField("지역명 검색", onClick = {
+                isSheetOpen = true
+            })
+            if (stayInfoList.isSuccess()) {
+                Timber.i("Show StayList")
                 Spacer(modifier = Modifier.height(20.dp))
-                DrawerOpenTextField("지역명 검색", onClick = {
-                    isSheetOpen = true
-                })
+                StayListWidget(stayList = stayInfoList.value.data!!)
             }
         }
 
@@ -79,11 +85,12 @@ fun StayMainWidget(viewModel: StayViewModel = hiltViewModel()) {
                     }.invokeOnCompletion { isSheetOpen = false }
                 },
                 dragHandle = {
-                    Column(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
+                    ) {
                         Text(
                             text = "지역선택",
                             style = TextStyle(
@@ -92,11 +99,24 @@ fun StayMainWidget(viewModel: StayViewModel = hiltViewModel()) {
                                 fontWeight = FontWeight.Medium
                             )
                         )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Row() {
+                            StayAreaIconWidget(currentParentArea, false)
+                            Spacer(modifier = Modifier.width(10.dp))
+                            if (currentChildArea != null) {
+                                StayAreaIconWidget(currentChildArea, true)
+                            }
+                        }
                     }
                 }
                 ) {
-                StayAreaDrawerContent(currentAreaCode = currentAreaCode) { areaItem, requestKey ->
-                    currentAreaCode = areaItem.code!!
+                StayAreaDrawerContent(currentParentArea = currentParentArea, currentChildArea = currentChildArea) { areaItem, requestKey, isChild ->
+                    if (isChild) {
+                        currentChildArea = areaItem
+                        viewModel.requestStayList(currentParentArea.code, currentChildArea?.code, )
+                    } else {
+                        currentParentArea = areaItem
+                    }
                 }
             }
         }

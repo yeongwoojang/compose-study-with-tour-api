@@ -21,8 +21,9 @@ interface ServiceAPI {
         @Query("serviceKey") key: String = API_KEY,
         @Query("arrange") arrange: String = Config.ARRANGE_TYPE.O.value,
         @Query("areaCode") areaCode: String?,
-        @Query("_type") type: String = TYPE
-    ): StayInfo
+        @Query("sigunguCode") sigunguCode: String?,
+        @Query("_type") type: String = TYPE,
+        ): StayInfo
 
     @GET("areaCode1")
     suspend fun requestAreaList(

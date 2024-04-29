@@ -3,7 +3,6 @@ package com.example.tourmanage.common
 import android.location.Location
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.isEmptyString
-import com.example.tourmanage.common.extension.isNotNullOrEmpty
 import timber.log.Timber
 
 object ServerGlobal {
@@ -14,7 +13,7 @@ object ServerGlobal {
         parentAreaList.addAll(areaCodeList)
     }
 
-    fun getAreaCodeList(): ArrayList<AreaItem> = parentAreaList
+    fun getParentAreaList(): ArrayList<AreaItem> = parentAreaList
 
     fun getAreaCode(areaName: String) = parentAreaList.find { it.name == areaName }?.code
 

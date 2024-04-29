@@ -1,11 +1,9 @@
 package com.example.tourmanage.ui.stay
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -13,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,7 +30,11 @@ import com.example.tourmanage.viewmodel.StayViewModel
 import timber.log.Timber
 
 @Composable
-fun StayAreaDrawerContent(viewModel: StayViewModel = hiltViewModel(), currentAreaCode: String, onClick: (areaItem: AreaItem, requestKey: String) -> Unit) {
+fun StayAreaDrawerContent(
+    viewModel: StayViewModel = hiltViewModel(),
+    currentParentArea: AreaItem,
+    currentChildArea: AreaItem?,
+    onClick: (areaItem: AreaItem, requestKey: String, isChild: Boolean) -> Unit) {
     val detailAreaCode = viewModel.areaInfo.collectAsStateWithLifecycle()
 
     Box(
@@ -52,13 +53,13 @@ fun StayAreaDrawerContent(viewModel: StayViewModel = hiltViewModel(), currentAre
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 itemsIndexed(
-                    items = ServerGlobal.getAreaCodeList(),
+                    items = ServerGlobal.getParentAreaList(),
                     key = { index, areaItem ->
                         areaItem.code.isEmptyString()
                     }
-                ) {index, areaItem ->
-                    AreaItemLayout(areaItem, curAreaCode = currentAreaCode, onClick = { requestKey ->
-                            onClick(areaItem, requestKey)
+                ) { index, parentArea ->
+                    AreaItemLayout(parentArea, currentParentArea = currentParentArea, onClick = { requestKey ->
+                            onClick(parentArea, requestKey, false)
                         }
                     )
                 }
@@ -69,7 +70,7 @@ fun StayAreaDrawerContent(viewModel: StayViewModel = hiltViewModel(), currentAre
                 .width(1.dp))
             Spacer(modifier = Modifier.width(10.dp))
 
-            if (detailAreaCode.isCompleteSuccess(currentAreaCode)) {
+            if (detailAreaCode.isCompleteSuccess(currentParentArea.code)) {
                 val detailAreaList = detailAreaCode.value.data!!
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
@@ -78,9 +79,9 @@ fun StayAreaDrawerContent(viewModel: StayViewModel = hiltViewModel(), currentAre
                 ) {
                     items(
                         items = detailAreaList,
-                        itemContent = {
-                            AreaItemLayout(it, isDetail = true, curAreaCode = currentAreaCode) { areaCode ->
-
+                        itemContent = { childArea ->
+                            AreaItemLayout(childArea, isChild = true, currentParentArea = currentParentArea, currentChildArea = currentChildArea) { requestKey ->
+                                onClick(childArea, requestKey, true)
                             }
                         }
                     )
@@ -92,21 +93,24 @@ fun StayAreaDrawerContent(viewModel: StayViewModel = hiltViewModel(), currentAre
 }
 
 @Composable
-fun AreaItemLayout(areaItem: AreaItem, isDetail: Boolean = false, curAreaCode: String, onClick: (requestKey: String) -> Unit) {
+fun AreaItemLayout(areaItem: AreaItem, isChild: Boolean = false, currentParentArea: AreaItem, currentChildArea: AreaItem? = null, onClick: (requestKey: String) -> Unit) {
+    val backgroundColor = if (isChild) {
+        if (currentChildArea?.name == areaItem.name && currentChildArea?.code == areaItem.code) {
+            colorResource(id = R.color.cornflower_blue)
+        } else {
+            colorResource(id = R.color.gainsboro)
+        }
+    } else {
+        if (currentParentArea.name == areaItem.name && currentParentArea.code == areaItem.code) {
+            colorResource(id = R.color.light_coral)
+        } else {
+            colorResource(id = R.color.gainsboro)
+        }
+    }
+
     Box(
         modifier = Modifier
-            .background(
-                color = if (isDetail) {
-                    colorResource(id = R.color.yellow)
-                } else {
-                    if (curAreaCode == areaItem.code) {
-                        colorResource(id = R.color.light_coral)
-                    } else {
-                        colorResource(id = R.color.gainsboro)
-                    }
-                },
-                shape = RoundedCornerShape(6.dp),
-            )
+            .background(color = backgroundColor, shape = RoundedCornerShape(6.dp))
             .width(80.dp)
             .wrapContentHeight()
             .padding(10.dp)

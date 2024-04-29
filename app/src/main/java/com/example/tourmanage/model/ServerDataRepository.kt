@@ -6,7 +6,7 @@ import com.example.tourmanage.common.value.Config
 import kotlinx.coroutines.flow.Flow
 
 interface ServerDataRepository {
-    fun requestStayInfo(areaCode: String? = ""): Flow<UiState<ArrayList<StayItem>>>
+    fun requestStayInfo(areaCode: String? = "", sigunguCode: String? = ""): Flow<UiState<ArrayList<StayItem>>>
     fun requestAreaCode(areaCode: String? = "", isInit: Boolean = false): Flow<UiState<ArrayList<AreaItem>>>
     fun requestTourInfo(areaCode: String? = ""): Flow<UiState<ArrayList<TourItem>>>
     fun requestStayDetailInfo(contentId: String, contentType: String): Flow<UiState<StayDetailItem>>
