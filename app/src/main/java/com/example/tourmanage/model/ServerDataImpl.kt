@@ -3,7 +3,6 @@ package com.example.tourmanage.model
 import com.example.tourmanage.*
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.*
-import com.example.tourmanage.common.extension.isEmptyString
 import com.example.tourmanage.common.repository.ServiceAPI
 import com.example.tourmanage.common.value.Config
 import kotlinx.coroutines.channels.awaitClose
@@ -18,10 +17,10 @@ import kotlin.collections.ArrayList
 class ServerDataImpl @Inject constructor(
     private val client: ServiceAPI
 ): ServerDataRepository {
-    override fun requestStayInfo(areaCode: String?): Flow<UiState<ArrayList<StayItem>>> {
+    override fun requestStayInfo(areaCode: String?, sigunguCode: String?): Flow<UiState<ArrayList<StayItem>>> {
         return callbackFlow {
             try {
-                val stayInfo = client.requestSearchStay(areaCode = areaCode)
+                val stayInfo = client.requestSearchStay(areaCode = areaCode, sigunguCode = sigunguCode)
                 val code = stayInfo.response?.header?.resultCode
                 val msg = stayInfo.response?.header?.resultMsg
                 val stayItemList =  stayInfo.toStayInfoList()
