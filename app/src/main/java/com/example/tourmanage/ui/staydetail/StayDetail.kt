@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.tourmanage.R
-import com.example.tourmanage.common.data.server.item.StayDetailItem
+import com.example.tourmanage.common.data.server.item.StayItem
 import com.example.tourmanage.common.extension.*
 import com.example.tourmanage.ui.*
 import com.example.tourmanage.ui.components.LoadingWidget
@@ -29,10 +29,10 @@ import timber.log.Timber
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun DetailLayout(detailData: StayDetailItem?, viewModel: StayDetailViewModel = hiltViewModel()) {
-    Timber.i("DetailLayout() | detailData: $detailData")
+fun DetailLayout(stayItem: StayItem?, viewModel: StayDetailViewModel = hiltViewModel()) {
+    Timber.i("DetailLayout() | stayItem: $stayItem")
 
-    if (detailData == null) {
+    if (stayItem == null) {
         return
     }
 
@@ -40,10 +40,12 @@ fun DetailLayout(detailData: StayDetailItem?, viewModel: StayDetailViewModel = h
     val activity = context as StayDetailActivity
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
-        viewModel.requestOptionInfo(detailData.contentId, detailData.contentTypeId)
+        viewModel.requestStayDetailInfo(stayItem.contentId, stayItem.contentTypeId)
+        viewModel.requestOptionInfo(stayItem.contentId, stayItem.contentTypeId)
     }
 
     val optionItem = viewModel.optionInfo.collectAsStateWithLifecycle()
+    val stayDetailItem = viewModel.stayDetailInfo.collectAsStateWithLifecycle()
 
     val scrollState = rememberLazyListState()
     var totalRoomCount by remember { mutableStateOf(0) }
@@ -68,7 +70,8 @@ fun DetailLayout(detailData: StayDetailItem?, viewModel: StayDetailViewModel = h
             }
     }
 
-    if (optionItem.isComplete()) {
+    if (stayDetailItem.isSuccess()) {
+        val detailData = stayDetailItem.value.data!!
         LazyColumn(
             state = scrollState
         ) {

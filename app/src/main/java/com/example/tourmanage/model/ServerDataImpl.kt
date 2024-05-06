@@ -137,16 +137,20 @@ class ServerDataImpl @Inject constructor(
         }
     }
 
-    override fun requestTourInfo(areaCode: String?): Flow<UiState<ArrayList<TourItem>>> {
+    override fun requestAreaBasedList(
+        areaCode: String?,
+        sigunguCode: String?,
+        contentTypeId: Config.CONTENT_TYPE_ID?
+    ): Flow<UiState<ArrayList<AreaBasedItem>>> {
         return callbackFlow {
             try {
-                val tourInfo = client.requestTourInfo(areaCode = areaCode)
+                val tourInfo = client.requestAreaBasedList(areaCode = areaCode, sigunguCode = sigunguCode, contentType = contentTypeId?.value)
                 Timber.i("tourInfo: $tourInfo")
                 val code = tourInfo.response?.header?.resultCode
                 Timber.i("tourInfo: $code")
                 val msg = tourInfo.response?.header?.resultMsg
                 Timber.i("tourInfo: $msg")
-                val tourItemList =  tourInfo.toTourInfoList()
+                val tourItemList =  tourInfo.toAreaBasedInfoItems()
                 Timber.i("tourInfo: $tourItemList")
                 if ("0000" == code && tourItemList.isNotEmpty()) {
                     trySend(UiState.Success(tourItemList))

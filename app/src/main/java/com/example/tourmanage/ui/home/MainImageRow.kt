@@ -30,6 +30,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import com.example.tourmanage.R
+import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 
 
 @Composable
@@ -79,9 +80,9 @@ fun MainImageRow(festivalItems: ArrayList<FestivalItem>) {
             Text(
                 text = "이달의 축제",
                 style = TextStyle(
-                    color = colorResource(id = R.color.light_coral),
-                    fontWeight = FontWeight.Light,
-                    fontFamily = FontFamily.Serif
+                    color = colorResource(id = R.color.cornflower_blue),
+                    fontFamily = spoqaHanSansNeoFont,
+                    fontWeight = FontWeight.Normal,
                 ),
                 fontSize = 16.sp
             )

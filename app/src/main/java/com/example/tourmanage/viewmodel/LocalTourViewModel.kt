@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.server.item.AreaItem
-import com.example.tourmanage.common.data.server.item.TourItem
+import com.example.tourmanage.common.data.server.item.AreaBasedItem
 import com.example.tourmanage.model.ServerDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +21,7 @@ class LocalTourViewModel @Inject constructor(
     val _areaInfo = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Ready())
     val areaInfo = _areaInfo
 
-    val _tourInfo = MutableStateFlow<UiState<ArrayList<TourItem>>>(UiState.Ready())
+    val _tourInfo = MutableStateFlow<UiState<ArrayList<AreaBasedItem>>>(UiState.Ready())
     val tourInfo = _tourInfo
 
     /**
@@ -51,7 +51,7 @@ class LocalTourViewModel @Inject constructor(
         var code = areaCode
 
         viewModelScope.launch {
-            serverRepo.requestTourInfo(code)
+            serverRepo.requestAreaBasedList(code,)
                 .onStart { _tourInfo.value = UiState.Loading() }
                 .catch { _tourInfo.value = UiState.Error(it.message!!) }
                 .collect { _tourInfo.value = it }

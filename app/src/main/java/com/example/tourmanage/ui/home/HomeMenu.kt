@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,6 +31,7 @@ import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.util.UiController
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.DataProvider
+import com.example.tourmanage.ui.CourseActivity
 import com.example.tourmanage.ui.FestivalMainActivity
 import com.example.tourmanage.ui.LocalTourActivity
 import com.example.tourmanage.ui.StayMainActivity
@@ -38,11 +40,10 @@ import kotlin.reflect.KClass
 @Composable
 fun HomeMenu(festivalItems: ArrayList<FestivalItem>) {
     val context = LocalContext.current
-    LazyHorizontalGrid(rows = GridCells.Fixed(3),
+    LazyVerticalGrid(columns = GridCells.Fixed(2),
         modifier = Modifier
-            .fillMaxWidth()
-            .height(400.dp),
-        contentPadding = PaddingValues(start = 25.dp, top = 30.dp),
+            .fillMaxSize(),
+        contentPadding = PaddingValues(start = 25.dp, top = 20.dp, bottom = 20.dp, end = 25.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
@@ -52,7 +53,7 @@ fun HomeMenu(festivalItems: ArrayList<FestivalItem>) {
                 Card(
                     shape = RoundedCornerShape(CornerSize(8.dp)),
                     elevation = CardDefaults.cardElevation(6.dp),
-                    modifier = Modifier.width(150.dp)
+                    modifier = Modifier.size(150.dp)
                         .clickable {
                             var intentData: IntentData? = null
                             val targetActivity: KClass<out Activity> = when (it.type) {
@@ -71,7 +72,9 @@ fun HomeMenu(festivalItems: ArrayList<FestivalItem>) {
                                     )
                                     LocalTourActivity::class
                                 }
-//                                Config.HOME_MENU_TYPE.WALK ->
+                                Config.HOME_MENU_TYPE.COURSE -> {
+                                    CourseActivity::class
+                                }
 //                                Config.HOME_MENU_TYPE.RIDING ->
 //                                Config.HOME_MENU_TYPE.CULTURE ->
                                 else -> FestivalMainActivity::class
@@ -80,14 +83,13 @@ fun HomeMenu(festivalItems: ArrayList<FestivalItem>) {
                         }
                     ) {
                     Box(
-                        modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
                         Image(
+                            modifier = Modifier.fillMaxSize(),
                             painter = painterResource(id = it.image),
                             contentDescription = "",
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
                         )
                         Text(
                             text = it.title,

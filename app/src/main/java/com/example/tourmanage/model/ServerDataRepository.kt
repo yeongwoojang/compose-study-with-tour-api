@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface ServerDataRepository {
     fun requestStayInfo(areaCode: String? = "", sigunguCode: String? = ""): Flow<UiState<ArrayList<StayItem>>>
     fun requestAreaCode(areaCode: String? = "", isInit: Boolean = false): Flow<UiState<ArrayList<AreaItem>>>
-    fun requestTourInfo(areaCode: String? = ""): Flow<UiState<ArrayList<TourItem>>>
+    fun requestAreaBasedList(areaCode: String? = "", sigunguCode: String? = "", contentTypeId: Config.CONTENT_TYPE_ID? = Config.CONTENT_TYPE_ID.TOUR_SPOT): Flow<UiState<ArrayList<AreaBasedItem>>>
     fun requestStayDetailInfo(contentId: String, contentType: String): Flow<UiState<StayDetailItem>>
     fun requestOptionInfo(contentId: String, contentType: String): Flow<UiState<ArrayList<DetailItem>>>
     fun requestFestivalInfo(areaCode: String? = "", eventStartDate: String? = "", arrange: Config.ARRANGE_TYPE): Flow<UiState<ArrayList<FestivalItem>>>

@@ -44,6 +44,7 @@
     import com.example.tourmanage.R
     import com.example.tourmanage.common.data.server.item.DetailItem
     import com.example.tourmanage.common.data.server.item.StayDetailItem
+    import com.example.tourmanage.common.data.server.item.StayItem
     import com.example.tourmanage.common.extension.*
     import com.example.tourmanage.common.value.Config
     import com.example.tourmanage.ui.staydetail.DetailLayout
@@ -58,7 +59,7 @@
     class StayDetailActivity : ComponentActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            val receivedData = intent.intentSerializable(Config.STAY_INFO, StayDetailItem::class.java)
+            val receivedData = intent.intentSerializable(Config.STAY_INFO, StayItem::class.java)
             val viewModel by viewModels<StayDetailViewModel>()
             setContent {
                 TourManageTheme {

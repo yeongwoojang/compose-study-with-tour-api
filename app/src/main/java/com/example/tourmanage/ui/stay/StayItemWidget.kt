@@ -1,5 +1,6 @@
 package com.example.tourmanage.ui.stay
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,19 +23,30 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.example.tourmanage.R
+import com.example.tourmanage.common.data.IntentData
 import com.example.tourmanage.common.data.server.item.StayItem
 import com.example.tourmanage.common.extension.isEmptyString
+import com.example.tourmanage.common.util.UiController
+import com.example.tourmanage.common.value.Config
+import com.example.tourmanage.ui.StayDetailActivity
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun StayItemWidget(stayItem: StayItem) {
+fun StayItemWidget(context: Context, stayItem: StayItem) {
     Card(
         modifier = Modifier
         .fillMaxWidth()
         .height(120.dp),
         colors = CardDefaults.cardColors(colorResource(id = R.color.white_smoke)),
         elevation = CardDefaults.cardElevation(3.dp),
+        onClick = {
+            UiController.addActivity(
+                context,
+                StayDetailActivity::class,
+                IntentData(mapOf(Config.STAY_INFO to stayItem))
+            )
+        }
     ) {
         Row(modifier = Modifier
             .fillMaxSize()

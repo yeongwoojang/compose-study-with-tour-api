@@ -46,9 +46,11 @@ object Config {
     enum class HOME_MENU_TYPE(val value: String) {
         FESTIVAL("FESTIVAL"),
         STAY("FESTIVAL"),
-        WALK("WALK"),
-        RIDING("RIDING"),
+        COURSE("COURSE"),
+        FOOD("FOOD"),
         TOUR_SPOT("TOUR_SPOT"),
         CULTURE("CULTURE"),
+        LEISURE("LEISURE"),
+        SHOPPING("SHOPPING"),
     }
 }

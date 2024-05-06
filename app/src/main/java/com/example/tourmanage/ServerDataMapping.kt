@@ -1,5 +1,7 @@
 package com.example.tourmanage
 
+import android.content.Context
+import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.info.*
 import com.example.tourmanage.common.data.server.item.*
 import com.example.tourmanage.common.extension.isBooleanYn
@@ -34,9 +36,9 @@ fun FestivalInfo.toFestivalItems(): ArrayList<FestivalItem> {
     } ?: ArrayList(emptyList())
 }
 
-fun TourInfo.toTourInfoList(): ArrayList<TourItem> {
+fun AreaBasedInfo.toAreaBasedInfoItems(): ArrayList<AreaBasedItem> {
     return response?.body?.items?.item?.let {
-        it as ArrayList<TourItem>
+        it as ArrayList<AreaBasedItem>
     } ?: ArrayList(emptyList())
 }
 

@@ -1,4 +1,4 @@
-package com.example.tourmanage.ui.stay
+package com.example.tourmanage.ui.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,12 +18,14 @@ import com.example.tourmanage.common.extension.isEmptyString
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 
 @Composable
-fun StayAreaIconWidget(areaItem: AreaItem?, isChild: Boolean) {
+fun AreaIconWidget(
+    modifier: Modifier,
+    areaItem: AreaItem?,
+    isChild: Boolean
+) {
     val backgroundColor = if (isChild) colorResource(id = R.color.cornflower_blue) else colorResource(id = R.color.lightpink)
     Box(
-        modifier = Modifier
-            .width(60.dp)
-            .wrapContentHeight()
+        modifier = modifier
             .background(color = backgroundColor, shape = RoundedCornerShape(20.dp))
             .padding(5.dp),
         contentAlignment = Alignment.Center

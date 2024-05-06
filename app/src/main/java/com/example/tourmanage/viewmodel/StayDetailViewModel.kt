@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.server.item.DetailItem
+import com.example.tourmanage.common.data.server.item.StayDetailItem
 import com.example.tourmanage.model.ServerDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,8 +18,24 @@ import javax.inject.Inject
 class StayDetailViewModel @Inject constructor(
     private val serverRepo: ServerDataRepository
 ): ViewModel() {
+    val _stayDetailInfo = MutableStateFlow<UiState<StayDetailItem>>(UiState.Ready())
+    val stayDetailInfo = _stayDetailInfo
+
     private val _optionInfo = MutableStateFlow<UiState<ArrayList<DetailItem>>>(UiState.Ready())
     val optionInfo = _optionInfo
+
+    fun requestStayDetailInfo(contentId: String?, contentType: String?) {
+        Timber.i("requestStayDetailInfo | contentId: $contentId | contentType: $contentType")
+        if (contentId == null || contentType == null) {
+            return
+        }
+        viewModelScope.launch {
+            serverRepo.requestStayDetailInfo(contentId, contentType)
+                .onStart {}
+                .catch { _stayDetailInfo.value = UiState.Error(it.message!!) }
+                .collect { _stayDetailInfo.value = it}
+        }
+    }
 
     fun requestOptionInfo(contentId: String?, contentType: String?) {
         Timber.i("requestOptionInfo() | contentId: $contentId | contentType: $contentType")

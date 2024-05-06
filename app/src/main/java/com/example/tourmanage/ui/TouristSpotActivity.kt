@@ -49,7 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.common.data.server.item.AreaItem
-import com.example.tourmanage.common.data.server.item.TourItem
+import com.example.tourmanage.common.data.server.item.AreaBasedItem
 import com.example.tourmanage.common.extension.isError
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
@@ -147,7 +147,7 @@ fun TourListView(viewModel: LocalTourViewModel) {
 }
 
 @Composable
-fun TourListUi(list: List<TourItem>) {
+fun TourListUi(list: List<AreaBasedItem>) {
     val context = LocalContext.current
     LazyColumn(
         contentPadding = PaddingValues(
@@ -175,7 +175,7 @@ fun TourListUi(list: List<TourItem>) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun TourListItem(item: TourItem, onClick: () -> Unit) {
+fun TourListItem(item: AreaBasedItem, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .aspectRatio(2f),
@@ -247,7 +247,7 @@ fun AreaItem(item: String, onClick: () -> Unit) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun TourImage(tourItem: TourItem) {
+fun TourImage(tourItem: AreaBasedItem) {
     GlideImage(
         contentScale = ContentScale.Crop,
         model = tourItem.fullImageUrl,

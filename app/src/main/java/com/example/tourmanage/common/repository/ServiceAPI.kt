@@ -74,15 +74,16 @@ interface ServiceAPI {
     ): FestivalInfo
 
     @GET("areaBasedList1")
-    suspend fun requestTourInfo(
+    suspend fun requestAreaBasedList(
         @Query("MobileOS") os: String = MOBILE_OS,
         @Query("MobileApp") app: String = MOBILE_APP,
         @Query("serviceKey") key: String = API_KEY,
         @Query("areaCode") areaCode: String?,
+        @Query("sigunguCode") sigunguCode: String? = "",
         @Query("_type") type: String = TYPE,
-        @Query("contentTypeId") contentType: String = "12",
+        @Query("contentTypeId") contentType: String? = "12",
         @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.value
-    ): TourInfo
+    ): AreaBasedInfo
 
     @GET("locationBasedList1")
     suspend fun requestLocationBasedList(

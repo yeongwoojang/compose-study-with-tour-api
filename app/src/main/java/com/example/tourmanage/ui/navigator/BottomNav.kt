@@ -24,7 +24,8 @@ fun BottomNav(
     containerColor: Color,
     contentColor: Color,
     indicatorColor: Color,
-    navController: NavHostController
+    navController: NavHostController,
+    onClick: (currentRoute: String) -> Unit
 ) {
     val navBacStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBacStackEntry?.destination?.route
@@ -67,6 +68,7 @@ fun BottomNav(
                          launchSingleTop = true
                          restoreState = true
                      }
+                    onClick(item.route)
                 }
             )
         }
