@@ -1,4 +1,4 @@
-package com.example.tourmanage.ui.stay
+package com.example.tourmanage.ui.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -26,16 +26,15 @@ import com.example.tourmanage.R
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.*
-import com.example.tourmanage.viewmodel.StayViewModel
-import timber.log.Timber
+import com.example.tourmanage.viewmodel.MainViewModel
 
 @Composable
-fun StayAreaDrawerContent(
-    viewModel: StayViewModel = hiltViewModel(),
-    currentParentArea: AreaItem,
+fun AreaDrawerContent(
+    viewModel: MainViewModel = hiltViewModel(),
+    currentParentArea: AreaItem?,
     currentChildArea: AreaItem?,
     onClick: (areaItem: AreaItem, requestKey: String, isChild: Boolean) -> Unit) {
-    val detailAreaCode = viewModel.areaInfo.collectAsStateWithLifecycle()
+    val detailAreaCode = viewModel.childAreaInfo.collectAsStateWithLifecycle()
 
     Box(
         modifier = Modifier
@@ -70,7 +69,7 @@ fun StayAreaDrawerContent(
                 .width(1.dp))
             Spacer(modifier = Modifier.width(10.dp))
 
-            if (detailAreaCode.isCompleteSuccess(currentParentArea.code)) {
+            if (detailAreaCode.isCompleteSuccess(currentParentArea?.code)) {
                 val detailAreaList = detailAreaCode.value.data!!
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
@@ -93,15 +92,15 @@ fun StayAreaDrawerContent(
 }
 
 @Composable
-fun AreaItemLayout(areaItem: AreaItem, isChild: Boolean = false, currentParentArea: AreaItem, currentChildArea: AreaItem? = null, onClick: (requestKey: String) -> Unit) {
+fun AreaItemLayout(areaItem: AreaItem?, isChild: Boolean = false, currentParentArea: AreaItem?, currentChildArea: AreaItem? = null, onClick: (requestKey: String) -> Unit) {
     val backgroundColor = if (isChild) {
-        if (currentChildArea?.name == areaItem.name && currentChildArea?.code == areaItem.code) {
+        if (currentChildArea?.name == areaItem?.name && currentChildArea?.code == areaItem?.code) {
             colorResource(id = R.color.cornflower_blue)
         } else {
             colorResource(id = R.color.gainsboro)
         }
     } else {
-        if (currentParentArea.name == areaItem.name && currentParentArea.code == areaItem.code) {
+        if (currentParentArea?.name == areaItem?.name && currentParentArea?.code == areaItem?.code) {
             colorResource(id = R.color.light_coral)
         } else {
             colorResource(id = R.color.gainsboro)
@@ -114,11 +113,11 @@ fun AreaItemLayout(areaItem: AreaItem, isChild: Boolean = false, currentParentAr
             .width(80.dp)
             .wrapContentHeight()
             .padding(10.dp)
-            .noRippleClickable { onClick(areaItem.code!!) },
+            .noRippleClickable { areaItem?.code?.let { onClick(it) } },
     contentAlignment = Alignment.Center
     ) {
        Text(
-           text = areaItem.name.isEmptyString(),
+           text = areaItem?.name.isEmptyString(),
            style = TextStyle(
                fontSize = 12.sp,
                fontFamily = spoqaHanSansNeoFont,

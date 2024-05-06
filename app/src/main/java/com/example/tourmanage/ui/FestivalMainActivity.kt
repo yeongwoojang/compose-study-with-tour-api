@@ -3,6 +3,7 @@ package com.example.tourmanage.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -26,18 +27,13 @@ class FestivalMainActivity : ComponentActivity() {
             Timber.d("mainFestival: $mainFestival")
         }
 
+        enableEdgeToEdge()
         setContent {
             TourManageTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    if (mainFestival != null) {
-                        FestivalMainWidget(mainFestival = mainFestival)
-                    } else {
-                        //TODO 데이터 없는 경우
-                    }
+                if (mainFestival != null) {
+                    FestivalMainWidget(mainFestival = mainFestival)
+                } else {
+                    //TODO 데이터 없는 경우
                 }
             }
         }

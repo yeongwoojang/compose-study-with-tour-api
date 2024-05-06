@@ -2,7 +2,7 @@ package com.example.tourmanage.common.data.server.item
 
 import com.squareup.moshi.Json
 
-data class TourItem(
+data class AreaBasedItem(
     @Json(name = "addr1") val addr1: String?,
     @Json(name = "areacode") val areaCode: String?,
     @Json(name = "contentid") val contentId: String?,
