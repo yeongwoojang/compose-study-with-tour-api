@@ -35,7 +35,6 @@ fun AreaDrawerContent(
     currentChildArea: AreaItem?,
     onClick: (areaItem: AreaItem, requestKey: String, isChild: Boolean) -> Unit) {
     val detailAreaCode = viewModel.childAreaInfo.collectAsStateWithLifecycle()
-
     Box(
         modifier = Modifier
             .navigationBarsPadding()
@@ -85,7 +84,6 @@ fun AreaDrawerContent(
                         }
                     )
                 }
-            } else {
             }
         }
     }
@@ -113,7 +111,21 @@ fun AreaItemLayout(areaItem: AreaItem?, isChild: Boolean = false, currentParentA
             .width(80.dp)
             .wrapContentHeight()
             .padding(10.dp)
-            .noRippleClickable { areaItem?.code?.let { onClick(it) } },
+            .noRippleClickable {
+                if (!isChild) {
+                    if (currentParentArea?.code != areaItem?.code) {
+                        areaItem?.code?.let {
+                            onClick(it)
+                        }
+                    }
+                } else {
+                    if (currentChildArea?.code != areaItem?.code) {
+                        areaItem?.code?.let {
+                            onClick(it)
+                        }
+                    }
+                }
+            },
     contentAlignment = Alignment.Center
     ) {
        Text(

@@ -52,7 +52,6 @@ import com.example.tourmanage.viewmodel.CourseViewModel
 
 @Composable
 fun CourseMainWidget(viewModel: CourseViewModel = hiltViewModel()) {
-
     LaunchedEffect(key1 = Unit) {
         val parentArea = ServerGlobal.getCurrentParentArea()
         val childArea = ServerGlobal.getCurrentChildArea()

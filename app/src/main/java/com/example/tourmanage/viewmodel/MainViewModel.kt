@@ -3,7 +3,9 @@ package com.example.tourmanage.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
+import com.example.tourmanage.common.AreaDataStoreRepository
 import com.example.tourmanage.common.data.server.item.AreaItem
+import com.example.tourmanage.common.extension.setDefaultCollect
 import com.example.tourmanage.model.ServerDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -17,13 +19,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val serverRepo: ServerDataRepository
+    private val serverRepo: ServerDataRepository,
+    private val dataStore: AreaDataStoreRepository,
 ): ViewModel() {
-    //_ viewModel은 Activity lifeCycle을 따르기 때문에 remember 필요x
-    //_ Activity에서 mutable변수에 remember를 사용하는 이유는 re-composition이 일어날 때 변수가 초기화되기 때문
-
     private var areaRequestJob: Job? = null
-
 
     val _areaInfo = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Ready())
     val areaInfo = _areaInfo
@@ -31,6 +30,11 @@ class MainViewModel @Inject constructor(
     val _childAreaInfo = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Ready())
     val childAreaInfo = _childAreaInfo
 
+    private val _curParentArea = MutableStateFlow<UiState<AreaItem?>>(UiState.Ready())
+    val curParentArea = _curParentArea
+
+    private val _curChildArea = MutableStateFlow<UiState<AreaItem?>>(UiState.Ready())
+    val curChildArea = _curChildArea
 
     fun requestParentAreaList() {
         Timber.i("requestAreaList() is called.")
@@ -43,7 +47,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun requestChildAreaList(areaCode: String?) {
-        Timber.i("requestAreaList() | areaCode: $areaCode")
+        Timber.i("requestChildAreaList() | areaCode: $areaCode")
         if (areaCode != null) {
             areaRequestJob?.cancel() // 이전에 실행 중인 요청 취소
             areaRequestJob = viewModelScope.launch {
@@ -52,6 +56,36 @@ class MainViewModel @Inject constructor(
                     .catch { _childAreaInfo.value = UiState.Error(it.message!!) }
                     .collect { _childAreaInfo.value = it }
             }
+        }
+    }
+
+    fun removeCacheArea(isChild: Boolean) {
+        viewModelScope.launch {
+            dataStore.removeCacheArea(isChild)
+            _curChildArea.value = UiState.Success(null)
+        }
+    }
+    fun cacheArea(areaItem: AreaItem?, isChild: Boolean = false) {
+        viewModelScope.launch {
+            if (areaItem == null) {
+                return@launch
+            }
+            val data = if (isChild) _curChildArea else _curParentArea
+            dataStore.cacheArea(isChild, areaItem).setDefaultCollect(data)
+        }
+    }
+
+    fun getCacheArea(isChild: Boolean = false) {
+        viewModelScope.launch {
+            val data = if (isChild) _curChildArea else _curParentArea
+            dataStore.getCachedArea(isChild)
+                .onStart { data.value = UiState.Loading() }
+                .catch {
+                    data.value = UiState.Error("")
+                }
+                .collect {
+                    data.value = it
+                }
         }
     }
 

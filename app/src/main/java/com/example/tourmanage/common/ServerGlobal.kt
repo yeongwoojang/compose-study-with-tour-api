@@ -27,7 +27,6 @@ object ServerGlobal {
 
     fun getParentAreaList(): ArrayList<AreaItem> = parentAreaList
 
-    fun getAreaCode(areaName: String) = parentAreaList.find { it.name == areaName }?.code
 
     fun setGPS(location: Location) {
         val longitude = location.longitude.toString().isEmptyString("")
@@ -38,15 +37,7 @@ object ServerGlobal {
 
     fun getCurrentGPS() = currentGPS
 
-    fun setCurrentParentArea(parentArea: AreaItem?) {
-        currentParentArea = parentArea
-    }
-
     fun getCurrentParentArea() = currentParentArea
-
-    fun setCurrentChildArea(childArea: AreaItem?) {
-        currentChildArea = childArea
-    }
 
     fun getCurrentChildArea() = currentChildArea
 

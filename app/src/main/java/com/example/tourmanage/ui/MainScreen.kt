@@ -10,12 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -41,7 +37,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.example.tourmanage.R
-import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
@@ -61,17 +56,49 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    var currentParentArea by rememberSaveable { mutableStateOf<AreaItem?>(null) }
-    var currentChildArea by rememberSaveable { mutableStateOf<AreaItem?>(null) }
+
+    var isInit by remember {
+        mutableStateOf(false)
+    }
+    val curParent = viewModel.curParentArea.collectAsStateWithLifecycle()
+    val curChild = viewModel.curChildArea.collectAsStateWithLifecycle()
+
+    var curParentItem by rememberSaveable {
+      mutableStateOf<AreaItem?>(null)
+    }
+    var curChildItem by rememberSaveable {
+        mutableStateOf<AreaItem?>(null)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.requestParentAreaList()
+        viewModel.getCacheArea(true)
+        viewModel.getCacheArea(false)
     }
 
-    LaunchedEffect(key1 = currentParentArea) {
-        Timber.i("Change Area | currentParentArea: $currentParentArea")
-        viewModel.requestChildAreaList(currentParentArea?.code)
-        currentChildArea = null
+    if (curParent.isSuccess()) {
+        LaunchedEffect(key1 = curParent.value.data!!.code) {
+            val parentArea = curParent.value.data!!
+            Timber.i("Change Area | parentName: ${parentArea.name} | parentCode: ${parentArea.code}")
+            if (isInit) {
+                viewModel.removeCacheArea(true)
+                curChildItem = null
+            }
+            if (!isInit) {
+                isInit = true
+            }
+
+            viewModel.requestChildAreaList(parentArea.code)
+            curParentItem = curParent.value.data
+        }
+    }
+
+    if (curChild.isSuccess()) {
+        LaunchedEffect(key1 = curChild.value.data?.name) {
+            val childArea = curChild.value.data
+            Timber.i("Change Child | childArea: $childArea")
+            curChildItem = curChild.value.data
+        }
     }
 
     var headerTitle by remember { mutableStateOf("HOME") }
@@ -98,16 +125,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                             textAlign = TextAlign.Center
                         )
 
-                    },
-//                    actions = {
-//                        IconButton(
-//                            modifier = Modifier.padding(top = 20.dp),
-//                            onClick = {
-//                                isSheetOpen = true
-//                            }) {
-//                            Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menu")
-//                        }
-//                    }
+                    }
                 )
             },
             bottomBar = {
@@ -123,7 +141,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
             }
         ) {
             Box(modifier = Modifier.padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding())) {
-                NavigationGraph(navController, currentParentArea, currentChildArea) {
+                NavigationGraph(navController, curParentItem, curChildItem) {
                     isSheetOpen = true
                 }
             }
@@ -156,32 +174,26 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Row() {
-                                if (currentParentArea != null) {
+                                if (curParentItem != null) {
                                     AreaIconWidget(
                                         modifier = Modifier
                                             .width(60.dp)
                                             .wrapContentHeight(),
-                                        currentParentArea, false)
+                                        curParentItem, false)
                                 }
                                 Spacer(modifier = Modifier.width(10.dp))
-                                if (currentChildArea != null) {
+                                if (curChildItem != null) {
                                     AreaIconWidget(modifier = Modifier
                                         .width(60.dp)
                                         .wrapContentHeight(),
-                                        currentChildArea, true)
+                                        curChildItem, true)
                                 }
                             }
                         }
                     }
                 ) {
-                    AreaDrawerContent(currentParentArea = currentParentArea, currentChildArea = currentChildArea) { areaItem, requestKey, isChild ->
-                        if (isChild) {
-                            currentChildArea = areaItem
-                            ServerGlobal.setCurrentChildArea(currentChildArea)
-                        } else {
-                            currentParentArea = areaItem
-                            ServerGlobal.setCurrentParentArea(currentParentArea)
-                        }
+                    AreaDrawerContent(currentParentArea = curParentItem, currentChildArea = curChildItem) { areaItem, requestKey, isChild ->
+                        viewModel.cacheArea(areaItem, isChild)
                     }
                 }
             }
