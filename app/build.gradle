@@ -128,4 +128,9 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
 
     implementation 'com.google.android.gms:play-services-location:21.0.1' //_ GPS
+
+    //_ data store
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+    implementation "androidx.datastore:datastore:1.0.0"
+
 }
