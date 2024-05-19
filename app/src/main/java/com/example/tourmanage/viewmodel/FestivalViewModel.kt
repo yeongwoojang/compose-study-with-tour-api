@@ -24,6 +24,11 @@ class FestivalViewModel @Inject constructor(
 
     private val _areaFestival = MutableStateFlow<UiState<ArrayList<FestivalItem>>>(UiState.Ready())
     val areaFestival = _areaFestival
+
+    private val _requestInit = MutableStateFlow<Boolean>(false)
+    val requestInit = _requestInit
+
+
     override fun requestMyLocationInfo(typeId: Config.CONTENT_TYPE_ID) {
         viewModelScope.launch {
             val currentGPS = ServerGlobal.getCurrentGPS()
@@ -40,4 +45,10 @@ class FestivalViewModel @Inject constructor(
                 .setDefaultCollect(_areaFestival)
         }
     }
+
+    fun initState() {
+        _requestInit.value = true
+    }
+
+    fun currentInitState() = _requestInit.value
 }

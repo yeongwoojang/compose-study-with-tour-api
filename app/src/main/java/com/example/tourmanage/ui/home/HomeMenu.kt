@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.tourmanage.common.data.IntentData
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.data.server.item.FestivalItem
@@ -60,7 +61,9 @@ fun HomeMenu(festivalItems: ArrayList<FestivalItem>, curParentArea: AreaItem?, c
                             val targetActivity: KClass<out Activity> = when (it.type) {
                                 Config.HOME_MENU_TYPE.FESTIVAL -> {
                                     intentData = IntentData(
-                                        mapOf(Config.PASS_DATA.DATA.value to festivalItems)
+                                        mapOf(
+                                            Config.PASS_DATA.DATA.value to festivalItems,
+                                        )
                                     )
                                     FestivalMainActivity::class
                                 }
@@ -68,7 +71,8 @@ fun HomeMenu(festivalItems: ArrayList<FestivalItem>, curParentArea: AreaItem?, c
                                     intentData = IntentData(
                                         mapOf(
                                             Config.PASS_DATA.PARENT_AREA.value to curParentArea,
-                                            Config.PASS_DATA.CHILD_AREA.value to curChildArea)
+                                            Config.PASS_DATA.CHILD_AREA.value to curChildArea
+                                        )
                                     )
                                     StayMainActivity::class
                                 }

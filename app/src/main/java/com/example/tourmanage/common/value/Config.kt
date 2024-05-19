@@ -14,7 +14,7 @@ object Config {
     enum class PASS_DATA(val value: String) {
         PARENT_AREA("PARENT_AREA"),
         CHILD_AREA("CHILD_AREA"),
-        DATA("DATA")
+        DATA("DATA"),
     }
 
     enum class FRAGMENT_CHANGE_TYPE(val value: String) {

@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -29,8 +30,7 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun RecommendBanner(viewModel: FestivalViewModel = hiltViewModel(), areaFestival: ArrayList<FestivalItem>) {
-
-    var imageIndex by remember { mutableStateOf(0) }
+    var imageIndex by rememberSaveable { mutableStateOf(0) }
     LaunchedEffect(Unit) {
         while(true) {
             delay(3000)
