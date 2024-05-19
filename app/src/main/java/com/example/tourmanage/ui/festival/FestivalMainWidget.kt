@@ -7,11 +7,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.extension.isSuccess
+import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.ui.common.Header
 import com.example.tourmanage.viewmodel.FestivalViewModel
 
@@ -20,7 +20,7 @@ import com.example.tourmanage.viewmodel.FestivalViewModel
 fun FestivalMainWidget(viewModel: FestivalViewModel = hiltViewModel(), mainFestival: ArrayList<FestivalItem>) {
     LaunchedEffect(Unit) {
         viewModel.requestAreaFestival()
-        viewModel.requestMyLocationFestival()
+        viewModel.requestMyLocationInfo(Config.CONTENT_TYPE_ID.FESTIVAL)
     }
 
     val areaFestival = viewModel.areaFestival.collectAsStateWithLifecycle()

@@ -49,8 +49,11 @@ fun MyLocationFestival(viewModel: FestivalViewModel = hiltViewModel(), myLocFest
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             itemsIndexed(myLocFestival) { index, item ->
+                val isLastItem = item == myLocFestival.last()
+                val padding = if (isLastItem) 16.dp else 0.dp
                 Column(modifier = Modifier
                     .width(150.dp)
+                    .padding(end = padding)
                 ) {
                     GlideImage(
                         model = item.mainImage,

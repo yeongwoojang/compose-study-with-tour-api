@@ -46,7 +46,7 @@ fun HomeWidget(viewModel: HomeViewModel = hiltViewModel(), curParentArea: AreaIt
 
             CurrentAreaWidget(curParentArea, curChildArea, onClick)
             MainImageRow(festivalList)
-            HomeMenu(festivalList)
+            HomeMenu(festivalList, curParentArea, curChildArea)
         }
     }
 

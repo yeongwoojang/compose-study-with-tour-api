@@ -11,17 +11,16 @@ import com.example.tourmanage.ui.common.Header
 import com.example.tourmanage.viewmodel.StayViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.tourmanage.common.ServerGlobal
+import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.isSuccess
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun StayMainWidget(viewModel: StayViewModel = hiltViewModel()) {
+fun StayMainWidget(viewModel: StayViewModel = hiltViewModel(), curParentArea: AreaItem?, curChildArea: AreaItem?) {
     var stayInfoList = viewModel.stayInfo.collectAsStateWithLifecycle()
 
-    val currentParentArea = ServerGlobal.getCurrentParentArea()
-    val currentChildArea = ServerGlobal.getCurrentChildArea()
     LaunchedEffect(key1 = Unit) {
-        viewModel.requestStayList(currentParentArea?.code, currentChildArea?.code)
+        viewModel.requestStayList(curParentArea?.code, curChildArea?.code)
     }
     Scaffold(
         topBar = {

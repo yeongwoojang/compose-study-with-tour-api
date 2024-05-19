@@ -20,7 +20,7 @@ import timber.log.Timber
 class FestivalMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val receivedData = intent.intentSerializable(Config.PASS_DATA, java.util.ArrayList::class.java)
+        val receivedData = intent.intentSerializable(Config.PASS_DATA.DATA.value, java.util.ArrayList::class.java)
         var mainFestival: ArrayList<FestivalItem>? = null
         if (receivedData is ArrayList<*>) {
             mainFestival = receivedData as? ArrayList<FestivalItem>
