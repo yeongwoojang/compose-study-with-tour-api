@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -20,12 +21,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.R
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.extension.isEmptyString
 import com.example.tourmanage.common.extension.noRippleClickable
+import com.example.tourmanage.data.DetailDavItem
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.FestivalViewModel
 import kotlinx.coroutines.delay
@@ -33,8 +36,8 @@ import timber.log.Timber
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel(), mainFestival: ArrayList<FestivalItem>) {
-    var imageIndex by remember { mutableStateOf(0) }
+fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel(), navController: NavHostController, mainFestival: ArrayList<FestivalItem>) {
+    var imageIndex by rememberSaveable { mutableStateOf(0) }
 
     LaunchedEffect(Unit) {
         while(true) {
@@ -61,8 +64,9 @@ fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel(), mainFestival:
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .noRippleClickable {
-                    mainFestival[imageIndex]
+                .clickable {
+                    navController.navigate(route = DetailDavItem.Test.route)
+//                    mainFestival[imageIndex]
                 }
         ) {//_ box1
             Crossfade(
