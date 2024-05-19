@@ -5,21 +5,17 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Build
+import com.example.tourmanage.common.data.GpsData
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.isEmptyString
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.io.IOException
 import java.util.Locale
 import kotlin.coroutines.resume
 
 object ServerGlobal {
-    private var currentGPS = Pair<String, String>("", "")
+    private var currentGps = GpsData()
     private val parentAreaList = ArrayList<AreaItem>()
-    private var currentParentArea: AreaItem? = null
-    private var currentChildArea: AreaItem? = null
 
     fun setAreaCodeList(areaCodeList: ArrayList<AreaItem>) {
         parentAreaList.addAll(areaCodeList)
@@ -32,14 +28,10 @@ object ServerGlobal {
         val longitude = location.longitude.toString().isEmptyString("")
         val latitude = location.latitude.toString().isEmptyString("")
         Timber.d("setGPS() | longitude: $longitude | latitude: $latitude")
-        currentGPS = Pair(longitude, latitude)
+        currentGps = GpsData(longitude, latitude)
     }
 
-    fun getCurrentGPS() = currentGPS
-
-    fun getCurrentParentArea() = currentParentArea
-
-    fun getCurrentChildArea() = currentChildArea
+    fun getCurrentGPS() = currentGps
 
     suspend fun getAddress(context: Context, lat: Double, lng: Double): Address? =
         suspendCancellableCoroutine<Address?> { cancellableContinuation ->

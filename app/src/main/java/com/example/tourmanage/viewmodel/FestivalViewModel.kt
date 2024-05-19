@@ -1,8 +1,8 @@
 package com.example.tourmanage.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
+import com.example.tourmanage.common.AreaDataStoreRepository
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.data.server.item.LocationBasedItem
@@ -16,19 +16,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FestivalViewModel @Inject constructor(
-    private val serverRepo: ServerDataRepository
-): ViewModel() {
+    private val serverRepo: ServerDataRepository,
+    private val dataStore: AreaDataStoreRepository,
+): CommonViewModel(serverRepo, dataStore) {
     private val _myLocFestival = MutableStateFlow<UiState<ArrayList<LocationBasedItem>>>(UiState.Ready())
     val myLocFestival = _myLocFestival
 
     private val _areaFestival = MutableStateFlow<UiState<ArrayList<FestivalItem>>>(UiState.Ready())
     val areaFestival = _areaFestival
-    fun requestMyLocationFestival() {
+    override fun requestMyLocationInfo(typeId: Config.CONTENT_TYPE_ID) {
         viewModelScope.launch {
             val currentGPS = ServerGlobal.getCurrentGPS()
-            val longitude = currentGPS.first
-            val latitude = currentGPS.second
-            serverRepo.requestLocationBasedList(contentTypeId = Config.CONTENT_TYPE_ID.FESTIVAL, mapX = longitude, mapY = latitude, arrange = Config.ARRANGE_TYPE.O)
+            val longitude = currentGPS.mapX
+            val latitude = currentGPS.mapY
+            serverRepo.requestLocationBasedList(contentTypeId = typeId, mapX = longitude, mapY = latitude, arrange = Config.ARRANGE_TYPE.O)
                 .setDefaultCollect(_myLocFestival)
         }
     }

@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tourmanage.common.data.IntentData
+import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.util.UiController
 import com.example.tourmanage.common.value.Config
@@ -38,7 +39,7 @@ import com.example.tourmanage.ui.StayMainActivity
 import kotlin.reflect.KClass
 
 @Composable
-fun HomeMenu(festivalItems: ArrayList<FestivalItem>) {
+fun HomeMenu(festivalItems: ArrayList<FestivalItem>, curParentArea: AreaItem?, curChildArea: AreaItem?) {
     val context = LocalContext.current
     LazyVerticalGrid(columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -59,20 +60,30 @@ fun HomeMenu(festivalItems: ArrayList<FestivalItem>) {
                             val targetActivity: KClass<out Activity> = when (it.type) {
                                 Config.HOME_MENU_TYPE.FESTIVAL -> {
                                     intentData = IntentData(
-                                        mapOf(Config.PASS_DATA to festivalItems)
+                                        mapOf(Config.PASS_DATA.DATA.value to festivalItems)
                                     )
                                     FestivalMainActivity::class
                                 }
                                 Config.HOME_MENU_TYPE.STAY -> {
+                                    intentData = IntentData(
+                                        mapOf(
+                                            Config.PASS_DATA.PARENT_AREA.value to curParentArea,
+                                            Config.PASS_DATA.CHILD_AREA.value to curChildArea)
+                                    )
                                     StayMainActivity::class
                                 }
                                 Config.HOME_MENU_TYPE.TOUR_SPOT -> {
                                     intentData = IntentData(
-                                        mapOf(Config.PASS_DATA to festivalItems)
+                                        mapOf(Config.PASS_DATA.DATA.value to festivalItems)
                                     )
                                     LocalTourActivity::class
                                 }
                                 Config.HOME_MENU_TYPE.COURSE -> {
+                                    intentData = IntentData(
+                                        mapOf(
+                                            Config.PASS_DATA.PARENT_AREA.value to curParentArea,
+                                            Config.PASS_DATA.CHILD_AREA.value to curChildArea)
+                                    )
                                     CourseActivity::class
                                 }
 //                                Config.HOME_MENU_TYPE.RIDING ->

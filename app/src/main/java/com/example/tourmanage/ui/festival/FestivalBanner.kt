@@ -3,6 +3,7 @@ package com.example.tourmanage.ui.festival
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -24,9 +25,11 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.R
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.extension.isEmptyString
+import com.example.tourmanage.common.extension.noRippleClickable
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.FestivalViewModel
 import kotlinx.coroutines.delay
+import timber.log.Timber
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -56,7 +59,12 @@ fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel(), mainFestival:
             .padding(end = 16.dp),
     ) {
         Box(
-            modifier = Modifier.fillMaxSize()) {//_ box1
+            modifier = Modifier
+                .fillMaxSize()
+                .noRippleClickable {
+                    mainFestival[imageIndex]
+                }
+        ) {//_ box1
             Crossfade(
                 targetState = imageIndex,
                 animationSpec = tween(1000)

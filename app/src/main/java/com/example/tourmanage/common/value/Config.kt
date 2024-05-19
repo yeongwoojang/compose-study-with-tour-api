@@ -9,7 +9,13 @@ object Config {
     const val MAIN_MENU_KEY = "MENU"
     const val STAY_INFO = "STAY_INFO"
 
-    const val PASS_DATA = "PASS_DATA"
+//    const val PASS_DATA = "PASS_DATA"
+
+    enum class PASS_DATA(val value: String) {
+        PARENT_AREA("PARENT_AREA"),
+        CHILD_AREA("CHILD_AREA"),
+        DATA("DATA")
+    }
 
     enum class FRAGMENT_CHANGE_TYPE(val value: String) {
         ADD("ADD"),
