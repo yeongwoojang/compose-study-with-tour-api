@@ -92,7 +92,7 @@ fun String.convertKRW(): String {
 
 suspend fun <T>Flow<UiState<T>>.setDefaultCollect(state: MutableStateFlow<UiState<T>>) {
     onStart { state.value = UiState.Loading() }
-        .catch { state.value = UiState.Error(it.message!!) }
+        .catch { state.value = UiState.Error(it.message ?: "") }
         .collect {state.value = it }
 }
 

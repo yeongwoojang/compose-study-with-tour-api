@@ -47,6 +47,7 @@ import com.example.tourmanage.ui.common.AreaDrawerContent
 import com.example.tourmanage.ui.common.AreaIconWidget
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.MainViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -72,8 +73,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
 
     LaunchedEffect(Unit) {
         viewModel.requestParentAreaList()
-        viewModel.getCacheArea(true)
-        viewModel.getCacheArea(false)
+        viewModel.getCachedArea()
     }
 
     if (curParent.isSuccess()) {
