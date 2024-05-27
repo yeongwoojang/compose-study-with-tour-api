@@ -6,12 +6,14 @@ import com.example.tourmanage.common.AreaDataStoreRepository
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.data.server.item.LocationBasedItem
-import com.example.tourmanage.common.extension.setDefaultCollect
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.model.ServerDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,36 +21,39 @@ class FestivalViewModel @Inject constructor(
     private val serverRepo: ServerDataRepository,
     private val dataStore: AreaDataStoreRepository,
 ): CommonViewModel(serverRepo, dataStore) {
-    private val _myLocFestival = MutableStateFlow<UiState<ArrayList<LocationBasedItem>>>(UiState.Ready())
-    val myLocFestival = _myLocFestival
+    private val _festivalInfo = MutableStateFlow<UiState<Festival>>(UiState.Ready())
+    val festivalInfo = _festivalInfo
 
-    private val _areaFestival = MutableStateFlow<UiState<ArrayList<FestivalItem>>>(UiState.Ready())
-    val areaFestival = _areaFestival
+    fun requestFestivalInfo(typeId: Config.CONTENT_TYPE_ID) {
+        val isSkip = _festivalInfo.value !is UiState.Ready
+        Timber.d("requestFestivalInfo() | isSkip: $isSkip")
+        if (!isSkip) {
+            viewModelScope.launch {
+                val recommend = serverRepo.requestFestivalInfo(areaCode = "6", arrange = Config.ARRANGE_TYPE.O)
 
-    private val _requestInit = MutableStateFlow<Boolean>(false)
-    val requestInit = _requestInit
+                val currentGPS = ServerGlobal.getCurrentGPS()
+                val longitude = currentGPS.mapX
+                val latitude = currentGPS.mapY
 
+                val myLocal = serverRepo.requestLocationBasedList(contentTypeId = typeId, mapX = longitude, mapY = latitude, arrange = Config.ARRANGE_TYPE.O)
+                recommend.combine(myLocal) { recommend, local ->
+                    Festival().apply {
+                        if (recommend is UiState.Success) this.recommendFestival = recommend.data!!
+                        if (local is UiState.Success) this.localFestival = local.data!!
+                    }
 
-    override fun requestMyLocationInfo(typeId: Config.CONTENT_TYPE_ID) {
-        viewModelScope.launch {
-            val currentGPS = ServerGlobal.getCurrentGPS()
-            val longitude = currentGPS.mapX
-            val latitude = currentGPS.mapY
-            serverRepo.requestLocationBasedList(contentTypeId = typeId, mapX = longitude, mapY = latitude, arrange = Config.ARRANGE_TYPE.O)
-                .setDefaultCollect(_myLocFestival)
+                }.onStart {
+                    _festivalInfo.value = UiState.Loading()
+                }.collect {
+                    _festivalInfo.value = UiState.Success(it)
+                }
+            }
         }
-    }
 
-    fun requestAreaFestival() {
-        viewModelScope.launch {
-            serverRepo.requestFestivalInfo(areaCode = "6", arrange = Config.ARRANGE_TYPE.O)
-                .setDefaultCollect(_areaFestival)
-        }
     }
-
-    fun initState() {
-        _requestInit.value = true
-    }
-
-    fun currentInitState() = _requestInit.value
 }
+
+data class Festival(
+    var recommendFestival: ArrayList<FestivalItem> = ArrayList(emptyList()),
+    var localFestival: ArrayList<LocationBasedItem> = ArrayList(emptyList())
+)

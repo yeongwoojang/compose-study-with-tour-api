@@ -32,10 +32,10 @@ class MainViewModel @Inject constructor(
 ): CommonViewModel(serverRepo, dataStore) {
     private var areaRequestJob: Job? = null
 
-    val _areaInfo = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Ready())
+    private val _areaInfo = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Ready())
     val areaInfo = _areaInfo
 
-    val _childAreaInfo = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Ready())
+    private val _childAreaInfo = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Ready())
     val childAreaInfo = _childAreaInfo
 
     private val _curParentArea = MutableStateFlow<UiState<AreaItem?>>(UiState.Ready())
@@ -48,9 +48,7 @@ class MainViewModel @Inject constructor(
         Timber.i("requestAreaList() is called.")
         viewModelScope.launch {
             serverRepo.requestAreaCode(isInit = true)
-                .onStart { _areaInfo.value = UiState.Loading()}
-                .catch { _areaInfo.value = UiState.Error(it.message!!) }
-                .collect { _areaInfo.value = it }
+                .setDefaultCollect(_areaInfo)
         }
     }
 
@@ -83,17 +81,14 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getCacheArea(isChild: Boolean = false) {
+    fun getCachedArea() {
         viewModelScope.launch {
-            val data = if (isChild) _curChildArea else _curParentArea
-            dataStore.getCachedArea(isChild)
-                .onStart { data.value = UiState.Loading() }
-                .catch {
-                    data.value = UiState.Error("")
-                }
-                .collect {
-                    data.value = it
-                }
+            repeat(2) { count -> //_ 부모, 자식 지역 코드 GET 하기위해 2번 조회
+                val data = if (count == 1) _curChildArea else _curParentArea
+                val isChild = count == 1
+                dataStore.getCachedArea(isChild)
+                    .setDefaultCollect(data)
+            }
         }
     }
 
