@@ -21,15 +21,18 @@ import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.ui.common.Header
 import com.example.tourmanage.ui.components.LoadingWidget
 import com.example.tourmanage.viewmodel.CourseViewModel
+import timber.log.Timber
 
 @Composable
 fun CourseMainWidget(viewModel: CourseViewModel = hiltViewModel(), curParentArea: AreaItem?, curChildArea: AreaItem?) {
     LaunchedEffect(key1 = Unit) {
-        if (curParentArea != null && curChildArea != null) {
-            viewModel.requestCourse(curParentArea, curChildArea)
-        }
-        viewModel.requestCourse()
-        viewModel.requestMyLocationInfo(Config.CONTENT_TYPE_ID.TOUR_COURSE)
+        Timber.i("TEST_LOG | request Start")
+//        if (curParentArea != null && curChildArea != null) {
+//            viewModel.requestCourse(curParentArea, curChildArea)
+//        }
+//        viewModel.requestCourse()
+//        viewModel.requestMyLocationInfo(Config.CONTENT_TYPE_ID.TOUR_COURSE)
+        viewModel.requestCourseInfo(Config.CONTENT_TYPE_ID.TOUR_COURSE, curParentArea, curChildArea)
     }
     
     val curAreaTourCourse = viewModel.curAreaTourCourse.collectAsStateWithLifecycle()
@@ -63,7 +66,7 @@ fun CourseMainWidget(viewModel: CourseViewModel = hiltViewModel(), curParentArea
                 if (myAreaTourCourse.isSuccess()) {
                     val myCourseData = myAreaTourCourse.value.data!!
                     item {
-                        MyCourseList(myCourseData)
+                        MyCourseList(courseItems = myCourseData)
                     }
                 }
 
@@ -78,7 +81,7 @@ fun CourseMainWidget(viewModel: CourseViewModel = hiltViewModel(), curParentArea
                             allCourseItem.contentId.isEmptyString()
                         }
                     ) {index, allCourseItem ->
-                        AllCourseItemWidget(allCourseItem)
+                        AllCourseItemWidget(allCourseItem = allCourseItem)
                     }
                 }
             }

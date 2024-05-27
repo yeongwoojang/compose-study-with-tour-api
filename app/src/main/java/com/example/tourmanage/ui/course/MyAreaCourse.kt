@@ -27,6 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.common.ServerGlobal
@@ -36,22 +38,23 @@ import com.example.tourmanage.common.extension.isEmptyString
 import com.example.tourmanage.common.extension.toAreaText
 import com.example.tourmanage.common.extension.toMyAreaText
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
+import com.example.tourmanage.viewmodel.CourseViewModel
 import timber.log.Timber
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun MyCourseList(courseItems: ArrayList<LocationBasedItem>) {
+fun MyCourseList(viewModel: CourseViewModel = hiltViewModel(), courseItems: ArrayList<LocationBasedItem>) {
     val context = LocalContext.current
-    var myAreaAddress by remember { mutableStateOf<Address?>(null) }
-    val currentGps = ServerGlobal.getCurrentGPS()
+    var currentAddress by remember { mutableStateOf<Address?>(null) }
     LaunchedEffect(key1 = Unit) {
-        myAreaAddress = ServerGlobal.getAddress(context, currentGps.mapY.isEmptyString("0").toDouble(), currentGps.mapX.isEmptyString("0").toDouble())
-
+        viewModel.getCurrentAddress(context).collect {
+            currentAddress = it
+        }
     }
 
-    if (myAreaAddress != null) {
+    if (currentAddress != null) {
         Text(
-            text = "${myAreaAddress!!.subLocality}의 여행 코스",
+            text = "${currentAddress!!.subLocality}의 여행 코스",
             style = TextStyle(
                 fontSize= 14.sp,
                 fontFamily = spoqaHanSansNeoFont,
