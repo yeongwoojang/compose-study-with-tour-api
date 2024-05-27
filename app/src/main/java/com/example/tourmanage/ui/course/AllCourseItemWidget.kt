@@ -27,6 +27,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.R
@@ -35,16 +37,18 @@ import com.example.tourmanage.common.data.server.item.AreaBasedItem
 import com.example.tourmanage.common.extension.isEmptyString
 import com.example.tourmanage.common.extension.toAreaText
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
+import com.example.tourmanage.viewmodel.CourseViewModel
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun AllCourseItemWidget(allCourseItem: AreaBasedItem) {
+fun AllCourseItemWidget(viewModel: CourseViewModel = hiltViewModel(), allCourseItem: AreaBasedItem) {
     val context = LocalContext.current
-    var address by remember { mutableStateOf<Address?>(null) }
-
+    var currentAddress by remember { mutableStateOf<Address?>(null) }
     LaunchedEffect(key1 = Unit) {
-        address = ServerGlobal.getAddress(context, allCourseItem.mapY.isEmptyString("0").toDouble(), allCourseItem.mapX.isEmptyString("0").toDouble())
+        viewModel.getCurrentAddress(context).collect {
+            currentAddress = it
+        }
     }
 
     Column{
@@ -73,10 +77,10 @@ fun AllCourseItemWidget(allCourseItem: AreaBasedItem) {
                 fontWeight = FontWeight.Normal
             )
         )
-        if (address != null) {
+        if (currentAddress != null) {
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = address!!.toAreaText(),
+                text = currentAddress!!.toAreaText(),
                 style = TextStyle(
                     color = colorResource(id = R.color.dark_gray),
                     fontSize = 11.sp,

@@ -145,13 +145,9 @@ class ServerDataImpl @Inject constructor(
         return callbackFlow {
             try {
                 val tourInfo = client.requestAreaBasedList(areaCode = areaCode, sigunguCode = sigunguCode, contentType = contentTypeId?.value)
-                Timber.i("tourInfo: $tourInfo")
                 val code = tourInfo.response?.header?.resultCode
-                Timber.i("tourInfo: $code")
                 val msg = tourInfo.response?.header?.resultMsg
-                Timber.i("tourInfo: $msg")
                 val tourItemList =  tourInfo.toAreaBasedInfoItems()
-                Timber.i("tourInfo: $tourItemList")
                 if ("0000" == code && tourItemList.isNotEmpty()) {
                     trySend(UiState.Success(tourItemList))
                 } else {
@@ -159,10 +155,8 @@ class ServerDataImpl @Inject constructor(
                 }
                 awaitClose()
             } catch (e: Exception) {
-                Timber.i("tourInfo: $e")
                 trySend(UiState.Error(e.message ?: "requestTourInfo() Error."))
             } finally {
-                Timber.i("tourInfo: finally")
                 close()
             }
         }
