@@ -1,5 +1,6 @@
 package com.example.tourmanage.ui.course
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,7 +35,10 @@ fun CourseMainWidget(viewModel: CourseViewModel = hiltViewModel(), curParentArea
 
     Scaffold(
         topBar = {
-            Header(menuName = "여행코스")
+            val context = LocalContext.current
+            Header(menuName = "여행코스", Config.HEADER_BUTTON_TYPE.HOME) {
+                (context as? Activity)?.finish()
+            }
         }
     ) {
         Column(

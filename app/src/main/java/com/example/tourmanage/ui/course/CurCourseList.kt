@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -21,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
+import com.example.tourmanage.R
 import com.example.tourmanage.common.data.server.item.AreaBasedItem
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.isEmptyString
@@ -55,6 +58,8 @@ fun CurCourseList(courseItems: ArrayList<AreaBasedItem>, curParentArea: AreaItem
                     model = courseItem.fullImageUrl,
                     contentDescription = "",
                     contentScale = ContentScale.FillBounds,
+                    failure = placeholder(R.drawable.stay_default),
+                    loading = placeholder(R.drawable.stay_default),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp)

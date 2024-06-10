@@ -11,9 +11,9 @@ sealed class BottomNavItem(
     object Area: BottomNavItem(R.string.bottom_nav_item_area, R.drawable.baseline_location_on_black_36, R.drawable.outline_location_on_black_36, Config.AREA)
 }
 
-sealed class DetailDavItem(
+sealed class DetailNavItem(
     val route: String
 ) {
-    object Test: DetailDavItem("TEST")
-    object Main: DetailDavItem("MAIN")
+    object Detail: DetailNavItem("Detail")
+    object Main: DetailNavItem("MAIN")
 }

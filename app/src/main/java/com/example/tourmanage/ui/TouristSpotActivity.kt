@@ -1,6 +1,7 @@
 package com.example.tourmanage.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -54,6 +55,7 @@ import com.example.tourmanage.common.extension.isError
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.common.util.UiController
+import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.ui.components.LoadingWidget
 import com.example.tourmanage.ui.common.Header
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
@@ -90,7 +92,10 @@ fun MainForm(viewModel: LocalTourViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = {
-            Header(menuName = "Tour")
+            val context = LocalContext.current
+            Header(menuName = "Tour", Config.HEADER_BUTTON_TYPE.HOME) {
+                (context as? Activity)?.finish()
+            }
         }
     ) {
         LazyColumn() {

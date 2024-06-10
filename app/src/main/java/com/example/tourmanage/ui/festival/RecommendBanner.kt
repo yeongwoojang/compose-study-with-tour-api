@@ -3,6 +3,7 @@ package com.example.tourmanage.ui.festival
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -29,7 +30,7 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun RecommendBanner(viewModel: FestivalViewModel = hiltViewModel(), areaFestival: ArrayList<FestivalItem>) {
+fun RecommendBanner(viewModel: FestivalViewModel = hiltViewModel(), areaFestival: ArrayList<FestivalItem>, goDetail: (item: FestivalItem)-> Unit) {
     var imageIndex by rememberSaveable { mutableStateOf(0) }
     LaunchedEffect(Unit) {
         while(true) {
@@ -43,15 +44,16 @@ fun RecommendBanner(viewModel: FestivalViewModel = hiltViewModel(), areaFestival
             modifier = Modifier
                 .fillMaxWidth()
                 .height(300.dp)
-                .padding(end = 16.dp),
+                .padding(end = 16.dp)
         ) {
             Box(
                 modifier = Modifier.fillMaxSize()) {//_ box1
                 Crossfade(
                     targetState = imageIndex,
-                    animationSpec = tween(1000)
+                    animationSpec = tween(1000),
                 ) {targetState ->
-                    Box {
+                    Box(modifier = Modifier
+                        .clickable { goDetail(areaFestival[targetState]) }) {
                         GlideImage(
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.FillBounds,
