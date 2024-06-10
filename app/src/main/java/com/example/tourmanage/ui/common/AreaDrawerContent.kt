@@ -20,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.R
 import com.example.tourmanage.common.ServerGlobal
@@ -33,8 +32,9 @@ fun AreaDrawerContent(
     viewModel: MainViewModel = hiltViewModel(),
     currentParentArea: AreaItem?,
     currentChildArea: AreaItem?,
+    detailAreaList: List<AreaItem>?,
     onClick: (areaItem: AreaItem, requestKey: String, isChild: Boolean) -> Unit) {
-    val detailAreaCode = viewModel.childAreaInfo.collectAsStateWithLifecycle()
+
     Box(
         modifier = Modifier
             .navigationBarsPadding()
@@ -68,8 +68,24 @@ fun AreaDrawerContent(
                 .width(1.dp))
             Spacer(modifier = Modifier.width(10.dp))
 
-            if (detailAreaCode.isCompleteSuccess(currentParentArea?.code)) {
-                val detailAreaList = detailAreaCode.value.data!!
+            if (detailAreaList != null) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    items(
+                        items = detailAreaList,
+                        itemContent = { childArea ->
+                            AreaItemLayout(childArea, isChild = true, currentParentArea = currentParentArea, currentChildArea = currentChildArea) { requestKey ->
+                                onClick(childArea, requestKey, true)
+                            }
+                        }
+                    )
+                }
+            }
+
+            if (detailAreaList != null) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),

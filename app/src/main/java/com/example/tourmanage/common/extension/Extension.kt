@@ -90,8 +90,10 @@ fun String.convertKRW(): String {
     return formatter.format(this.toLong())
 }
 
-suspend fun <T>Flow<UiState<T>>.setDefaultCollect(state: MutableStateFlow<UiState<T>>) {
-    onStart { state.value = UiState.Loading() }
+suspend fun <T>Flow<UiState<T>>.setDefaultCollect(state: MutableStateFlow<UiState<T>>, needLoading: Boolean = true) {
+    onStart {
+        if (needLoading) state.value = UiState.Loading()
+    }
         .catch { state.value = UiState.Error(it.message ?: "") }
         .collect { state.value = it }
 }

@@ -47,9 +47,8 @@ import com.example.tourmanage.ui.common.AreaDrawerContent
 import com.example.tourmanage.ui.common.AreaIconWidget
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.MainViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,11 +57,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    var isInit by remember {
-        mutableStateOf(false)
-    }
-    val curParent = viewModel.curParentArea.collectAsStateWithLifecycle()
-    val curChild = viewModel.curChildArea.collectAsStateWithLifecycle()
+    var detailAreaCode by remember { mutableStateOf<List<AreaItem>?>(null) }
 
     var curParentItem by rememberSaveable {
       mutableStateOf<AreaItem?>(null)
@@ -74,30 +69,24 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
     LaunchedEffect(Unit) {
         viewModel.requestParentAreaList()
         viewModel.getCachedArea()
-    }
-
-    if (curParent.isSuccess()) {
-        LaunchedEffect(key1 = curParent.value.data!!.code) {
-            val parentArea = curParent.value.data!!
-            Timber.i("Change Area | parentName: ${parentArea.name} | parentCode: ${parentArea.code}")
-            if (isInit) {
-                viewModel.removeCacheArea(true)
-                curChildItem = null
+        launch {
+            viewModel.childAreaList.collectLatest {
+                it.data?.let { childArea ->
+                    detailAreaCode = childArea
+                }
             }
-            if (!isInit) {
-                isInit = true
-            }
-
-            viewModel.requestChildAreaList(parentArea.code)
-            curParentItem = curParent.value.data
         }
-    }
 
-    if (curChild.isSuccess()) {
-        LaunchedEffect(key1 = curChild.value.data?.name) {
-            val childArea = curChild.value.data
-            Timber.i("Change Child | childArea: $childArea")
-            curChildItem = curChild.value.data
+        launch {
+            viewModel.curParent.collectLatest {
+                curParentItem = it
+            }
+        }
+
+        launch {
+            viewModel.curChild.collectLatest {
+                curChildItem = it
+            }
         }
     }
 
@@ -192,7 +181,10 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                         }
                     }
                 ) {
-                    AreaDrawerContent(currentParentArea = curParentItem, currentChildArea = curChildItem) { areaItem, requestKey, isChild ->
+                    AreaDrawerContent(
+                        currentParentArea = curParentItem,
+                        currentChildArea = curChildItem,
+                        detailAreaList = detailAreaCode) { areaItem, requestKey, isChild ->
                         viewModel.cacheArea(areaItem, isChild)
                     }
                 }
