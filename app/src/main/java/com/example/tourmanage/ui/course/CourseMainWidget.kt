@@ -26,18 +26,10 @@ import timber.log.Timber
 @Composable
 fun CourseMainWidget(viewModel: CourseViewModel = hiltViewModel(), curParentArea: AreaItem?, curChildArea: AreaItem?) {
     LaunchedEffect(key1 = Unit) {
-        Timber.i("TEST_LOG | request Start")
-//        if (curParentArea != null && curChildArea != null) {
-//            viewModel.requestCourse(curParentArea, curChildArea)
-//        }
-//        viewModel.requestCourse()
-//        viewModel.requestMyLocationInfo(Config.CONTENT_TYPE_ID.TOUR_COURSE)
         viewModel.requestCourseInfo(Config.CONTENT_TYPE_ID.TOUR_COURSE, curParentArea, curChildArea)
     }
-    
-    val curAreaTourCourse = viewModel.curAreaTourCourse.collectAsStateWithLifecycle()
-    val allCourseItems = viewModel.allAreaTourCourse.collectAsStateWithLifecycle()
-    val myAreaTourCourse = viewModel.myAreaTourCourse.collectAsStateWithLifecycle()
+
+    val tourCourseInfo = viewModel.tourCourseInfo.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -53,30 +45,29 @@ fun CourseMainWidget(viewModel: CourseViewModel = hiltViewModel(), curParentArea
                     bottom = it.calculateBottomPadding()
                 ),
         ) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(25.dp),
-            ) {
-                if (curAreaTourCourse.isSuccess()) {
-                    val curCourseData = curAreaTourCourse.value.data!!
+
+            if (tourCourseInfo.isSuccess()) {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(25.dp),
+                ) {
+                    val curCourseData = tourCourseInfo.value.data!!.curAreaTourCourse
+                    val myCourseData = tourCourseInfo.value.data!!.myAreaTourCourse
+                    val allCourseData = tourCourseInfo.value.data!!.allAreaTourCourse
+
                     item {
                         CurCourseList(curCourseData, curParentArea, curChildArea)
                     }
-                }
 
-                if (myAreaTourCourse.isSuccess()) {
-                    val myCourseData = myAreaTourCourse.value.data!!
                     item {
                         MyCourseList(courseItems = myCourseData)
                     }
-                }
 
-                if (allCourseItems.isSuccess()) {
-                    val allCourse = allCourseItems.value.data!!
                     item {
                         AllCourseList()
                     }
+
                     itemsIndexed(
-                        items = allCourse,
+                        items = allCourseData,
                         key = {index, allCourseItem ->
                             allCourseItem.contentId.isEmptyString()
                         }
@@ -85,9 +76,10 @@ fun CourseMainWidget(viewModel: CourseViewModel = hiltViewModel(), curParentArea
                     }
                 }
             }
+
         }
 
-        if (curAreaTourCourse.isLoading() || allCourseItems.isLoading()) {
+        if (tourCourseInfo.isLoading()) {
             LoadingWidget()
         }
     }
