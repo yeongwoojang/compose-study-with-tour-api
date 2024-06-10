@@ -1,5 +1,6 @@
 package com.example.tourmanage.ui.festival
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -32,7 +33,7 @@ import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun MyLocationFestival(viewModel: FestivalViewModel = hiltViewModel(), myLocFestival: ArrayList<LocationBasedItem>) {
+fun MyLocationFestival(viewModel: FestivalViewModel = hiltViewModel(), myLocFestival: ArrayList<LocationBasedItem>, goDetail: (item: LocationBasedItem)-> Unit) {
     Column {
         Text(
             text = "우리 동네에서 열리는 축제",
@@ -54,6 +55,7 @@ fun MyLocationFestival(viewModel: FestivalViewModel = hiltViewModel(), myLocFest
                 Column(modifier = Modifier
                     .width(150.dp)
                     .padding(end = padding)
+                    .clickable { goDetail(item) }
                 ) {
                     GlideImage(
                         model = item.mainImage,

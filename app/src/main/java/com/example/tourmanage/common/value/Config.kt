@@ -59,4 +59,9 @@ object Config {
         LEISURE("LEISURE"),
         SHOPPING("SHOPPING"),
     }
+
+    enum class HEADER_BUTTON_TYPE(val value: String) {
+        HOME("HOME"),
+        CLOSE("CLOSE")
+    }
 }

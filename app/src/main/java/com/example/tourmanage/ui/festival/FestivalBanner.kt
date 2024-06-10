@@ -21,22 +21,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.R
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.extension.isEmptyString
-import com.example.tourmanage.common.extension.noRippleClickable
-import com.example.tourmanage.data.DetailDavItem
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.FestivalViewModel
 import kotlinx.coroutines.delay
-import timber.log.Timber
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel(), navController: NavHostController, mainFestival: ArrayList<FestivalItem>) {
+fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel(), mainFestival: ArrayList<FestivalItem>, goDetail: (item: FestivalItem)-> Unit) {
     var imageIndex by rememberSaveable { mutableStateOf(0) }
 
     LaunchedEffect(Unit) {
@@ -64,18 +60,17 @@ fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel(), navController
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .clickable {
-                    navController.navigate(route = DetailDavItem.Test.route)
-//                    mainFestival[imageIndex]
-                }
-        ) {//_ box1
+
+        ) {
             Crossfade(
                 targetState = imageIndex,
                 animationSpec = tween(1000)
             ) {targetState ->
                 Box {
                     GlideImage(
-                        modifier = Modifier.fillMaxSize(),
+
+                        modifier = Modifier.fillMaxSize()
+                        .clickable { goDetail(mainFestival[targetState]) },
                         contentScale = ContentScale.FillBounds,
                         model = mainFestival[targetState].mainImage,
                         contentDescription = "")

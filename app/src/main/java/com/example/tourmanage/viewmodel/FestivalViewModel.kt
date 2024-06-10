@@ -8,9 +8,14 @@ import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.data.server.item.LocationBasedItem
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.model.ServerDataRepository
+import com.squareup.moshi.Json
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -23,6 +28,21 @@ class FestivalViewModel @Inject constructor(
 ): CommonViewModel(serverRepo, dataStore) {
     private val _festivalInfo = MutableStateFlow<UiState<Festival>>(UiState.Ready())
     val festivalInfo = _festivalInfo
+
+    private val clickItemFlow = MutableSharedFlow<Any>()
+
+    val goDetailFlow = clickItemFlow
+        .flatMapLatest { item ->
+            flow<DetailFestival> {
+                emit(DetailFestival().apply {
+                    if (item is FestivalItem) {
+                        title = item.title
+                    } else if (item is LocationBasedItem) {
+                        title = item.title
+                    }
+                })
+            }
+        }
 
     fun requestFestivalInfo(typeId: Config.CONTENT_TYPE_ID) {
         val isSkip = _festivalInfo.value !is UiState.Ready
@@ -49,11 +69,25 @@ class FestivalViewModel @Inject constructor(
                 }
             }
         }
+    }
 
+    fun choiceFestival(item: Any) {
+        viewModelScope.launch {
+            clickItemFlow.emit(item)
+        }
     }
 }
 
 data class Festival(
     var recommendFestival: ArrayList<FestivalItem> = ArrayList(emptyList()),
     var localFestival: ArrayList<LocationBasedItem> = ArrayList(emptyList())
+)
+
+data class DetailFestival(
+    var title: String? = "",
+    var contentId: String? = "",
+    var addr1: String? = "",
+    var addr2: String? = "",
+    var contentTypeId: String? = "",
+    var mainImage: String? = ""
 )

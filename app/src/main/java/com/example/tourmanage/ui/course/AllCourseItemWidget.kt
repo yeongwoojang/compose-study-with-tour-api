@@ -31,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.example.tourmanage.R
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaBasedItem
@@ -63,6 +64,8 @@ fun AllCourseItemWidget(viewModel: CourseViewModel = hiltViewModel(), allCourseI
                 model = allCourseItem.fullImageUrl,
                 contentDescription = "",
                 contentScale = ContentScale.FillBounds,
+                failure = placeholder(R.drawable.stay_default),
+                loading = placeholder(R.drawable.stay_default),
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(12.dp)),
