@@ -24,7 +24,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.extension.isEmptyString
 import kotlinx.coroutines.delay
-import androidx.compose.material.Divider
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -87,12 +86,13 @@ fun MainImageRow(festivalItems: ArrayList<FestivalItem>) {
                 fontSize = 16.sp
             )
             Spacer(modifier = Modifier.width(10.dp))
-            Divider(
+            HorizontalDivider(
                 Modifier
                     .weight(2f)
                     .height(1.5.dp)
                     .padding(end = 20.dp)
-                    .background(colorResource(id = R.color.white_smoke)))
+                    .background(colorResource(id = R.color.white_smoke))
+            )
         }
         Spacer(modifier = Modifier.height(20.dp))
         LazyRow(

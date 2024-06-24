@@ -2,8 +2,9 @@ package com.example.tourmanage.ui.staydetail
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -50,10 +51,10 @@ fun StayOverview(detailData: StayDetailItem, paddingModifier: Modifier) {
     }
 
     Spacer(modifier = Modifier.height(10.dp))
-    Divider(
+    HorizontalDivider(
         modifier = Modifier.fillMaxWidth(),
-        color = colorResource(id = R.color.white_smoke),
         thickness = 1.dp,
+        color = colorResource(id = R.color.white_smoke)
     )
 
     Spacer(modifier = Modifier.height(10.dp))

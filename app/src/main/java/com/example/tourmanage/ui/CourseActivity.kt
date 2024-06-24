@@ -3,7 +3,6 @@ package com.example.tourmanage.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.intentSerializable
 import com.example.tourmanage.common.value.Config
@@ -18,7 +17,6 @@ class CourseActivity : ComponentActivity() {
         val curParentArea = intent.intentSerializable(Config.PASS_DATA.PARENT_AREA.value, AreaItem::class.java)
         val curChildArea = intent.intentSerializable(Config.PASS_DATA.CHILD_AREA.value, AreaItem::class.java)
 
-        enableEdgeToEdge()
         setContent {
             TourManageTheme {
                 CourseMainWidget(curParentArea = curParentArea, curChildArea = curChildArea)

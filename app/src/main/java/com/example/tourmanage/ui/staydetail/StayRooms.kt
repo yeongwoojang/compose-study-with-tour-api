@@ -5,14 +5,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material.Text
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -22,7 +21,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.R
 import com.example.tourmanage.common.data.server.item.DetailItem
 import com.example.tourmanage.common.extension.convertKRW
-import com.example.tourmanage.common.extension.isBooleanYn
 import com.example.tourmanage.common.extension.isEmptyString
 import com.example.tourmanage.getOptionString
 import timber.log.Timber
