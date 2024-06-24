@@ -26,12 +26,13 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -73,7 +74,7 @@ class LocalTourActivity : ComponentActivity() {
             TourManageTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colorScheme.background
                 ) {
                     MainForm(viewModel)
                 }
@@ -82,7 +83,7 @@ class LocalTourActivity : ComponentActivity() {
     }
 }
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainForm(viewModel: LocalTourViewModel = hiltViewModel()) {
     val areaInfos = viewModel.areaInfo.collectAsStateWithLifecycle()
@@ -168,24 +169,27 @@ fun TourListUi(list: List<AreaBasedItem>) {
     ) {
         items(
             items = list,
-            itemContent = { TourListItem(it) {
-                UiController.addActivity(
-                    context,
-                    StayDetailActivity::class,
-                    null)
-            } }
+            itemContent = {
+                TourListItem(it) {
+                    UiController.addActivity(
+                        context,
+                        StayDetailActivity::class,
+                        null
+                    )
+                }
+            }
         )
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TourListItem(item: AreaBasedItem, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .aspectRatio(2f),
         shape = RoundedCornerShape(CornerSize(16.dp)),
-        elevation = 6.dp,
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         onClick = onClick
     ) {
         Box(
@@ -222,7 +226,7 @@ fun AreaListUi(list: List<AreaItem>, viewModel: LocalTourViewModel) {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AreaItem(item: String, onClick: () -> Unit) {
     Card(
@@ -232,7 +236,7 @@ fun AreaItem(item: String, onClick: () -> Unit) {
 
             },
         shape = RoundedCornerShape(CornerSize(20.dp)),
-        elevation = 2.dp,
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         onClick = onClick
     ) {
         Box(

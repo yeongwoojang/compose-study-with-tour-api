@@ -3,7 +3,6 @@ package com.example.tourmanage.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -33,7 +32,6 @@ class FestivalMainActivity : ComponentActivity() {
             Timber.d("mainFestival: $mainFestival")
         }
 
-        enableEdgeToEdge()
         setContent {
             TourManageTheme {
                 if (mainFestival != null) {

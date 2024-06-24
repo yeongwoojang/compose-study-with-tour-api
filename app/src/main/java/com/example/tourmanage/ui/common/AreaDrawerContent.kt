@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -63,9 +63,11 @@ fun AreaDrawerContent(
                 }
             }
             Spacer(modifier = Modifier.width(10.dp))
-            Divider(modifier = Modifier
-                .fillMaxHeight()
-                .width(1.dp))
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(1.dp)
+            )
             Spacer(modifier = Modifier.width(10.dp))
 
             if (detailAreaList != null) {

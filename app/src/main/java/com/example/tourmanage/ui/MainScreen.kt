@@ -1,5 +1,6 @@
 package com.example.tourmanage.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,11 +11,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -60,7 +62,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
     var detailAreaCode by remember { mutableStateOf<List<AreaItem>?>(null) }
 
     var curParentItem by rememberSaveable {
-      mutableStateOf<AreaItem?>(null)
+        mutableStateOf<AreaItem?>(null)
     }
     var curChildItem by rememberSaveable {
         mutableStateOf<AreaItem?>(null)
@@ -103,8 +105,8 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                 TopAppBar(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primaryContainer)
                         .height(70.dp),
-                    backgroundColor = colorResource(id = R.color.white_smoke),
                     title = {
                         Text(
                             modifier = Modifier
@@ -129,7 +131,12 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                 }
             }
         ) {
-            Box(modifier = Modifier.padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding())) {
+            Box(
+                modifier = Modifier.padding(
+                    top = it.calculateTopPadding(),
+                    bottom = it.calculateBottomPadding()
+                )
+            ) {
                 NavigationGraph(navController, curParentItem, curChildItem) {
                     isSheetOpen = true
                 }
@@ -168,14 +175,17 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                                         modifier = Modifier
                                             .width(60.dp)
                                             .wrapContentHeight(),
-                                        curParentItem, false)
+                                        curParentItem, false
+                                    )
                                 }
                                 Spacer(modifier = Modifier.width(10.dp))
                                 if (curChildItem != null) {
-                                    AreaIconWidget(modifier = Modifier
-                                        .width(60.dp)
-                                        .wrapContentHeight(),
-                                        curChildItem, true)
+                                    AreaIconWidget(
+                                        modifier = Modifier
+                                            .width(60.dp)
+                                            .wrapContentHeight(),
+                                        curChildItem, true
+                                    )
                                 }
                             }
                         }
@@ -184,7 +194,8 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                     AreaDrawerContent(
                         currentParentArea = curParentItem,
                         currentChildArea = curChildItem,
-                        detailAreaList = detailAreaCode) { areaItem, requestKey, isChild ->
+                        detailAreaList = detailAreaCode
+                    ) { areaItem, requestKey, isChild ->
                         viewModel.cacheArea(areaItem, isChild)
                     }
                 }
