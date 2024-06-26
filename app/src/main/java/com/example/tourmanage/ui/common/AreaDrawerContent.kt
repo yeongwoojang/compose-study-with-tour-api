@@ -29,14 +29,14 @@ import com.example.tourmanage.viewmodel.MainViewModel
 
 @Composable
 fun AreaDrawerContent(
-    viewModel: MainViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
     currentParentArea: AreaItem?,
     currentChildArea: AreaItem?,
     detailAreaList: List<AreaItem>?,
     onClick: (areaItem: AreaItem, requestKey: String, isChild: Boolean) -> Unit) {
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .navigationBarsPadding()
             .statusBarsPadding()
             .fillMaxWidth()

@@ -54,6 +54,9 @@ class RetrofitModule {
     fun getOkHttpClient(@ApplicationContext context: Context, loggingIntercepter: HttpLoggingInterceptor, networkInterceptor: Interceptor)
     = OkHttpClient.Builder().apply {
 //        cache(Cache(context.cacheDir, 1024 * 1024 * 10))
+        readTimeout(3, TimeUnit.SECONDS)
+        connectTimeout(3, TimeUnit.SECONDS)
+        writeTimeout(3, TimeUnit.SECONDS)
         addInterceptor(loggingIntercepter)
         addNetworkInterceptor(networkInterceptor)
     }.build()

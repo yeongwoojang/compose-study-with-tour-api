@@ -1,40 +1,27 @@
 package com.example.tourmanage.ui.main
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.tourmanage.ui.favorite.FavoriteScreen
 import com.example.tourmanage.ui.home.HomeScreen
-import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainNavHost() {
     val navController = rememberNavController()
-
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    var bottomSheenOpenYn by remember { mutableStateOf(false) }
     val currentRoute = navBackStackEntry?.destination?.route?.let { currentRoute ->
         MainRoute.values().find { route -> route.route == currentRoute }
     } ?: MainRoute.HOME
@@ -42,20 +29,10 @@ fun MainNavHost() {
     Surface {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background
-                    ),
-                    title = {
-                        Text(
-                            text = currentRoute.contentDescription,
-                            style = TextStyle(
-                                color = Color.White,
-                                fontSize = 14.sp,
-                                fontFamily = spoqaHanSansNeoFont,
-                                fontWeight = FontWeight.Medium
-                            )
-                        )
+                MainTopBar(
+                    currentRoute = currentRoute,
+                    menuClick = {
+                        bottomSheenOpenYn = true
                     }
                 )
             },
@@ -66,7 +43,12 @@ fun MainNavHost() {
                     startDestination = MainRoute.HOME.route
                 ) {
                     composable(route = MainRoute.HOME.route) {
-                        HomeScreen()
+                        HomeScreen(
+                            bottomSheenOpenYn = bottomSheenOpenYn,
+                            onDismissMenu = {
+                                bottomSheenOpenYn = false
+                            }
+                        )
                     }
 
                     composable(route = MainRoute.FAVORITE.route) {
