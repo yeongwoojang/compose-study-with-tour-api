@@ -16,6 +16,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,11 +31,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.ui.common.AreaDrawerContent
 import com.example.tourmanage.ui.common.AreaIconWidget
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.MainHomeViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +52,20 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
 
 
+//    LaunchedEffect(key1 = viewModel.childAreaCodesState) {
+//        viewModel.childAreaCodesState.collect {
+//            Timber.i("TEST_LOG | $it")
+//        }
+//    }
+
+    val child = viewModel.childAreaCodesState.collectAsStateWithLifecycle()
+    Timber.i("TEST_LOG | child: $child")
+
+    if (child.isSuccess()) {
+        val name = child.value.data!!
+        name.get(0).name
+        Text(text = name.get(0).name!!)
+    }
     if (bottomSheenOpenYn) {
         ModalBottomSheet(
             modifier = Modifier.height(600.dp),
@@ -76,6 +94,9 @@ fun HomeScreen(
                         )
                     )
                     Spacer(modifier = Modifier.height(10.dp))
+                    Row {
+
+                    }
 //                    Row() {
 //                        if (curParentItem != null) {
 //                            AreaIconWidget(
@@ -102,10 +123,11 @@ fun HomeScreen(
                 modifier = Modifier.background(color = MaterialTheme.colorScheme.primaryContainer),
                 currentParentArea = null,
                 currentChildArea = null,
-                detailAreaList = null
-            ) { areaItem, requestKey, isChild ->
-//                viewModel.cacheArea(areaItem, isChild)
-            }
+                detailAreaList = null,
+                onClick = { areaItem, isChild ->
+                    viewModel.cacheArea(areaItem, isChild)
+                }
+            )
         }
     }
 }

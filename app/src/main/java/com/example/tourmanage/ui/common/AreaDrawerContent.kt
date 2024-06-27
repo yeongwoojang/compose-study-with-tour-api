@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +34,8 @@ fun AreaDrawerContent(
     currentParentArea: AreaItem?,
     currentChildArea: AreaItem?,
     detailAreaList: List<AreaItem>?,
-    onClick: (areaItem: AreaItem, requestKey: String, isChild: Boolean) -> Unit) {
+    onClick: (areaItem: AreaItem, isChild: Boolean) -> Unit
+) {
 
     Box(
         modifier = modifier
@@ -56,14 +58,17 @@ fun AreaDrawerContent(
                         areaItem.code.isEmptyString()
                     }
                 ) { index, parentArea ->
-                    AreaItemLayout(parentArea, currentParentArea = currentParentArea, onClick = { requestKey ->
-                            onClick(parentArea, requestKey, false)
+                    AreaItemLayout(
+                        areaItem = parentArea,
+                        currentParentArea = currentParentArea,
+                        onClick = {
+                            onClick(parentArea, false)
                         }
                     )
                 }
             }
             Spacer(modifier = Modifier.width(10.dp))
-            HorizontalDivider(
+            VerticalDivider(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(1.dp)
@@ -79,9 +84,15 @@ fun AreaDrawerContent(
                     items(
                         items = detailAreaList,
                         itemContent = { childArea ->
-                            AreaItemLayout(childArea, isChild = true, currentParentArea = currentParentArea, currentChildArea = currentChildArea) { requestKey ->
-                                onClick(childArea, requestKey, true)
-                            }
+                            AreaItemLayout(
+                                areaItem = childArea,
+                                isChild = true,
+                                currentParentArea = currentParentArea,
+                                currentChildArea = currentChildArea,
+                                onClick = {
+                                    onClick(childArea, true)
+                                }
+                            )
                         }
                     )
                 }
@@ -96,8 +107,13 @@ fun AreaDrawerContent(
                     items(
                         items = detailAreaList,
                         itemContent = { childArea ->
-                            AreaItemLayout(childArea, isChild = true, currentParentArea = currentParentArea, currentChildArea = currentChildArea) { requestKey ->
-                                onClick(childArea, requestKey, true)
+                            AreaItemLayout(
+                                areaItem = childArea,
+                                isChild = true,
+                                currentParentArea = currentParentArea,
+                                currentChildArea = currentChildArea
+                            ) {
+                                onClick(childArea, true)
                             }
                         }
                     )
@@ -108,7 +124,14 @@ fun AreaDrawerContent(
 }
 
 @Composable
-fun AreaItemLayout(areaItem: AreaItem?, isChild: Boolean = false, currentParentArea: AreaItem?, currentChildArea: AreaItem? = null, onClick: (requestKey: String) -> Unit) {
+fun AreaItemLayout(
+    modifier: Modifier = Modifier,
+    areaItem: AreaItem?,
+    isChild: Boolean = false,
+    currentParentArea: AreaItem?,
+    currentChildArea: AreaItem? = null,
+    onClick: () -> Unit
+) {
     val backgroundColor = if (isChild) {
         if (currentChildArea?.name == areaItem?.name && currentChildArea?.code == areaItem?.code) {
             colorResource(id = R.color.cornflower_blue)
@@ -124,7 +147,7 @@ fun AreaItemLayout(areaItem: AreaItem?, isChild: Boolean = false, currentParentA
     }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .background(color = backgroundColor, shape = RoundedCornerShape(6.dp))
             .width(80.dp)
             .wrapContentHeight()
@@ -133,27 +156,27 @@ fun AreaItemLayout(areaItem: AreaItem?, isChild: Boolean = false, currentParentA
                 if (!isChild) {
                     if (currentParentArea?.code != areaItem?.code) {
                         areaItem?.code?.let {
-                            onClick(it)
+                            onClick()
                         }
                     }
                 } else {
                     if (currentChildArea?.code != areaItem?.code) {
                         areaItem?.code?.let {
-                            onClick(it)
+                            onClick()
                         }
                     }
                 }
             },
-    contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center
     ) {
-       Text(
-           text = areaItem?.name.isEmptyString(),
-           style = TextStyle(
-               fontSize = 12.sp,
-               fontFamily = spoqaHanSansNeoFont,
-               fontWeight = FontWeight.Medium,
-               color = Color.Black
-           )
-       )
+        Text(
+            text = areaItem?.name.isEmptyString(),
+            style = TextStyle(
+                fontSize = 12.sp,
+                fontFamily = spoqaHanSansNeoFont,
+                fontWeight = FontWeight.Medium,
+                color = Color.Black
+            )
+        )
     }
 }

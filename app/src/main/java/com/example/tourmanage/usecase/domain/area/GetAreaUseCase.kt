@@ -1,6 +1,5 @@
 package com.example.tourmanage.usecase.domain.area
 
-import com.example.tourmanage.common.data.server.info.AreaInfo
 import com.example.tourmanage.common.data.server.item.AreaItem
 import kotlinx.coroutines.flow.Flow
 

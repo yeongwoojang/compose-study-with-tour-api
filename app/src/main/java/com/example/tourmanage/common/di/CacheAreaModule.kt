@@ -6,11 +6,11 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.tourmanage.common.AreaDataStoreRepository
 import com.example.tourmanage.common.DataStoreRepository
+import com.example.tourmanage.usecase.data.area.CacheAreaUseCaseImpl
+import com.example.tourmanage.usecase.domain.area.CacheAreaUseCase
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -20,22 +20,9 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class DataStoreModule {
+abstract class CacheAreaModule {
 
     @Binds
     @Singleton
-    abstract fun bindDataStoreRepository(
-        dataStoreRepository: AreaDataStoreRepository
-    ): DataStoreRepository
-
-    companion object {
-        @Provides
-        @Singleton
-        fun provideAreaDataStorePreferences(
-            @ApplicationContext applicationContext: Context
-        ): DataStore<Preferences> {
-            return applicationContext.dataStore
-        }
-    }
-
+    abstract fun bindCacheAreaUseCase(dataStoreRepository: CacheAreaUseCaseImpl): CacheAreaUseCase
 }
