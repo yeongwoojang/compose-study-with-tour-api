@@ -195,7 +195,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                         currentParentArea = curParentItem,
                         currentChildArea = curChildItem,
                         detailAreaList = detailAreaCode
-                    ) { areaItem, requestKey, isChild ->
+                    ) { areaItem, isChild ->
                         viewModel.cacheArea(areaItem, isChild)
                     }
                 }

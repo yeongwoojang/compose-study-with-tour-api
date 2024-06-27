@@ -8,7 +8,7 @@ import com.example.tourmanage.toAreaInfoList
 import com.example.tourmanage.usecase.domain.area.GetAreaUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
+import timber.log.Timber
 import javax.inject.Inject
 
 class GetAreaUseCaseImpl @Inject constructor(

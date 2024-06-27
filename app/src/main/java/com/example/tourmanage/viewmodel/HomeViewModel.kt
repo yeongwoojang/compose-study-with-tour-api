@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val serverRepo: ServerDataRepository
+    private val serverRepo: ServerDataRepository,
 ): ViewModel() {
 
     private val _festivalItem = MutableStateFlow<UiState<ArrayList<FestivalItem>>>(UiState.Ready())

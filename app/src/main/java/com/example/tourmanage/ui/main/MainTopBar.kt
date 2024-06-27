@@ -33,7 +33,7 @@ fun MainTopBar(
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = MaterialTheme.colorScheme.primary
         ),
         title = {
             Row(
@@ -45,7 +45,7 @@ fun MainTopBar(
                 Text(
                     text = currentRoute.contentDescription,
                     style = TextStyle(
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp,
                         fontFamily = spoqaHanSansNeoFont,
                         fontWeight = FontWeight.Medium
@@ -58,7 +58,7 @@ fun MainTopBar(
                         onClick = menuClick) {
                         Icon(
                             imageVector = Icons.Filled.Menu,
-                            tint = MaterialTheme.colorScheme.onPrimary,
+                            tint = MaterialTheme.colorScheme.onBackground,
                             contentDescription = "지역 설정"
                         )
                     }
