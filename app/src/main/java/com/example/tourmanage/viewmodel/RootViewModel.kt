@@ -8,8 +8,11 @@ import com.example.tourmanage.error.area.AreaException
 import com.example.tourmanage.usecase.domain.area.GetAreaUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -22,10 +25,12 @@ class RootViewModel @Inject constructor(
     private val _areaCodesState = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Ready())
     val areaCodesState = _areaCodesState.asStateFlow()
 
+    private val _exceptionState = MutableSharedFlow<Throwable>()
+    val exceptionState = _exceptionState.asSharedFlow()
+
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e("exceptionHandler:: | throwable: $throwable")
-        when (throwable) {
-            is AreaException -> _areaCodesState.value = UiState.Error(throwable.message.orEmpty())
+        viewModelScope.launch {
+            _exceptionState.emit(throwable)
         }
     }
     fun getAreaList() {

@@ -39,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.example.tourmanage.R
+import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
@@ -192,9 +193,10 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                     }
                 ) {
                     AreaDrawerContent(
-                        currentParentArea = curParentItem,
-                        currentChildArea = curChildItem,
-                        detailAreaList = detailAreaCode
+                        curMainArea = curParentItem,
+                        curChildArea = curChildItem,
+                        mainAreaList = ServerGlobal.getMainAreaList(),
+                        curChildAreaList = null
                     ) { areaItem, isChild ->
                         viewModel.cacheArea(areaItem, isChild)
                     }

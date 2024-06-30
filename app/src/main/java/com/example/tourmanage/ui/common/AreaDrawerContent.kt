@@ -7,8 +7,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.*
@@ -20,22 +20,30 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.R
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.*
-import com.example.tourmanage.viewmodel.MainViewModel
 
 @Composable
 fun AreaDrawerContent(
     modifier: Modifier = Modifier,
-    currentParentArea: AreaItem?,
-    currentChildArea: AreaItem?,
-    detailAreaList: List<AreaItem>?,
+    curMainArea: AreaItem?,
+    curChildArea: AreaItem?,
+    mainAreaList: List<AreaItem>,
+    curChildAreaList: List<AreaItem>?,
     onClick: (areaItem: AreaItem, isChild: Boolean) -> Unit
 ) {
+
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        var scrollPosition = mainAreaList.indexOf(curMainArea)
+        if (scrollPosition == -1) scrollPosition = 0
+        listState.scrollToItem(scrollPosition)
+    }
 
     Box(
         modifier = modifier
@@ -49,20 +57,22 @@ fun AreaDrawerContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             LazyColumn(
+                state = listState,
                 modifier = Modifier,
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                itemsIndexed(
-                    items = ServerGlobal.getParentAreaList(),
-                    key = { index, areaItem ->
-                        areaItem.code.isEmptyString()
+                items(
+                    count = mainAreaList.size,
+                    key = {index ->
+                        mainAreaList[index]
                     }
-                ) { index, parentArea ->
+                ) { index ->
+                    val mainArea = mainAreaList[index]
                     AreaItemLayout(
-                        areaItem = parentArea,
-                        currentParentArea = currentParentArea,
+                        areaItem = mainArea,
+                        currentParentArea = curMainArea,
                         onClick = {
-                            onClick(parentArea, false)
+                            onClick(mainArea, false)
                         }
                     )
                 }
@@ -75,20 +85,20 @@ fun AreaDrawerContent(
             )
             Spacer(modifier = Modifier.width(10.dp))
 
-            if (detailAreaList != null) {
+            if (curChildAreaList != null) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(
-                        items = detailAreaList,
+                        items = curChildAreaList,
                         itemContent = { childArea ->
                             AreaItemLayout(
                                 areaItem = childArea,
                                 isChild = true,
-                                currentParentArea = currentParentArea,
-                                currentChildArea = currentChildArea,
+                                currentParentArea = curMainArea,
+                                currentChildArea = curChildArea,
                                 onClick = {
                                     onClick(childArea, true)
                                 }
@@ -98,27 +108,6 @@ fun AreaDrawerContent(
                 }
             }
 
-            if (detailAreaList != null) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(
-                        items = detailAreaList,
-                        itemContent = { childArea ->
-                            AreaItemLayout(
-                                areaItem = childArea,
-                                isChild = true,
-                                currentParentArea = currentParentArea,
-                                currentChildArea = currentChildArea
-                            ) {
-                                onClick(childArea, true)
-                            }
-                        }
-                    )
-                }
-            }
         }
     }
 }

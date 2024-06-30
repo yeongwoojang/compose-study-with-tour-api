@@ -1,9 +1,9 @@
 package com.example.tourmanage.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,13 +33,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.tourmanage.common.ServerGlobal
+import com.example.tourmanage.common.data.server.item.AreaItem
+import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.ui.common.AreaDrawerContent
 import com.example.tourmanage.ui.common.AreaIconWidget
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.MainHomeViewModel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,25 +50,37 @@ fun HomeScreen(
     bottomSheenOpenYn: Boolean = false,
     onDismissMenu: () -> Unit
 ) {
-//    var bottomSheenOpenYn by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
 
+    var curMainArea by rememberSaveable { mutableStateOf<AreaItem?>(null) }
+    var curSubArea by rememberSaveable { mutableStateOf<AreaItem?>(null) }
 
-//    LaunchedEffect(key1 = viewModel.childAreaCodesState) {
-//        viewModel.childAreaCodesState.collect {
-//            Timber.i("TEST_LOG | $it")
-//        }
-//    }
+    var subAreaList by remember { mutableStateOf<List<AreaItem>?>(null) }
 
-    val child = viewModel.childAreaCodesState.collectAsStateWithLifecycle()
-    Timber.i("TEST_LOG | child: $child")
+    LaunchedEffect(Unit) {
+        launch {
+            viewModel.curMainArea.collect {
+                curMainArea = it
+            }
+        }
 
-    if (child.isSuccess()) {
-        val name = child.value.data!!
-        name.get(0).name
-        Text(text = name.get(0).name!!)
+        launch {
+            viewModel.curSubArea.collect {
+                curSubArea = it
+            }
+        }
+        launch {
+            viewModel.getCachedArea()
+        }
     }
+
+    val subAreaListState = viewModel.subAreaList.collectAsStateWithLifecycle()
+
+    if (subAreaListState.isSuccess()) {
+        subAreaList = subAreaListState.value.data!!
+    }
+
     if (bottomSheenOpenYn) {
         ModalBottomSheet(
             modifier = Modifier.height(600.dp),
@@ -83,7 +98,8 @@ fun HomeScreen(
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
                         .fillMaxWidth()
                         .padding(top = 10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Text(
                         text = "지역선택",
@@ -93,38 +109,37 @@ fun HomeScreen(
                             fontWeight = FontWeight.Medium
                         )
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
                     Row {
-
+                        if (curMainArea != null) {
+                            AreaIconWidget(
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .wrapContentHeight(),
+                                curMainArea, false
+                            )
+                        }
+                        if (curSubArea != null) {
+                            AreaIconWidget(
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .wrapContentHeight(),
+                                curSubArea, true
+                            )
+                        }
                     }
-//                    Row() {
-//                        if (curParentItem != null) {
-//                            AreaIconWidget(
-//                                modifier = Modifier
-//                                    .width(60.dp)
-//                                    .wrapContentHeight(),
-//                                curParentItem, false
-//                            )
-//                        }
-//                        Spacer(modifier = Modifier.width(10.dp))
-//                        if (curChildItem != null) {
-//                            AreaIconWidget(
-//                                modifier = Modifier
-//                                    .width(60.dp)
-//                                    .wrapContentHeight(),
-//                                curChildItem, true
-//                            )
-//                        }
-//                    }
                 }
             }
         ) {
             AreaDrawerContent(
                 modifier = Modifier.background(color = MaterialTheme.colorScheme.primaryContainer),
-                currentParentArea = null,
-                currentChildArea = null,
-                detailAreaList = null,
+                curMainArea = curMainArea,
+                curChildArea = curSubArea,
+                mainAreaList = ServerGlobal.getMainAreaList(),
+                curChildAreaList = subAreaList,
                 onClick = { areaItem, isChild ->
+                    if (subAreaListState.isLoading()) {
+                        return@AreaDrawerContent
+                    }
                     viewModel.cacheArea(areaItem, isChild)
                 }
             )

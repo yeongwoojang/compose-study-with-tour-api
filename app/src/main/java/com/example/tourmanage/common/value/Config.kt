@@ -1,5 +1,7 @@
 package com.example.tourmanage.common.value
 
+import androidx.datastore.preferences.core.stringPreferencesKey
+
 object Config {
 
     const val HOME = "HOME"
@@ -64,4 +66,12 @@ object Config {
         HOME("HOME"),
         CLOSE("CLOSE")
     }
+
+    val PARENT_AREA = stringPreferencesKey(
+        name = "PARENT_AREA"
+    )
+
+    val CHILD_AREA = stringPreferencesKey(
+        name = "CHILD_AREA"
+    )
 }

@@ -51,6 +51,7 @@ class MainViewModel @Inject constructor(
             _curChild.emit(null)
         }
     }
+
     fun cacheArea(areaItem: AreaItem?, isChild: Boolean = false) {
         viewModelScope.launch {
             if (areaItem == null) {
