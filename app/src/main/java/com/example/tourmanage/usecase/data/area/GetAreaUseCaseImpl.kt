@@ -20,10 +20,11 @@ class GetAreaUseCaseImpl @Inject constructor(
                 areaCode = areaCode
             )
             val areaCodes = response.toAreaInfoList()
+            Timber.i("GetAreaUseCase() | areaCodes: $areaCodes")
             if (areaCodes.isEmpty()) {
                 throw AreaException("지역코드 없음.")
             } else {
-                ServerGlobal.setAreaCodeList(areaCodes)
+                ServerGlobal.setMainAreaList(areaCodes)
                 emit(areaCodes)
             }
         }

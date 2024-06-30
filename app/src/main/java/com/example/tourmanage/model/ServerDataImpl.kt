@@ -8,7 +8,6 @@ import com.example.tourmanage.common.value.Config
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -47,7 +46,7 @@ class ServerDataImpl @Inject constructor(
                 val areaItemList = areaInfo.toAreaInfoList()
                 if ("0000" == code && areaItemList.isNotEmpty()) {
                     if (isInit) {
-                        ServerGlobal.setAreaCodeList(areaItemList)
+                        ServerGlobal.setMainAreaList(areaItemList)
                     }
                     trySend(UiState.Success(areaItemList, requestKey = areaCode!!))
                 } else {

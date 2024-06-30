@@ -15,14 +15,15 @@ import kotlin.coroutines.resume
 
 object ServerGlobal {
     private var currentGps = GpsData()
-    private val parentAreaList = ArrayList<AreaItem>()
+    private val mainAreaList = ArrayList<AreaItem>()
 
-    fun setAreaCodeList(areaCodeList: ArrayList<AreaItem>) {
-        parentAreaList.addAll(areaCodeList)
+    fun setMainAreaList(list: ArrayList<AreaItem>) {
+        if (mainAreaList.isEmpty()) {
+            mainAreaList.addAll(list)
+        }
     }
 
-    fun getParentAreaList(): ArrayList<AreaItem> = parentAreaList
-
+    fun getMainAreaList(): ArrayList<AreaItem> = mainAreaList
 
     fun setGPS(location: Location) {
         val longitude = location.longitude.toString().isEmptyString("")

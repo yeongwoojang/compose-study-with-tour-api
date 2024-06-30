@@ -30,22 +30,38 @@ class RetrofitModule {
     @Provides
     @Singleton
     fun getNetworkInterceptor() = Interceptor {
-        Timber.d("OkHttp Intercept")
-        val request = it.request()
-        val response = it.proceed(request)
+        Timber.d("Intercept")
 
-        val isSuccess = response.body?.contentType().toString() == "application/json"
+        var replyCount = 0
+        val request = it.request()
+        var response: Response? = null
+        var isSuccess = false
+        while(replyCount < 2) { //_ 여기서 retry는 1회 시도
+            try {
+                Timber.e("Intercept() | proceed")
+                response = it.proceed(request)
+                isSuccess = response.body?.contentType().toString() == "application/json"
+                if (isSuccess) {
+                   break
+                }
+            } catch (e: Exception) {
+                Timber.e("Intercept() | error: $e")
+            }
+            replyCount++
+        }
+
         if (isSuccess) {
             val cacheControl = CacheControl.Builder()
                 .maxAge(1, TimeUnit.HOURS)
                 .build()
 
-            response.newBuilder()
+            response!!.newBuilder()
                 .removeHeader("Cache-Control")
                 .addHeader("Cache-Control", cacheControl.toString())
                 .build()
         } else {
-            response
+            Timber.e("Intercept() | last proceed")
+            it.proceed(request)//_ 최종적으로 retry 한번 더 시도 (총 3회 조회까지 가능)
         }
     }
 
@@ -54,11 +70,11 @@ class RetrofitModule {
     fun getOkHttpClient(@ApplicationContext context: Context, loggingIntercepter: HttpLoggingInterceptor, networkInterceptor: Interceptor)
     = OkHttpClient.Builder().apply {
 //        cache(Cache(context.cacheDir, 1024 * 1024 * 10))
-        readTimeout(3, TimeUnit.SECONDS)
-        connectTimeout(3, TimeUnit.SECONDS)
-        writeTimeout(3, TimeUnit.SECONDS)
+        readTimeout(100, TimeUnit.MILLISECONDS)
+        connectTimeout(1, TimeUnit.SECONDS)
+        writeTimeout(1, TimeUnit.SECONDS)
         addInterceptor(loggingIntercepter)
-        addNetworkInterceptor(networkInterceptor)
+        addInterceptor(networkInterceptor)
     }.build()
 
     @Provides
