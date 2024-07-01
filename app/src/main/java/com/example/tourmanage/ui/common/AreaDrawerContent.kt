@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -22,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.R
-import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.*
 
@@ -37,7 +35,6 @@ fun AreaDrawerContent(
 ) {
 
     val listState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         var scrollPosition = mainAreaList.indexOf(curMainArea)
@@ -63,14 +60,15 @@ fun AreaDrawerContent(
             ) {
                 items(
                     count = mainAreaList.size,
-                    key = {index ->
+                    key = { index ->
                         mainAreaList[index]
                     }
                 ) { index ->
                     val mainArea = mainAreaList[index]
                     AreaItemLayout(
+                        modifier = Modifier.width(80.dp),
                         areaItem = mainArea,
-                        currentParentArea = curMainArea,
+                        curMainArea = curMainArea,
                         onClick = {
                             onClick(mainArea, false)
                         }
@@ -78,10 +76,9 @@ fun AreaDrawerContent(
                 }
             }
             Spacer(modifier = Modifier.width(10.dp))
-            VerticalDivider(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(1.dp)
+            VerticalDivider(modifier = Modifier
+                .fillMaxHeight()
+                .width(1.dp)
             )
             Spacer(modifier = Modifier.width(10.dp))
 
@@ -95,10 +92,11 @@ fun AreaDrawerContent(
                         items = curChildAreaList,
                         itemContent = { childArea ->
                             AreaItemLayout(
+                                modifier = Modifier.width(80.dp),
                                 areaItem = childArea,
-                                isChild = true,
-                                currentParentArea = curMainArea,
-                                currentChildArea = curChildArea,
+                                isSub = true,
+                                curMainArea = curMainArea,
+                                curSubArea = curChildArea,
                                 onClick = {
                                     onClick(childArea, true)
                                 }
@@ -116,19 +114,19 @@ fun AreaDrawerContent(
 fun AreaItemLayout(
     modifier: Modifier = Modifier,
     areaItem: AreaItem?,
-    isChild: Boolean = false,
-    currentParentArea: AreaItem?,
-    currentChildArea: AreaItem? = null,
+    isSub: Boolean = false,
+    curMainArea: AreaItem?,
+    curSubArea: AreaItem? = null,
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (isChild) {
-        if (currentChildArea?.name == areaItem?.name && currentChildArea?.code == areaItem?.code) {
+    val backgroundColor = if (isSub) {
+        if (curSubArea?.name == areaItem?.name && curSubArea?.code == areaItem?.code) {
             colorResource(id = R.color.cornflower_blue)
         } else {
             colorResource(id = R.color.gainsboro)
         }
     } else {
-        if (currentParentArea?.name == areaItem?.name && currentParentArea?.code == areaItem?.code) {
+        if (curMainArea?.name == areaItem?.name && curMainArea?.code == areaItem?.code) {
             colorResource(id = R.color.light_coral)
         } else {
             colorResource(id = R.color.gainsboro)
@@ -137,22 +135,17 @@ fun AreaItemLayout(
 
     Box(
         modifier = modifier
-            .background(color = backgroundColor, shape = RoundedCornerShape(6.dp))
-            .width(80.dp)
             .wrapContentHeight()
+            .background(color = backgroundColor, shape = RoundedCornerShape(6.dp))
             .padding(10.dp)
             .noRippleClickable {
-                if (!isChild) {
-                    if (currentParentArea?.code != areaItem?.code) {
-                        areaItem?.code?.let {
-                            onClick()
-                        }
+                if (!isSub) {
+                    if (curMainArea?.code != areaItem?.code) {
+                        onClick()
                     }
                 } else {
-                    if (currentChildArea?.code != areaItem?.code) {
-                        areaItem?.code?.let {
-                            onClick()
-                        }
+                    if (curSubArea?.code != areaItem?.code) {
+                        onClick()
                     }
                 }
             },

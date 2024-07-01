@@ -8,9 +8,7 @@ import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.data.server.item.LocationBasedItem
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.model.ServerDataRepository
-import com.squareup.moshi.Json
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -49,7 +47,7 @@ class FestivalViewModel @Inject constructor(
         Timber.d("requestFestivalInfo() | isSkip: $isSkip")
         if (!isSkip) {
             viewModelScope.launch {
-                val recommend = serverRepo.requestFestivalInfo(areaCode = "6", arrange = Config.ARRANGE_TYPE.O)
+                val recommend = serverRepo.requestFestivalInfo(areaCode = "6")
 
                 val currentGPS = ServerGlobal.getCurrentGPS()
                 val longitude = currentGPS.mapX

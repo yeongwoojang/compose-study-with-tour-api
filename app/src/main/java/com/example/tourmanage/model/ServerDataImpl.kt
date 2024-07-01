@@ -108,7 +108,7 @@ class ServerDataImpl @Inject constructor(
         }
     }
 
-    override fun requestFestivalInfo(areaCode: String?, eventStartDate: String?, arrange: Config.ARRANGE_TYPE): Flow<UiState<ArrayList<FestivalItem>>> {
+    override fun requestFestivalInfo(areaCode: String?, eventStartDate: String?): Flow<UiState<ArrayList<FestivalItem>>> {
         return callbackFlow {
             try {
                 var date = eventStartDate
@@ -117,7 +117,7 @@ class ServerDataImpl @Inject constructor(
                     date = format.format(Date().time)
                 }
 
-                val festivalInfo = client.requestFestivalInfo(areaCode = areaCode, eventStartDate = date!!, arrange = arrange.name)
+                val festivalInfo = client.requestFestivalInfo(areaCode = areaCode, eventStartDate = date!!)
                 val code = festivalInfo.response?.header?.resultCode
                 val msg = festivalInfo.response?.header?.resultMsg
                 val festivalItems = festivalInfo.toFestivalItems()
