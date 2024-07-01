@@ -55,10 +55,8 @@ fun IndicatorDots(isSelected: Boolean) {
     Box(modifier = Modifier
         .size(size.value)
         .clip(CircleShape)
-        .background(Color.Black)
-    ) {
-
-    }
+        .background(Color.White)
+    )
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -72,29 +70,6 @@ fun MainImageRow(festivalItems: ArrayList<FestivalItem>) {
     val screenWidth = configuration.screenWidthDp.dp
 
     Column() {
-        Row(
-            modifier = Modifier.padding(start = 18.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "이달의 축제",
-                style = TextStyle(
-                    color = colorResource(id = R.color.cornflower_blue),
-                    fontFamily = spoqaHanSansNeoFont,
-                    fontWeight = FontWeight.Normal,
-                ),
-                fontSize = 16.sp
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            HorizontalDivider(
-                Modifier
-                    .weight(2f)
-                    .height(1.5.dp)
-                    .padding(end = 20.dp)
-                    .background(colorResource(id = R.color.white_smoke))
-            )
-        }
-        Spacer(modifier = Modifier.height(20.dp))
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             state = scrollState
@@ -133,13 +108,6 @@ fun MainImageRow(festivalItems: ArrayList<FestivalItem>) {
             pageCount = festivalItems.size,
             currentPage = curIdx
         )
-        Spacer(modifier = Modifier.height(10.dp))
-        Divider(
-            Modifier
-                .fillMaxWidth()
-                .height(1.5.dp)
-                .padding(start = 25.dp, end = 20.dp)
-                .background(colorResource(id = R.color.white_smoke)))
     }
 
     LaunchedEffect(scrollState.isScrollInProgress) {

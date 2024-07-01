@@ -4,18 +4,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.server.item.AreaItem
+import com.example.tourmanage.common.data.server.item.FestivalItem
+import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.usecase.domain.area.CacheAreaUseCase
 import com.example.tourmanage.usecase.domain.area.GetAreaUseCase
 import com.example.tourmanage.usecase.domain.area.GetCacheAreaUseCase
 import com.example.tourmanage.usecase.domain.area.RemoveCacheAreaUseCase
+import com.example.tourmanage.usecase.domain.festival.GetFestivalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -31,7 +37,8 @@ class MainHomeViewModel @Inject constructor(
     private val getAreaUseCase: GetAreaUseCase,
     private val cacheAreaUseCase: CacheAreaUseCase,
     private val getCacheAreaUseCase: GetCacheAreaUseCase,
-    private val removeCacheAreaUseCase: RemoveCacheAreaUseCase
+    private val removeCacheAreaUseCase: RemoveCacheAreaUseCase,
+    private val getFestivalUseCase: GetFestivalUseCase
 
 ): ViewModel() {
      private var getSubAreaJob: Job? = null //_ 버튼을 연타하여 연속적인 조회를 막고 이전 조회는 취소하기 위한 Job
@@ -45,6 +52,9 @@ class MainHomeViewModel @Inject constructor(
 
     private val _curSubArea = MutableSharedFlow<AreaItem?>()
     val curSubArea = _curSubArea.asSharedFlow()
+
+    private val _festivalList = MutableStateFlow<UiState<ArrayList<FestivalItem>>>(UiState.Ready())
+    val festivalList = _festivalList.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val subAreaList: StateFlow<UiState<ArrayList<AreaItem>>> = _curMainArea.flatMapLatest {
@@ -94,4 +104,16 @@ class MainHomeViewModel @Inject constructor(
         }
     }
 
+    fun requestFestivalInfo(areaCode: String = "", eventStartDate: String = "") {
+        Timber.i("requestFestivalInfo()")
+        viewModelScope.launch(exceptionHandler) {
+            getFestivalUseCase(areaCode, eventStartDate).getOrThrow()
+                .onStart {
+                    _festivalList.value = UiState.Loading()
+                }
+                .collect {
+                    _festivalList.value = UiState.Success(it)
+                }
+        }
+    }
 }

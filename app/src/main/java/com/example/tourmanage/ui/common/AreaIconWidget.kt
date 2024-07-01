@@ -29,8 +29,8 @@ fun AreaIconWidget(
     val backgroundColor = if (isChild) colorResource(id = R.color.cornflower_blue) else colorResource(id = R.color.lightpink)
     Box(
         modifier = modifier
-            .background(color = backgroundColor, shape = RoundedCornerShape(20.dp))
-            .padding(5.dp),
+            .background(color = backgroundColor, shape = RoundedCornerShape(8.dp))
+            .padding(10.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(

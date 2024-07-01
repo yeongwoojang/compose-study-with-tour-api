@@ -25,7 +25,7 @@ class HomeViewModel @Inject constructor(
     fun requestFestivalInfo(areaCode: String? = "", eventStartDate: String? = "", arrangeType: Config.ARRANGE_TYPE) {
         Timber.i("requestFestivalInfo() | areaCode: $areaCode | eventStartDate: $eventStartDate | arrangeType: $arrangeType")
         viewModelScope.launch {
-            serverRepo.requestFestivalInfo(areaCode, eventStartDate, arrangeType)
+            serverRepo.requestFestivalInfo(areaCode, eventStartDate)
                 .onStart { _festivalItem.value = UiState.Loading() }
                 .catch { _festivalItem.value = UiState.Error(it.message!!) }
                 .collect { _festivalItem.value = it }

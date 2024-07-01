@@ -71,7 +71,7 @@ interface ServiceAPI {
         @Query("_type") type: String = TYPE,
         @Query("eventStartDate") eventStartDate: String? = "",
         @Query("listYN") listYn: String = "Y",
-        @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.value,
+        @Query("arrange") arrange: String = Config.ARRANGE_TYPE.O.value,
     ): FestivalInfo
 
     @GET("areaBasedList1")

@@ -9,16 +9,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.tourmanage.common.data.IntentData
+import com.example.tourmanage.common.util.UiController
+import com.example.tourmanage.common.value.Config
+import com.example.tourmanage.ui.FestivalMainActivity
 import com.example.tourmanage.ui.favorite.FavoriteScreen
+import com.example.tourmanage.ui.festival.FestivalScreen
+import com.example.tourmanage.ui.home.HomeRoute
 import com.example.tourmanage.ui.home.HomeScreen
 
 @Composable
 fun MainNavHost() {
+    val context = LocalContext.current
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     var bottomSheenOpenYn by remember { mutableStateOf(false) }
@@ -47,7 +55,20 @@ fun MainNavHost() {
                             bottomSheenOpenYn = bottomSheenOpenYn,
                             onDismissMenu = {
                                 bottomSheenOpenYn = false
-                            }
+                            },
+                            onClick = { homeRoute, data ->
+                                when (homeRoute) {
+                                    HomeRoute.FESTIVAL -> UiController
+                                        .addActivity(
+                                            context = context,
+                                            targetActivity = FestivalMainActivity::class,
+                                            data = IntentData(
+                                                mapOf(Config.PASS_DATA.DATA.value to data)
+                                            )
+                                        )
+                                }
+
+                            },
                         )
                     }
 

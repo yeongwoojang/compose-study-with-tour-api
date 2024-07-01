@@ -4,7 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.value.Config
-import com.example.tourmanage.error.area.AreaException
+import com.example.tourmanage.error.area.TourMangeException
 import com.example.tourmanage.usecase.domain.area.GetCacheAreaUseCase
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +21,7 @@ class GetCacheAreaUseCaseImpl @Inject constructor(
         flow {
             val data = dataStore.data
                 .catch {
-                    throw AreaException("캐싱된 지역 불러오기 실패")
+                    throw TourMangeException.AreaException("캐싱된 지역 불러오기 실패")
                 }
                 .map { preferences ->
                     val key = if (isSub) Config.CHILD_AREA else Config.PARENT_AREA
