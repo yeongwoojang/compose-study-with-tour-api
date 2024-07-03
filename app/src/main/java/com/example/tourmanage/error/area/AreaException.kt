@@ -6,6 +6,8 @@ sealed class TourMangeException(message: String): Exception(message) {
     class AreaNullException(message: String): Exception(message)
 
     class FestivalNullException(message: String): Exception(message)
+
+    class LocationBasedNullException(message: String): Exception(message)
 }
 
 

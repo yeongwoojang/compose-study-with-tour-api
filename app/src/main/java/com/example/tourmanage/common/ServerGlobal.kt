@@ -14,7 +14,7 @@ import java.util.Locale
 import kotlin.coroutines.resume
 
 object ServerGlobal {
-    private var currentGps = GpsData()
+    private var currentGps = GpsData("", "")
     private val mainAreaList = ArrayList<AreaItem>()
 
     fun setMainAreaList(list: ArrayList<AreaItem>) {

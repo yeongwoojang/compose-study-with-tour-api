@@ -93,10 +93,10 @@ interface ServiceAPI {
         @Query("_type") type: String = TYPE,
         @Query("listYN") listYn: String = "Y",
         @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.value,
-        @Query("mapX") mapX: String? = "",
-        @Query("mapY") mapY: String? = "",
+        @Query("mapX") mapX: String,
+        @Query("mapY") mapY: String,
         @Query("radius") radius: String? = "5000",
-        @Query("contentTypeId") contentTypeId: String? = Config.CONTENT_TYPE_ID.FESTIVAL.value,
+        @Query("contentTypeId") contentTypeId: String,
         @Query("serviceKey") key: String = API_KEY,
     ): LocationBasedInfo
 }

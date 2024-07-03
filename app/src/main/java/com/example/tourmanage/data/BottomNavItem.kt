@@ -10,10 +10,3 @@ sealed class BottomNavItem(
     object Wish: BottomNavItem(R.string.bottom_nav_item_wish, R.drawable.baseline_favorite_black_36, R.drawable.outline_favorite_border_black_36, Config.WISH)
     object Area: BottomNavItem(R.string.bottom_nav_item_area, R.drawable.baseline_location_on_black_36, R.drawable.outline_location_on_black_36, Config.AREA)
 }
-
-sealed class DetailNavItem(
-    val route: String
-) {
-    object Detail: DetailNavItem("Detail")
-    object Main: DetailNavItem("MAIN")
-}
