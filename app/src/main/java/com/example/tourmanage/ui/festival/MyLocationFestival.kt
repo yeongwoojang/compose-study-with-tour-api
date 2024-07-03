@@ -7,33 +7,28 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.common.extension.isEmptyString
-import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.viewmodel.FestivalViewModel
-import timber.log.Timber
 import com.example.tourmanage.R
 import com.example.tourmanage.common.data.server.item.LocationBasedItem
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun MyLocationFestival(viewModel: FestivalViewModel = hiltViewModel(), myLocFestival: ArrayList<LocationBasedItem>, goDetail: (item: LocationBasedItem)-> Unit) {
+fun MyLocationFestival(myLocFestival: ArrayList<LocationBasedItem>, choiceFestival: (item: LocationBasedItem)-> Unit) {
     Column {
         Text(
             text = "우리 동네에서 열리는 축제",
@@ -55,7 +50,7 @@ fun MyLocationFestival(viewModel: FestivalViewModel = hiltViewModel(), myLocFest
                 Column(modifier = Modifier
                     .width(150.dp)
                     .padding(end = padding)
-                    .clickable { goDetail(item) }
+                    .clickable { choiceFestival(item) }
                 ) {
                     GlideImage(
                         model = item.mainImage,

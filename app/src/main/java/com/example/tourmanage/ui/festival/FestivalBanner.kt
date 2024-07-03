@@ -32,7 +32,7 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel(), mainFestival: ArrayList<FestivalItem>, goDetail: (item: FestivalItem)-> Unit) {
+fun FestivalBanner(mainFestival: ArrayList<FestivalItem>, choiceFestival: (item: FestivalItem)-> Unit) {
     var imageIndex by rememberSaveable { mutableStateOf(0) }
 
     LaunchedEffect(Unit) {
@@ -68,9 +68,8 @@ fun FestivalBanner(viewModel: FestivalViewModel = hiltViewModel(), mainFestival:
             ) {targetState ->
                 Box {
                     GlideImage(
-
                         modifier = Modifier.fillMaxSize()
-                        .clickable { goDetail(mainFestival[targetState]) },
+                        .clickable { choiceFestival(mainFestival[targetState]) },
                         contentScale = ContentScale.FillBounds,
                         model = mainFestival[targetState].mainImage,
                         contentDescription = "")

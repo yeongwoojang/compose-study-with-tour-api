@@ -17,19 +17,22 @@ import com.example.tourmanage.common.data.server.item.LocationBasedItem
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.common.value.Config
-import com.example.tourmanage.data.DetailNavItem
+import com.example.tourmanage.data.FestivalNavItem
 import com.example.tourmanage.ui.common.Header
 import com.example.tourmanage.ui.components.LoadingWidget
 import com.example.tourmanage.viewmodel.FestivalViewModel
-import timber.log.Timber
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun FestivalMainWidget(viewModel: FestivalViewModel = hiltViewModel(), navController: NavHostController, mainFestival: ArrayList<FestivalItem>) {
+fun FestivalMainWidget(
+    viewModel: FestivalViewModel,
+    mainFestival: ArrayList<FestivalItem>,
+    moveToDetail: (String) -> Unit = {},
+    choiceFestival: (Any) -> Unit = {},
+) {
     LaunchedEffect(Unit) {
-        viewModel.requestFestivalInfo(Config.CONTENT_TYPE_ID.FESTIVAL)
         viewModel.goDetailFlow.collect {
-            navController.navigate("${DetailNavItem.Detail.route}/${it.title}")
+            moveToDetail("${FestivalNavItem.Detail.route}/${it.title}")
         }
     }
 
@@ -48,7 +51,13 @@ fun FestivalMainWidget(viewModel: FestivalViewModel = hiltViewModel(), navContro
             val recommendFestival = festivalData.recommendFestival
             val locFestival = festivalData.localFestival
 
-            FestivalContents(viewModel, it, navController, mainFestival, recommendFestival, locFestival)
+            FestivalContents(
+                paddingValues = it,
+                mainFestival = mainFestival,
+                areaFestival = recommendFestival,
+                myLocFestival = locFestival,
+                choiceFestival = choiceFestival
+            )
         }
     }
 
@@ -58,7 +67,13 @@ fun FestivalMainWidget(viewModel: FestivalViewModel = hiltViewModel(), navContro
 }
 
 @Composable
-fun FestivalContents(viewModel: FestivalViewModel = hiltViewModel(), paddingValues: PaddingValues, navController: NavHostController, mainFestival: ArrayList<FestivalItem>, areaFestival: ArrayList<FestivalItem>, myLocFestival: ArrayList<LocationBasedItem>) {
+fun FestivalContents(
+    paddingValues: PaddingValues,
+    mainFestival: ArrayList<FestivalItem>,
+    areaFestival: ArrayList<FestivalItem>,
+    myLocFestival: ArrayList<LocationBasedItem>,
+    choiceFestival: (Any) -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -70,22 +85,24 @@ fun FestivalContents(viewModel: FestivalViewModel = hiltViewModel(), paddingValu
         verticalArrangement = Arrangement.spacedBy(40.dp)
     ) {
         item {
-            FestivalBanner(mainFestival = mainFestival) {
-                viewModel.choiceFestival(it)
-            }
+            FestivalBanner(
+                mainFestival = mainFestival,
+                choiceFestival = choiceFestival
+            )
         }
         if (myLocFestival.isNotEmpty()) {
             item {
-                MyLocationFestival(myLocFestival = myLocFestival) {
-                    viewModel.choiceFestival(it)
-
-                }
+                MyLocationFestival(
+                    myLocFestival = myLocFestival,
+                    choiceFestival = choiceFestival
+                )
             }
         }
         item {
-            RecommendBanner(areaFestival = areaFestival) {
-                viewModel.choiceFestival(it)
-            }
+            RecommendBanner(
+                areaFestival = areaFestival,
+                choiceFestival = choiceFestival
+            )
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.tourmanage.viewmodel
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.AreaDataStoreRepository
@@ -8,7 +9,13 @@ import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.data.server.item.LocationBasedItem
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.model.ServerDataRepository
+import com.example.tourmanage.usecase.data.common.GetLocationBasedUseCaseImpl
+import com.example.tourmanage.usecase.domain.common.GetLocationBasedUseCase
+import com.example.tourmanage.usecase.domain.festival.GetFestivalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -23,7 +30,14 @@ import javax.inject.Inject
 class FestivalViewModel @Inject constructor(
     private val serverRepo: ServerDataRepository,
     private val dataStore: AreaDataStoreRepository,
-): CommonViewModel(serverRepo, dataStore) {
+    private val getFestivalUseCase: GetFestivalUseCase,
+    private val getLocationBasedUseCase: GetLocationBasedUseCase
+): ViewModel() {
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e("exceptionHandler:: | throwable: $throwable")
+    }
+
     private val _festivalInfo = MutableStateFlow<UiState<Festival>>(UiState.Ready())
     val festivalInfo = _festivalInfo
 
@@ -42,29 +56,43 @@ class FestivalViewModel @Inject constructor(
             }
         }
 
-    fun requestFestivalInfo(typeId: Config.CONTENT_TYPE_ID) {
-        val isSkip = _festivalInfo.value !is UiState.Ready
-        Timber.d("requestFestivalInfo() | isSkip: $isSkip")
-        if (!isSkip) {
-            viewModelScope.launch {
-                val recommend = serverRepo.requestFestivalInfo(areaCode = "6")
+    init {
+        load()
+    }
 
-                val currentGPS = ServerGlobal.getCurrentGPS()
-                val longitude = currentGPS.mapX
-                val latitude = currentGPS.mapY
+    private fun load() {
+        requestFestival(Config.CONTENT_TYPE_ID.FESTIVAL)
+    }
 
-                val myLocal = serverRepo.requestLocationBasedList(contentTypeId = typeId, mapX = longitude, mapY = latitude, arrange = Config.ARRANGE_TYPE.O)
-                recommend.combine(myLocal) { recommend, local ->
-                    Festival().apply {
-                        if (recommend is UiState.Success) this.recommendFestival = recommend.data!!
-                        if (local is UiState.Success) this.localFestival = local.data!!
-                    }
+    fun requestFestival(typeId: Config.CONTENT_TYPE_ID) {
+        Timber.i("requestFestival() typeId: $typeId")
+        viewModelScope.launch(exceptionHandler) {
+            val currentGPS = ServerGlobal.getCurrentGPS()
+            val longitude = currentGPS.mapX
+            val latitude = currentGPS.mapY
 
-                }.onStart {
-                    _festivalInfo.value = UiState.Loading()
-                }.collect {
-                    _festivalInfo.value = UiState.Success(it)
+            val recommendDeferred = async {
+                getFestivalUseCase(areaCode = "6").getOrThrow()
+            }
+
+            val locationDeferred = async {
+                getLocationBasedUseCase(
+                    contentTypeId = typeId,
+                    mapX = longitude,
+                    mapY = latitude
+                ).getOrThrow()
+            }
+            val recommendFestivalFlow = recommendDeferred.await()
+            val locationBasedFestivalFlow= locationDeferred.await()
+            recommendFestivalFlow.combine(locationBasedFestivalFlow) { recommend, local ->
+               Festival().apply {
+                    if (recommend.isNotEmpty()) this.recommendFestival = recommend
+                    if (local.isNotEmpty()) this.localFestival = local
                 }
+            }.onStart {
+                _festivalInfo.value = UiState.Loading()
+            }.collect {
+                _festivalInfo.value = UiState.Success(it)
             }
         }
     }

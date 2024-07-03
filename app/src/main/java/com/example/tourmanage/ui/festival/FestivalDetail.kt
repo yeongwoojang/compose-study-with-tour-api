@@ -12,10 +12,11 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.ui.common.Header
+import com.example.tourmanage.viewmodel.FestivalViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun FestivalDetail(navController: NavHostController, navBackStackEntry: NavBackStackEntry) {
+fun FestivalDetail(viewModel: FestivalViewModel, navController: NavHostController, navBackStackEntry: NavBackStackEntry) {
 
     Scaffold(
         topBar = {
