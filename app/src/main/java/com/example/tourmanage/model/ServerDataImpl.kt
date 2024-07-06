@@ -170,7 +170,7 @@ class ServerDataImpl @Inject constructor(
     ): Flow<UiState<ArrayList<LocationBasedItem>>> {
         return callbackFlow {
             try {
-                val locationBasedInfo = client.requestLocationBasedList(contentTypeId = contentTypeId?.value, mapX = mapX, mapY = mapY, radius = radius, arrange = arrange.value)
+                val locationBasedInfo = client.requestLocationBasedList(contentTypeId = contentTypeId!!.value, mapX = mapX!!, mapY = mapY!!, radius = radius, arrange = arrange.value)
                 val code = locationBasedInfo.response?.header?.resultCode
                 val msg = locationBasedInfo.response?.header?.resultMsg
                 val locationBasedItemList =  locationBasedInfo.toLocationBasedList()

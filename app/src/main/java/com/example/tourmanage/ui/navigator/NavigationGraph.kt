@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.data.BottomNavItem
-import com.example.tourmanage.ui.area.AreaWidget
+import com.example.tourmanage.ui.area.AreaScreen
 import com.example.tourmanage.ui.home.HomeWidget
 import com.example.tourmanage.ui.wish.WishWidget
 
@@ -20,7 +20,7 @@ fun NavigationGraph(navController: NavHostController, curParentArea: AreaItem?, 
             WishWidget()
         }
         composable(BottomNavItem.Area.route) {
-            AreaWidget()
+            AreaScreen()
         }
 
     }

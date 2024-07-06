@@ -19,8 +19,8 @@ import com.example.tourmanage.common.data.IntentData
 import com.example.tourmanage.common.util.UiController
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.ui.FestivalMainActivity
+import com.example.tourmanage.ui.area.AreaScreen
 import com.example.tourmanage.ui.favorite.FavoriteScreen
-import com.example.tourmanage.ui.festival.FestivalScreen
 import com.example.tourmanage.ui.home.HomeRoute
 import com.example.tourmanage.ui.home.HomeScreen
 
@@ -77,7 +77,7 @@ fun MainNavHost() {
                     }
 
                     composable(route = MainRoute.AREA.route) {
-                        //TODO 어떤 화면?
+                        AreaScreen()
                     }
                 }
             },
