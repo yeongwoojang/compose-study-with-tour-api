@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.server.item.DetailItem
-import com.example.tourmanage.common.data.server.item.StayDetailItem
+import com.example.tourmanage.common.data.server.item.DetailCommonItem
 import com.example.tourmanage.model.ServerDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class StayDetailViewModel @Inject constructor(
     private val serverRepo: ServerDataRepository
 ): ViewModel() {
-    val _stayDetailInfo = MutableStateFlow<UiState<StayDetailItem>>(UiState.Ready())
+    val _stayDetailInfo = MutableStateFlow<UiState<DetailCommonItem>>(UiState.Ready())
     val stayDetailInfo = _stayDetailInfo
 
     private val _optionInfo = MutableStateFlow<UiState<ArrayList<DetailItem>>>(UiState.Ready())

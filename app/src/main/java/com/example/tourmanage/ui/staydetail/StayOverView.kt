@@ -2,7 +2,6 @@ package com.example.tourmanage.ui.staydetail
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -18,13 +17,13 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tourmanage.R
-import com.example.tourmanage.common.data.server.item.StayDetailItem
+import com.example.tourmanage.common.data.server.item.DetailCommonItem
 import com.example.tourmanage.common.extension.downsizeString
 import com.example.tourmanage.common.extension.isEmptyString
 import timber.log.Timber
 
 @Composable
-fun StayOverview(detailData: StayDetailItem, paddingModifier: Modifier) {
+fun StayOverview(detailData: DetailCommonItem, paddingModifier: Modifier) {
     Timber.i("OverViewLayout")
     val overviewText = detailData.overview.isEmptyString().downsizeString(80)
     val moreViewText = "더보기"

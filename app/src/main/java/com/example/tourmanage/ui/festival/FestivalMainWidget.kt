@@ -2,9 +2,12 @@ package com.example.tourmanage.ui.festival
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,22 +23,18 @@ import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.FestivalNavItem
 import com.example.tourmanage.ui.common.Header
 import com.example.tourmanage.ui.components.LoadingWidget
+import com.example.tourmanage.viewmodel.FestivalArgument
 import com.example.tourmanage.viewmodel.FestivalViewModel
+import com.google.gson.Gson
+import timber.log.Timber
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FestivalMainWidget(
     viewModel: FestivalViewModel,
     mainFestival: ArrayList<FestivalItem>,
-    moveToDetail: (String) -> Unit = {},
-    choiceFestival: (Any) -> Unit = {},
+    choiceFestival: (String) -> Unit = {},
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.goDetailFlow.collect {
-            moveToDetail("${FestivalNavItem.Detail.route}/${it.title}")
-        }
-    }
-
     val festivalInfo = viewModel.festivalInfo.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -50,7 +49,6 @@ fun FestivalMainWidget(
             val festivalData = festivalInfo.value.data!!
             val recommendFestival = festivalData.recommendFestival
             val locFestival = festivalData.localFestival
-
             FestivalContents(
                 paddingValues = it,
                 mainFestival = mainFestival,
@@ -63,46 +61,5 @@ fun FestivalMainWidget(
 
     if (festivalInfo.isLoading()) {
         LoadingWidget()
-    }
-}
-
-@Composable
-fun FestivalContents(
-    paddingValues: PaddingValues,
-    mainFestival: ArrayList<FestivalItem>,
-    areaFestival: ArrayList<FestivalItem>,
-    myLocFestival: ArrayList<LocationBasedItem>,
-    choiceFestival: (Any) -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                start = 16.dp,
-                top = paddingValues.calculateTopPadding() + 20.dp,
-                bottom = paddingValues.calculateBottomPadding()
-            ),
-        verticalArrangement = Arrangement.spacedBy(40.dp)
-    ) {
-        item {
-            FestivalBanner(
-                mainFestival = mainFestival,
-                choiceFestival = choiceFestival
-            )
-        }
-        if (myLocFestival.isNotEmpty()) {
-            item {
-                MyLocationFestival(
-                    myLocFestival = myLocFestival,
-                    choiceFestival = choiceFestival
-                )
-            }
-        }
-        item {
-            RecommendBanner(
-                areaFestival = areaFestival,
-                choiceFestival = choiceFestival
-            )
-        }
     }
 }

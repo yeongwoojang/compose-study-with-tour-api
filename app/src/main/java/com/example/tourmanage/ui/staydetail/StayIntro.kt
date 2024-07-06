@@ -9,12 +9,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tourmanage.R
-import com.example.tourmanage.common.data.server.item.StayDetailItem
+import com.example.tourmanage.common.data.server.item.DetailCommonItem
 import com.example.tourmanage.common.extension.getPureText
 import com.example.tourmanage.common.extension.isEmptyString
 
 @Composable
-fun StayIntro(detailData: StayDetailItem) {
+fun StayIntro(detailData: DetailCommonItem) {
     Column(modifier = Modifier.padding(start = 15.dp, top = 15.dp, end = 15.dp)) {
         Text(
             text = detailData.title.isEmptyString("숙소 명").getPureText(),

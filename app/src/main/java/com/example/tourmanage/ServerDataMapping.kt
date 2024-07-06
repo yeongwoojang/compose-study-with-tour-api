@@ -1,7 +1,5 @@
 package com.example.tourmanage
 
-import android.content.Context
-import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.info.*
 import com.example.tourmanage.common.data.server.item.*
 import com.example.tourmanage.common.extension.isBooleanYn
@@ -18,7 +16,7 @@ fun AreaInfo.toAreaInfoList(): ArrayList<AreaItem> {
     } ?: ArrayList(emptyList())
 }
 
-fun StayDetailInfo.toStayDetail(): StayDetailItem? {
+fun DetailCommonInfo.toDetailCommonItem(): DetailCommonItem? {
     return response?.body?.items?.item?.let {
         it[0]
     }
@@ -45,6 +43,12 @@ fun AreaBasedInfo.toAreaBasedInfoItems(): ArrayList<AreaBasedItem> {
 fun LocationBasedInfo.toLocationBasedList(): ArrayList<LocationBasedItem> {
     return response?.body?.items?.item?.let {
         it as ArrayList<LocationBasedItem>
+    } ?: ArrayList(emptyList())
+}
+
+fun DetailImageInfo.toDetailImageLise(): ArrayList<DetailImageItem> {
+    return response?.body?.items?.item?.let {
+        it as ArrayList<DetailImageItem>
     } ?: ArrayList(emptyList())
 }
 

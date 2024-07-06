@@ -13,12 +13,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.tourmanage.common.data.server.item.StayDetailItem
+import com.example.tourmanage.common.data.server.item.DetailCommonItem
 import com.example.tourmanage.ui.StayDetailActivity
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun StayTopImage(detailData: StayDetailItem, activity: StayDetailActivity) {
+fun StayTopImage(detailData: DetailCommonItem, activity: StayDetailActivity) {
     Box(
         Modifier
             .fillMaxWidth()

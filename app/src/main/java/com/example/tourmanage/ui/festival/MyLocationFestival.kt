@@ -28,7 +28,7 @@ import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun MyLocationFestival(myLocFestival: ArrayList<LocationBasedItem>, choiceFestival: (item: LocationBasedItem)-> Unit) {
+fun MyLocationFestival(myLocFestival: ArrayList<LocationBasedItem>, choiceFestival: (String)-> Unit) {
     Column {
         Text(
             text = "우리 동네에서 열리는 축제",
@@ -50,7 +50,7 @@ fun MyLocationFestival(myLocFestival: ArrayList<LocationBasedItem>, choiceFestiv
                 Column(modifier = Modifier
                     .width(150.dp)
                     .padding(end = padding)
-                    .clickable { choiceFestival(item) }
+                    .clickable { choiceFestival(item.contentId.orEmpty()) }
                 ) {
                     GlideImage(
                         model = item.mainImage,

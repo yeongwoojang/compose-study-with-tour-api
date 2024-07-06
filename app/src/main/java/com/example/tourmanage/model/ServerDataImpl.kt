@@ -63,13 +63,13 @@ class ServerDataImpl @Inject constructor(
     }
 
 
-    override fun requestStayDetailInfo(contentId: String, contentType: String): Flow<UiState<StayDetailItem>> {
+    override fun requestStayDetailInfo(contentId: String, contentType: String): Flow<UiState<DetailCommonItem>> {
         return callbackFlow {
             try {
                 val stayDetailInfo = client.requestStayDetailInfo(contentId = contentId, contentTypeId = contentType)
                 val code = stayDetailInfo.response?.header?.resultCode
                 val msg = stayDetailInfo.response?.header?.resultMsg
-                val stayDetailItem = stayDetailInfo.toStayDetail()
+                val stayDetailItem = stayDetailInfo.toDetailCommonItem()
                 if ("0000" == code && stayDetailItem != null) {
                     trySend(UiState.Success(stayDetailItem))
                 } else {

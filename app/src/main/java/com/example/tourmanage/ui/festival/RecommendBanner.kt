@@ -30,7 +30,7 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun RecommendBanner(areaFestival: ArrayList<FestivalItem>, choiceFestival: (item: FestivalItem)-> Unit) {
+fun RecommendBanner(areaFestival: ArrayList<FestivalItem>, choiceFestival: (String)-> Unit) {
     var imageIndex by rememberSaveable { mutableStateOf(0) }
     LaunchedEffect(Unit) {
         while(true) {
@@ -53,7 +53,7 @@ fun RecommendBanner(areaFestival: ArrayList<FestivalItem>, choiceFestival: (item
                     animationSpec = tween(1000),
                 ) {targetState ->
                     Box(modifier = Modifier
-                        .clickable { choiceFestival(areaFestival[targetState]) }) {
+                        .clickable { choiceFestival(areaFestival[targetState].contentId.orEmpty()) }) {
                         GlideImage(
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.FillBounds,

@@ -2,7 +2,7 @@ package com.example.tourmanage.common.data.server.item
 
 import com.squareup.moshi.Json
 
-data class StayDetailItem(
+data class DetailCommonItem(
     @Json(name = "contentid") val contentId: String?,
     @Json(name = "contenttypeid") val contentTypeId: String?,
     @Json(name = "title") val title: String?,
