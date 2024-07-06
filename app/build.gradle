@@ -133,4 +133,7 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0"
     implementation "androidx.datastore:datastore:1.0.0"
 
+    implementation "io.github.fornewid:naver-map-compose:$compose_version"
+    implementation("com.naver.maps:map-sdk:3.18.0")
+
 }

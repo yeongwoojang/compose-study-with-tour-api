@@ -50,7 +50,7 @@ interface ServiceAPI {
         @Query("mapinfoYN") mapInfoYn: String? = "Y",
         @Query("overviewYN") overviewYn: String? = "Y",
         @Query("_type") type: String = TYPE
-    ): StayDetailInfo
+    ): DetailCommonInfo
 
     @GET("detailInfo1")
     suspend fun requestOptionInfo(
@@ -99,4 +99,42 @@ interface ServiceAPI {
         @Query("contentTypeId") contentTypeId: String,
         @Query("serviceKey") key: String = API_KEY,
     ): LocationBasedInfo
+
+    @GET("detailInfo1")
+    suspend fun requestDetailInfo(
+        @Query("MobileOS") os: String = MOBILE_OS,
+        @Query("MobileApp") app: String = MOBILE_APP,
+        @Query("serviceKey") key: String = API_KEY,
+        @Query("contentId") contentId: String = "",
+        @Query("contentTypeId") contentTypeId: String? = "",
+        @Query("_type") type: String = TYPE
+    ): DetailInfo
+
+    @GET("detailCommon1")
+    suspend fun requestDetailCommonInfo(
+        @Query("MobileOS") os: String = MOBILE_OS,
+        @Query("MobileApp") app: String = MOBILE_APP,
+        @Query("serviceKey") key: String = API_KEY,
+        @Query("contentId") contentId: String = "",
+        @Query("contentTypeId") contentTypeId: String = "",
+        @Query("defaultYN") defaultYn: String? = "Y",
+        @Query("firstImageYN") mainImageYn: String? = "Y",
+        @Query("areacodeYN") areaCodeYn: String? = "Y",
+        @Query("catcodeYN") catCodeYn: String? = "Y",
+        @Query("addrinfoYN") addrInfoYn: String? = "Y",
+        @Query("mapinfoYN") mapInfoYn: String? = "Y",
+        @Query("overviewYN") overviewYn: String? = "Y",
+        @Query("_type") type: String = TYPE
+    ): DetailCommonInfo
+
+    @GET("detailImage1")
+    suspend fun requestDetailImage(
+        @Query("MobileOS") os: String = MOBILE_OS,
+        @Query("MobileApp") app: String = MOBILE_APP,
+        @Query("serviceKey") key: String = API_KEY,
+        @Query("contentId") contentId: String = "",
+        @Query("imageYN") imageYN: String? = "Y",
+        @Query("subImageYN") subImageYN: String? = "Y",
+        @Query("_type") type: String = TYPE
+    ): DetailImageInfo
 }
