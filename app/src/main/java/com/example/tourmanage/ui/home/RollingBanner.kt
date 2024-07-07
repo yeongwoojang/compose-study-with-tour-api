@@ -38,10 +38,13 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.R
+import com.example.tourmanage.common.data.server.item.DetailImageItem
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.extension.isEmptyString
+import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
+import com.example.tourmanage.viewmodel.FestivalDetail
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -53,13 +56,17 @@ fun RollingBanner(
     modifier: Modifier = Modifier,
     itemList: List<Any> = emptyList()
 ) {
-
-    val festivalItems = if (itemList.all { it is FestivalItem }) {
+    var type = "BOTTOM"
+    val items = if (itemList.all { it is FestivalItem }) {
         itemList as ArrayList<FestivalItem>  // 안전하게 캐스팅
+    } else if (itemList.all { it is DetailImageItem}) {
+        type = "TOP"
+        itemList as ArrayList<DetailImageItem>  // 안전하게 캐스팅
     } else {
-        emptyList<FestivalItem>()
+        emptyList()
     }
-    val pagerState = rememberPagerState(pageCount = { festivalItems.size })
+
+    val pagerState = rememberPagerState(pageCount = { items.size })
 
     // 초기페이지 설정. 한번만 실행되기 원하니 key 는 Unit|true.
     LaunchedEffect(key1 = Unit) {
@@ -73,7 +80,7 @@ fun RollingBanner(
                 // 페이지 바뀌었다고 애니메이션이 멈추면 어색하니 NonCancellable
                 withContext(NonCancellable) {
                     // 일어날린 없지만 유저가 약 10억번 스크롤할지 몰라.. 하는 사람을 위해..
-                    if (pagerState.currentPage + 1 in 0..festivalItems.size) {
+                    if (pagerState.currentPage + 1 in 0..items.size) {
                         pagerState.animateScrollToPage(pagerState.currentPage.inc() % pagerState.pageCount)
                     }
                 }
@@ -90,12 +97,23 @@ fun RollingBanner(
             HorizontalPager(
                 state = pagerState
             ) { index ->
-                festivalItems.getOrNull(index % (festivalItems.size))?.let { item ->
+                val imageItem = items[index]
+                val imageUrl = when (imageItem) {
+                    is FestivalItem -> imageItem.mainImage
+                    is DetailImageItem -> imageItem.originImgUrl
+                    else -> ""
+                }
+
+                val title = when (imageItem) {
+                    is FestivalItem -> imageItem.title
+                    else -> ""
+                }
+                items.getOrNull(index % (items.size))?.let { item ->
                     Box {
                         GlideImage(
                             modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop,
-                            model = item.mainImage, contentDescription = ""
+                            contentScale = ContentScale.FillBounds,
+                            model = imageUrl, contentDescription = ""
                         )
                         Text(
                             modifier = Modifier
@@ -103,7 +121,7 @@ fun RollingBanner(
                                 .shadow(10.dp, shape = RoundedCornerShape(8.dp))
                                 .align(Alignment.TopStart),
                             color = Color.White,
-                            text = item.title.isEmptyString(),
+                            text = title.isEmptyString(),
                             style = TextStyle(
                                 fontSize = 14.sp,
                                 fontFamily = spoqaHanSansNeoFont,
@@ -113,12 +131,17 @@ fun RollingBanner(
                     }
                 }
             }
+            val alignment = when (type) {
+                "BOTTOM" -> Alignment.BottomCenter
+                "TOP" -> Alignment.TopCenter
+                else -> Alignment.BottomCenter
+            }
             Row(
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
-                    .align(alignment = Alignment.BottomCenter),
+                    .align(alignment = alignment),
                 horizontalArrangement = Arrangement.Center
             ) {
                 repeat(pagerState.pageCount) { iteration ->
@@ -133,6 +156,7 @@ fun RollingBanner(
                     )
                 }
             }
+
 
             Box(modifier = Modifier
                 .align(Alignment.BottomEnd)

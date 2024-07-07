@@ -10,7 +10,7 @@ data class DetailCommonItem(
     @Json(name = "modifiedtime") val modifiedTime: String?,
     @Json(name = "tel") val tel: String?,
     @Json(name = "telname") val telName: String?,
-    @Json(name = "hompage") val hompageUrl: String?,
+    @Json(name = "homepage") var hompageUrl: String?,
     @Json(name = "booktour") val bookTour: String?,
     @Json(name = "firstimage") val mainImage: String?,
     @Json(name = "firstimage2") val subImage: String?,

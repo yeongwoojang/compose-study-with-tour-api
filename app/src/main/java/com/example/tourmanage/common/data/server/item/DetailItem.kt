@@ -46,4 +46,7 @@ data class DetailItem(
     @Json(name = "roomimg5") val roomIng5: String?,
     @Json(name = "rooming5alt") val roomImgDesc5: String?,
     @Json(name = "cpyrhtDivCd5") val cpyrhtDivCd5: String?,
+    @Json(name = "infoname") val infoName: String?,
+    @Json(name = "infotext") var infoText: String?,
+
 ): CommonBodyItem()
