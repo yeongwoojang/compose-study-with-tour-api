@@ -1,7 +1,6 @@
 package com.example.tourmanage.common.util
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
@@ -13,6 +12,10 @@ import androidx.core.app.ActivityCompat
 import com.example.tourmanage.common.ServerGlobal
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import timber.log.Timber
 
 object PermissionUtils {
@@ -71,21 +74,23 @@ object PermissionUtils {
             }
         }
     }
+    fun getLocation(context: Context) = callbackFlow {
+        val onSuccessListener = OnSuccessListener<Location> { location ->
+            location?.let {
+                Timber.i("좌표: ${it.latitude}, ${it.longitude}")
+                ServerGlobal.setGPS(it)
+                trySend(it)
+            }
+        }
+        val onFailureListener = OnFailureListener {
+            close(it)
+        }
 
-    @SuppressLint("MissingPermission")
-    fun getLocation(context: Context) {
-        val fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(context)
-
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
         fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-            .addOnSuccessListener { success: Location? ->
-                success?.let { location ->
-                    ServerGlobal.setGPS(location)
-                    Timber.i("좌표: ${location.latitude}, ${location.longitude}")
-                }
-            }
-            .addOnFailureListener { fail ->
-                Timber.i("GPS 정보 호출 실패")
-            }
+            .addOnSuccessListener(onSuccessListener)
+            .addOnFailureListener(onFailureListener)
+
+        awaitClose()
     }
 }

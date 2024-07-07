@@ -1,5 +1,6 @@
 package com.example.tourmanage.viewmodel
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
@@ -10,6 +11,7 @@ import com.example.tourmanage.common.data.server.item.DetailImageItem
 import com.example.tourmanage.common.data.server.item.DetailItem
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.data.server.item.LocationBasedItem
+import com.example.tourmanage.common.util.PermissionUtils
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.error.area.TourMangeException
 import com.example.tourmanage.model.ServerDataRepository
