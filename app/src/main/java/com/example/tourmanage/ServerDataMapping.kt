@@ -3,6 +3,8 @@ package com.example.tourmanage
 import com.example.tourmanage.common.data.server.info.*
 import com.example.tourmanage.common.data.server.item.*
 import com.example.tourmanage.common.extension.isBooleanYn
+import timber.log.Timber
+import java.util.regex.Pattern
 
 fun StayInfo.toStayInfoList(): ArrayList<StayItem> {
     return response?.body?.items?.item?.let {
@@ -18,6 +20,14 @@ fun AreaInfo.toAreaInfoList(): ArrayList<AreaItem> {
 
 fun DetailCommonInfo.toDetailCommonItem(): DetailCommonItem? {
     return response?.body?.items?.item?.let {
+
+        it[0].apply {
+            val regex = """href="([^"]+)"""".toRegex()
+            if (!hompageUrl.isNullOrEmpty()) {
+                val matchResult = regex.find(hompageUrl!!)
+                hompageUrl = matchResult?.groupValues?.get(1)
+            }
+        }
         it[0]
     }
 }
@@ -25,6 +35,16 @@ fun DetailCommonInfo.toDetailCommonItem(): DetailCommonItem? {
 fun DetailInfo.toDetailItems(): ArrayList<DetailItem> {
     return response?.body?.items?.item?.let {
         it as ArrayList<DetailItem>
+        it.forEach { item ->
+            val fullText = item.infoText
+            if (!fullText.isNullOrEmpty()) {
+                val htmlPattern = Pattern.compile("<.*?>")
+                // 정규 표현식을 이용하여 태그 제거
+                val noHtml = htmlPattern.matcher(fullText).replaceAll("")
+                item.infoText = noHtml
+            }
+        }
+        it
     } ?: ArrayList(emptyList())
 }
 

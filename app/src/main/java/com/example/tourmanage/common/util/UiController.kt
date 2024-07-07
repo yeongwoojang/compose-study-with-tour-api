@@ -3,6 +3,7 @@ package com.example.tourmanage.common.util
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.core.app.ActivityOptionsCompat
 import com.example.tourmanage.common.data.FragmentInteraction
 import com.example.tourmanage.common.data.IntentData
 import com.example.tourmanage.common.extension.putExtra
@@ -17,7 +18,12 @@ object UiController {
                 putExtra(it)
             }
         }.let {
-            context.startActivity(it)
+            val options = ActivityOptionsCompat.makeCustomAnimation(
+                context,
+                android.R.anim.slide_in_left,
+                android.R.anim.slide_out_right
+            )
+            context.startActivity(it, options.toBundle())
         }
     }
 

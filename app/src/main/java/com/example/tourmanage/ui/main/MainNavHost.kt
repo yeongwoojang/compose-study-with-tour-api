@@ -77,7 +77,9 @@ fun MainNavHost() {
                     }
 
                     composable(route = MainRoute.AREA.route) {
-                        AreaScreen()
+                        AreaScreen(
+
+                        )
                     }
                 }
             },

@@ -37,6 +37,11 @@ fun FestivalMainWidget(
 ) {
     val festivalInfo = viewModel.festivalInfo.collectAsStateWithLifecycle()
 
+    if (festivalInfo.isSuccess()) {
+        val festivalData = festivalInfo.value.data!!
+        val recommendFestival = festivalData.recommendFestival
+        val locFestival = festivalData.localFestival
+    }
     Scaffold(
         topBar = {
             val context = LocalContext.current

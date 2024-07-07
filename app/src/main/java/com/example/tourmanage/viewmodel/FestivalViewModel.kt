@@ -1,5 +1,6 @@
 package com.example.tourmanage.viewmodel
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
@@ -10,6 +11,7 @@ import com.example.tourmanage.common.data.server.item.DetailImageItem
 import com.example.tourmanage.common.data.server.item.DetailItem
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.data.server.item.LocationBasedItem
+import com.example.tourmanage.common.util.PermissionUtils
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.error.area.TourMangeException
 import com.example.tourmanage.model.ServerDataRepository
@@ -139,35 +141,49 @@ class FestivalViewModel @Inject constructor(
             detailInfoFlow.await()
                 .catch {
                     festivalDetailFlow.emit(festivalDetail.apply {
-                        detailInfo = ArrayList(emptyList())
+                        overview = ""
+                        infoText = ""
                     })
                 }
                 .collect {
                     festivalDetailFlow.emit(festivalDetail.apply {
-                        detailInfo = it
+                        overview = it[0]?.infoText.orEmpty()
+                        infoText = it[1]?.infoText.orEmpty()
                     })
                 }
             detailCommonFlow.await()
                 .catch {
                     festivalDetailFlow.emit(festivalDetail.apply {
-                        detailCommon = null
+                        mainImage = ""
+                        homePageUrl = ""
+                        tel = ""
+                        mapX = ""
+                        mapY = ""
+                        addr1 = ""
+                        addr2 = ""
                     })
                 }
                 .collect {
                     festivalDetailFlow.emit(festivalDetail.apply {
-                        detailCommon = it
+                        mainImage = it?.mainImage.orEmpty()
+                        homePageUrl = it?.hompageUrl.orEmpty()
+                        tel = it?.tel.orEmpty()
+                        mapX = it?.mapX.orEmpty()
+                        mapY = it?.mapY.orEmpty()
+                        addr1 = it?.addr1.orEmpty()
+                        addr2 = it?.addr2.orEmpty()
                     })
 
                 }
             detailImageFlow.await()
                 .catch {
                     festivalDetailFlow.emit(festivalDetail.apply {
-                        detailImageItems = ArrayList(emptyList())
+                        images = ArrayList(emptyList())
                     })
                 }
                 .collect {
                     festivalDetailFlow.emit(festivalDetail.apply {
-                        detailImageItems = it
+                        images = it
                     })
                 }
         }
@@ -191,7 +207,14 @@ data class FestivalArgument(
 )
 
 data class FestivalDetail(
-    var detailInfo: ArrayList<DetailItem> = ArrayList(emptyList()),
-    var detailCommon: DetailCommonItem? = null,
-    var detailImageItems: ArrayList<DetailImageItem> = ArrayList(emptyList())
+    var mainImage: String = "",
+    var overview: String = "",
+    var infoText: String = "",
+    var homePageUrl: String = "",
+    var tel: String = "",
+    var mapX: String = "",
+    var mapY: String = "",
+    var addr1: String = "",
+    var addr2: String = "",
+    var images: ArrayList<DetailImageItem> = ArrayList(emptyList())
 )
