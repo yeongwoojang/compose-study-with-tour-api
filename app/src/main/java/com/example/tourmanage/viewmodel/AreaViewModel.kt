@@ -3,6 +3,7 @@ package com.example.tourmanage.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
+import com.example.tourmanage.common.data.server.item.AreaBasedItem
 import com.example.tourmanage.common.data.server.item.LocationBasedItem
 import com.example.tourmanage.common.data.server.item.SearchItem
 import com.example.tourmanage.common.value.Config
@@ -26,7 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import timber.log.Timber
 import javax.inject.Inject
-
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class AreaViewModel @Inject constructor(
     private val getSearchUseCase: GetSearchUseCase,
@@ -44,7 +45,9 @@ class AreaViewModel @Inject constructor(
     private val _currentMenu = MutableSharedFlow<Config.CONTENT_TYPE_ID>(replay = 1)
     val currentMenu = _currentMenu.asSharedFlow()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    private val _markersFlow = MutableSharedFlow<ArrayList<LocationBasedItem>>()
+    val markersFlow = _markersFlow.asSharedFlow()
+
     val locationFlow = queryFlow.flatMapLatest { query ->
         flow {
             getSearchUseCase(query).getOrThrow().collect {
@@ -53,7 +56,13 @@ class AreaViewModel @Inject constructor(
         }
     }.shareIn(viewModelScope + exceptionHandler, SharingStarted.Eagerly)
 
-
+    fun requestPointList(contentTypeId: Config.CONTENT_TYPE_ID, mapX: Double, mapY: Double) {
+        viewModelScope.launch(exceptionHandler) {
+            getLocationBasedUseCase(contentTypeId, mapX.toString(), mapY.toString()).getOrThrow().collect {
+                _markersFlow.emit(it)
+            }
+        }
+    }
 
     init {
         setMenu(Config.CONTENT_TYPE_ID.FESTIVAL)

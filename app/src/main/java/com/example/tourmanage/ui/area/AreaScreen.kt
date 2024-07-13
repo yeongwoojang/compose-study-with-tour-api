@@ -34,20 +34,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.tourmanage.common.ServerGlobal
-import com.example.tourmanage.common.data.server.item.SearchItem
-import com.example.tourmanage.common.extension.isSuccess
+import com.example.tourmanage.common.data.server.item.AreaBasedItem
+import com.example.tourmanage.common.data.server.item.LocationBasedItem
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.DataProvider
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.AreaViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
-import com.naver.maps.map.compose.CameraPositionState
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.naver.maps.map.compose.Marker
+import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
+import com.naver.maps.map.overlay.Marker
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @OptIn(ExperimentalNaverMapApi::class)
@@ -58,22 +60,60 @@ fun AreaScreen(
 ) {
     var text by remember { mutableStateOf("") }
     var currentMenu by remember { mutableStateOf(Config.CONTENT_TYPE_ID.FESTIVAL) }
-    var currentLocation by remember { mutableStateOf(SearchItem(ServerGlobal.getCurrentGPS().mapX, ServerGlobal.getCurrentGPS().mapY)) }
+    var currentLocation by remember {
+        mutableStateOf(LatLng(
+            ServerGlobal.getCurrentGPS().mapY.toDouble(),
+            ServerGlobal.getCurrentGPS().mapX.toDouble()
+        ))
+    }
+
+    var markers by remember {
+        mutableStateOf(ArrayList<LocationBasedItem>(emptyList()))
+    }
 
     LaunchedEffect(Unit) {
-        viewModel.currentMenu.collect {
-            currentMenu = it
+        launch {
+            viewModel.currentMenu.collect {
+                currentMenu = it
+            }
+        }
+
+        launch {
+            viewModel.markersFlow.collect {
+                markers = it
+            }
+        }
+    }
+    val cameraPositionState = rememberCameraPositionState {
+        // 카메라 초기 위치를 설정합니다.
+        position = CameraPosition(currentLocation, 13.0)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.locationFlow.collect {
+            Timber.i("${it}")
+            currentLocation = LatLng(it.mapy.toDouble(), it.mapx.toDouble())
+            cameraPositionState.position = CameraPosition(currentLocation, 11.0)
         }
     }
 
-
-    val seoul = LatLng(currentLocation.mapy.toDouble(), currentLocation.mapx.toDouble())
-    val cameraPositionState: CameraPositionState = rememberCameraPositionState {
-        // 카메라 초기 위치를 설정합니다.
-        position = CameraPosition(seoul, 11.0)
+    LaunchedEffect(key1 = currentLocation, key2 = currentMenu) {
+        viewModel.requestPointList(currentMenu, currentLocation.longitude, currentLocation.latitude)
     }
+
     Box(Modifier.fillMaxSize()) {
-        NaverMap(cameraPositionState = cameraPositionState)
+        NaverMap(cameraPositionState = cameraPositionState) {
+            markers.forEach {
+                Marker(
+                    width = 20.dp,
+                    height = 40.dp,
+                    state = MarkerState(position = LatLng(it.mapY!!.toDouble(), it.mapX!!.toDouble())),
+                    captionText = "${it.title}",
+                    captionColor = Color.Green
+                )
+            }
+
+        }
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
