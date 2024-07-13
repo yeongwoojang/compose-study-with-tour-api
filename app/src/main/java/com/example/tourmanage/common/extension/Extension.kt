@@ -111,3 +111,13 @@ fun Modifier.noRippleClickable(onClick: ()->Unit): Modifier = composed {
 fun Address.toAreaText() = "${adminArea.isEmptyString()} ${locality.isEmptyString()} ${thoroughfare.isEmptyString()}"
 
 fun Address.toMyAreaText() = "${adminArea.isEmptyString()} ${subLocality}"
+
+fun String?.formatCoordinate(): String {
+    this?: return ""
+
+    // 2. 소수점을 적절한 위치에 추가
+    val formattedValue = StringBuilder(this)
+    formattedValue.insert(this.length - 7, '.')
+
+    return formattedValue.toString()
+}

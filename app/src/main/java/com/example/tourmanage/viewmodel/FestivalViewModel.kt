@@ -49,8 +49,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FestivalViewModel @Inject constructor(
-    private val serverRepo: ServerDataRepository,
-    private val dataStore: AreaDataStoreRepository,
     private val getFestivalUseCase: GetFestivalUseCase,
     private val getLocationBasedUseCase: GetLocationBasedUseCase,
     private val getDetailInfoUseCase: GetDetailInfoUseCase,
