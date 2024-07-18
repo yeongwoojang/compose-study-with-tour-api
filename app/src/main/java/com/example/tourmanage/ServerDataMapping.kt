@@ -2,6 +2,7 @@ package com.example.tourmanage
 
 import com.example.tourmanage.common.data.server.info.*
 import com.example.tourmanage.common.data.server.item.*
+import com.example.tourmanage.common.extension.formatCoordinate
 import com.example.tourmanage.common.extension.isBooleanYn
 import timber.log.Timber
 import java.util.regex.Pattern
@@ -70,6 +71,13 @@ fun DetailImageInfo.toDetailImageLise(): ArrayList<DetailImageItem> {
     return response?.body?.items?.item?.let {
         it as ArrayList<DetailImageItem>
     } ?: ArrayList(emptyList())
+}
+
+fun SearchItem.convertXY(): SearchItem {
+    return SearchItem(
+        mapx = this.mapx.formatCoordinate(),
+        mapy = this.mapy.formatCoordinate()
+    )
 }
 
 fun DetailItem.getOptionString(): String {

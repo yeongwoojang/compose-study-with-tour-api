@@ -4,6 +4,6 @@ import com.example.tourmanage.common.value.Config
 
 data class HomeMenuItem(
     var title: String = "",
-    var type: Config.HOME_MENU_TYPE,
+    var type: Config.CONTENT_TYPE_ID,
     var image: Int
 )

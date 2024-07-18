@@ -1,6 +1,7 @@
 package com.example.tourmanage.common.di
 
 import android.content.Context
+import com.example.tourmanage.common.repository.SearchAPI
 import com.example.tourmanage.common.repository.ServiceAPI
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -23,12 +24,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class RetrofitModule {
-    @Provides
     @Singleton
+    @Provides
     fun getInterceptor() = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
-    @Provides
     @Singleton
+    @Provides
+    @ServerInterceptor
     fun getNetworkInterceptor() = Interceptor {
         Timber.d("Intercept")
 
@@ -65,26 +67,72 @@ class RetrofitModule {
         }
     }
 
-    @Provides
     @Singleton
-    fun getOkHttpClient(@ApplicationContext context: Context, loggingIntercepter: HttpLoggingInterceptor, networkInterceptor: Interceptor)
+    @Provides
+    @SearchInterceptor
+    fun getSearchInterceptor() = Interceptor { chain ->
+        val request = chain.request().newBuilder()
+            .addHeader("X-Naver-Client-Id", SearchAPI.CLIENT_ID)
+            .addHeader("X-Naver-Client-Secret", SearchAPI.SECRET_KEY)
+            .build()
+        chain.proceed(request)
+    }
+
+    @Singleton
+    @Provides
+    @ServerOkHttpClient
+    fun getOkHttpClient(@ApplicationContext context: Context, loggingInterceptor: HttpLoggingInterceptor, @ServerInterceptor serverInterceptor: Interceptor)
     = OkHttpClient.Builder().apply {
 //        cache(Cache(context.cacheDir, 1024 * 1024 * 10))
         readTimeout(3, TimeUnit.SECONDS)
         connectTimeout(3, TimeUnit.SECONDS)
         writeTimeout(3, TimeUnit.SECONDS)
-        addInterceptor(loggingIntercepter)
-        addInterceptor(networkInterceptor)
+        addInterceptor(loggingInterceptor)
+        addInterceptor(serverInterceptor)
     }.build()
 
-    @Provides
     @Singleton
-    fun getClient(client: OkHttpClient): ServiceAPI = Retrofit.Builder()
+    @Provides
+    @SearchOkHttpClient
+    fun getSearchOkHttpClient(@ApplicationContext context: Context, loggingIntercepter: HttpLoggingInterceptor, @SearchInterceptor searchInterceptor: Interceptor)
+            = OkHttpClient.Builder().apply {
+//        cache(Cache(context.cacheDir, 1024 * 1024 * 10))
+        readTimeout(3, TimeUnit.SECONDS)
+        connectTimeout(3, TimeUnit.SECONDS)
+        writeTimeout(3, TimeUnit.SECONDS)
+        addInterceptor(loggingIntercepter)
+        addInterceptor(searchInterceptor)
+    }.build()
+
+    @Singleton
+    @Provides
+    @ServerRetrofit
+    fun getClient(@ServerOkHttpClient client: OkHttpClient): Retrofit = Retrofit.Builder()
             .baseUrl(ServiceAPI.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder()
                 .add(KotlinJsonAdapterFactory())
                 .build()))
             .client(client)
-            .build().create(ServiceAPI::class.java)
+            .build()
 
+    @Singleton
+    @Provides
+    @SearchRetrofit
+    fun getSearchClient(@SearchOkHttpClient client: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(SearchAPI.SEARCH_URL)
+        .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()))
+        .client(client)
+        .build()
+
+    @Singleton
+    @Provides
+    fun getServerService(@ServerRetrofit retrofit: Retrofit): ServiceAPI =
+        retrofit.create(ServiceAPI::class.java)
+
+    @Singleton
+    @Provides
+    fun getSearchService(@SearchRetrofit retrofit: Retrofit): SearchAPI =
+        retrofit.create(SearchAPI::class.java)
 }

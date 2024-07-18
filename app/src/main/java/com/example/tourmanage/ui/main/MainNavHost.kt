@@ -30,6 +30,8 @@ fun MainNavHost() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     var bottomSheenOpenYn by remember { mutableStateOf(false) }
+    var markerOpenYn by remember { mutableStateOf(false) }
+
     val currentRoute = navBackStackEntry?.destination?.route?.let { currentRoute ->
         MainRoute.values().find { route -> route.route == currentRoute }
     } ?: MainRoute.HOME
@@ -78,7 +80,13 @@ fun MainNavHost() {
 
                     composable(route = MainRoute.AREA.route) {
                         AreaScreen(
-
+                            markerClick = {
+                                markerOpenYn = true
+                            },
+                            markerOpenYn = markerOpenYn,
+                            onDismissMenu = {
+                                markerOpenYn = false
+                            }
                         )
                     }
                 }
