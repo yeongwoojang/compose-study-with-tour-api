@@ -22,11 +22,6 @@
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="@string/naver_map_sdk_client_id" />
         <activity
-            android:name=".ui.CourseActivity"
-            android:exported="false"
-            android:label="@string/title_activity_course"
-            android:theme="@style/Theme.TourManage" />
-        <activity
             android:name=".ui.FestivalMainActivity"
             android:exported="false"
             android:label="@string/title_activity_festival_main"
@@ -44,25 +39,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.StayMainActivity"
+            android:name=".ui.stay.StayMainActivity"
             android:exported="false"
             android:label="@string/title_activity_stay_main"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.TourManage" />
-        <activity
-            android:name=".ui.LocalTourActivity"
-            android:exported="false"
-            android:label="@string/title_activity_local_tour"
-            android:theme="@style/Theme.TourManage" />
-        <activity
-            android:name=".ui.StayDetailActivity"
-            android:exported="false"
-            android:label="@string/title_activity_stay_detail"
-            android:theme="@style/Theme.TourManage" />
-        <activity
-            android:name=".ui.TouristSpotDetailActivity"
-            android:exported="false"
-            android:label="@string/title_activity_local_tour_detail"
             android:theme="@style/Theme.TourManage" />
     </application>
 

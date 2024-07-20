@@ -84,9 +84,6 @@ import timber.log.Timber
 @Composable
 fun AreaScreen(
     viewModel: AreaViewModel = hiltViewModel(),
-    markerClick: () -> Unit,
-    markerOpenYn: Boolean = false,
-    onDismissMenu: () -> Unit,
 ) {
     var text by remember { mutableStateOf("") }
     var currentMenu by remember { mutableStateOf(Config.CONTENT_TYPE_ID.FESTIVAL) }
@@ -122,6 +119,8 @@ fun AreaScreen(
         position = CameraPosition(currentLocation, 13.0)
     }
     LaunchedEffect(Unit) {
+        cameraPositionState.position = CameraPosition(currentLocation, 11.0)
+
         viewModel.locationFlow.collect {
             Timber.i("${it}")
             currentLocation = LatLng(it.mapy.toDouble(), it.mapx.toDouble())
@@ -229,7 +228,6 @@ fun AreaScreen(
                         captionText = "${item.title}",
                         captionColor = Color.Green,
                         onClick = {
-                            markerClick()
                             scope.launch {
                                 scaffoldState.bottomSheetState.expand()
                             }

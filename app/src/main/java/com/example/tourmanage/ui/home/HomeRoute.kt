@@ -6,4 +6,5 @@ enum class HomeRoute(
     val contentDescription: String,
 ) {
     FESTIVAL(route = "Festival", contentDescription = "Festival"),
+    STAY(route = "Stay", contentDescription = "Stay"),
 }

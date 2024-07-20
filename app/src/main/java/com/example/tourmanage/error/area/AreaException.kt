@@ -9,6 +9,7 @@ sealed class TourMangeException(message: String): Exception(message) {
     class DetailCommonInfoNullException(message: String): Exception(message)
     class DetailImageInfoNullException(message: String): Exception(message)
     class SearchInfoNullException(message: String): Exception(message)
+    class StayInfoNullException(message: String): Exception(message)
 
 
 }
