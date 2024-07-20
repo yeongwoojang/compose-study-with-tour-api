@@ -33,14 +33,16 @@ fun MainBottomBar(
     MainBottomBar(
         currentRoute = currentRoute,
         onItemClick = { route ->
-            navController.navigate(route = route.route) {
-                navController.graph.startDestinationRoute?.let {
-                    popUpTo(it) {
-                        saveState = true
+            if(route != currentRoute) {
+                navController.navigate(route = route.route) {
+                    navController.graph.startDestinationRoute?.let {
+                        popUpTo(it) {
+                            saveState = true
+                        }
                     }
+                    this.launchSingleTop = true
+                    this.restoreState = true
                 }
-                this.launchSingleTop = true
-                this.restoreState = true
             }
         }
     )

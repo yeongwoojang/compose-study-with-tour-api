@@ -23,6 +23,7 @@ import com.example.tourmanage.ui.area.AreaScreen
 import com.example.tourmanage.ui.favorite.FavoriteScreen
 import com.example.tourmanage.ui.home.HomeRoute
 import com.example.tourmanage.ui.home.HomeScreen
+import com.example.tourmanage.ui.stay.StayMainActivity
 
 @Composable
 fun MainNavHost() {
@@ -30,7 +31,6 @@ fun MainNavHost() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     var bottomSheenOpenYn by remember { mutableStateOf(false) }
-    var markerOpenYn by remember { mutableStateOf(false) }
 
     val currentRoute = navBackStackEntry?.destination?.route?.let { currentRoute ->
         MainRoute.values().find { route -> route.route == currentRoute }
@@ -58,15 +58,24 @@ fun MainNavHost() {
                             onDismissMenu = {
                                 bottomSheenOpenYn = false
                             },
-                            onClick = { homeRoute, data ->
+                            onClick = { homeRoute, sendData
+                                ->
                                 when (homeRoute) {
                                     HomeRoute.FESTIVAL -> UiController
                                         .addActivity(
                                             context = context,
                                             targetActivity = FestivalMainActivity::class,
                                             data = IntentData(
-                                                mapOf(Config.PASS_DATA.DATA.value to data)
+                                                mapOf(Config.PASS_DATA.DATA.value to sendData)
                                             )
+                                        )
+                                    HomeRoute.STAY -> UiController
+                                        .addActivity(
+                                            context = context,
+                                            targetActivity = StayMainActivity::class,
+                                            data = if (sendData != null) IntentData(
+                                                mapOf(Config.PASS_DATA.DATA.value to sendData)
+                                            ) else null
                                         )
                                 }
 
@@ -79,15 +88,7 @@ fun MainNavHost() {
                     }
 
                     composable(route = MainRoute.AREA.route) {
-                        AreaScreen(
-                            markerClick = {
-                                markerOpenYn = true
-                            },
-                            markerOpenYn = markerOpenYn,
-                            onDismissMenu = {
-                                markerOpenYn = false
-                            }
-                        )
+                        AreaScreen()
                     }
                 }
             },

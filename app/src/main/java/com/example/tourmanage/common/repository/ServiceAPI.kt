@@ -20,8 +20,8 @@ interface ServiceAPI {
         @Query("MobileApp") app: String = MOBILE_APP,
         @Query("serviceKey") key: String = API_KEY,
         @Query("arrange") arrange: String = Config.ARRANGE_TYPE.O.value,
-        @Query("areaCode") areaCode: String?,
-        @Query("sigunguCode") sigunguCode: String?,
+        @Query("areaCode") areaCode: String? = "",
+        @Query("sigunguCode") sigunguCode: String? = "",
         @Query("_type") type: String = TYPE,
         ): StayInfo
 
