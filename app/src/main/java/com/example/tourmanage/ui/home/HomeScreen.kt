@@ -73,8 +73,6 @@ fun HomeScreen(
 
     var subAreaList by remember { mutableStateOf<List<AreaItem>?>(null) }
 
-    var isInit by remember { mutableStateOf(false) }
-
     var areaCodeMap by remember { mutableStateOf<Pair<AreaItem?, AreaItem?>>(Pair(null, null)) }
 
     LaunchedEffect(Unit) {

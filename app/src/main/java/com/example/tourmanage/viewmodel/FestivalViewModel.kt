@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.AreaDataStoreRepository
 import com.example.tourmanage.common.ServerGlobal
+import com.example.tourmanage.common.data.room.FavorDatabase
+import com.example.tourmanage.common.data.room.FavorEntity
 import com.example.tourmanage.common.data.server.item.DetailCommonItem
 import com.example.tourmanage.common.data.server.item.DetailImageItem
 import com.example.tourmanage.common.data.server.item.DetailItem
@@ -19,6 +21,9 @@ import com.example.tourmanage.usecase.data.common.GetDetailCommonUseCase
 import com.example.tourmanage.usecase.data.common.GetDetailImageUseCase
 import com.example.tourmanage.usecase.data.common.GetDetailInfoUseCase
 import com.example.tourmanage.usecase.domain.common.GetLocationBasedUseCase
+import com.example.tourmanage.usecase.domain.favor.AddFavorUseCase
+import com.example.tourmanage.usecase.domain.favor.DelFavorUseCase
+import com.example.tourmanage.usecase.domain.favor.GetFavorUseCase
 import com.example.tourmanage.usecase.domain.festival.GetFestivalUseCase
 import com.google.gson.annotations.SerializedName
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +34,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -42,7 +49,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.supervisorScope
 import timber.log.Timber
 import javax.inject.Inject
@@ -53,24 +62,43 @@ class FestivalViewModel @Inject constructor(
     private val getLocationBasedUseCase: GetLocationBasedUseCase,
     private val getDetailInfoUseCase: GetDetailInfoUseCase,
     private val getDetailCommonUseCase: GetDetailCommonUseCase,
-    private val getDetailImageUseCase: GetDetailImageUseCase
+    private val getDetailImageUseCase: GetDetailImageUseCase,
+    private val addFavorUseCase: AddFavorUseCase,
+    private val getFavorUseCase: GetFavorUseCase,
+    private val delFavorUseCase: DelFavorUseCase,
 ) : ViewModel() {
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Timber.e("exceptionHandler:: | throwable: $throwable")
+        when (throwable) {
+            is TourMangeException.AddFavorException -> {
+                viewModelScope.launch {
+                    _addFavorErrorFlow.emit("잠시후 다시 시도해 주세요.")
+                }
+            }
+        }
     }
 
     private val _festivalInfo = MutableStateFlow<UiState<Festival>>(UiState.Ready())
     val festivalInfo = _festivalInfo.asStateFlow()
 
+    private val festivalResult = MutableSharedFlow<Festival>()
+
     private val _festivalDetailInfo = MutableStateFlow<UiState<FestivalDetail>>(UiState.Loading())
     val festivalDetailInfo = _festivalDetailInfo.asStateFlow()
+
+    private val _addFavorErrorFlow = MutableSharedFlow<String>()
+    val addFavorErrorFlow = _addFavorErrorFlow.asSharedFlow()
+
+    private val _festivalFavorListFow = MutableSharedFlow<List<FavorEntity>>(replay = 1)
+    val festivalFavorListFlow = _festivalFavorListFow.asSharedFlow()
 
     init {
         load()
     }
 
     private fun load() {
+        requestFavorList()
         requestFestival(Config.CONTENT_TYPE_ID.FESTIVAL)
     }
 
@@ -104,6 +132,7 @@ class FestivalViewModel @Inject constructor(
             }.onStart {
                 _festivalInfo.value = UiState.Loading()
             }.collect {
+                festivalResult.emit(it)
                 _festivalInfo.value = UiState.Success(it)
             }
         }
@@ -186,6 +215,28 @@ class FestivalViewModel @Inject constructor(
                 }
         }
 
+    }
+
+    fun requestAddFavor(contentTypeId: String, contentId: String, title: String, image: String) {
+        viewModelScope.launch(exceptionHandler) {
+            addFavorUseCase(contentTypeId, contentId, title, image).getOrThrow()
+            requestFavorList()
+        }
+    }
+
+    fun requestDelFavor(contentId: String) {
+        viewModelScope.launch {
+            delFavorUseCase(contentId).getOrThrow()
+            requestFavorList()
+        }
+    }
+
+    private fun requestFavorList() {
+        viewModelScope.launch(exceptionHandler) {
+            val result = getFavorUseCase(Config.CONTENT_TYPE_ID.FESTIVAL).getOrThrow()
+            _festivalFavorListFow.emit(result)
+            Timber.i("requestFavorList() | $result")
+        }
     }
 }
 
