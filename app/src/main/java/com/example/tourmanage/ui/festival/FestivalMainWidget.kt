@@ -3,6 +3,7 @@ package com.example.tourmanage.ui.festival
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.example.tourmanage.common.data.room.FavorEntity
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.data.server.item.LocationBasedItem
 import com.example.tourmanage.common.extension.isLoading
@@ -26,6 +28,7 @@ import com.example.tourmanage.ui.components.LoadingWidget
 import com.example.tourmanage.viewmodel.FestivalArgument
 import com.example.tourmanage.viewmodel.FestivalViewModel
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -36,12 +39,23 @@ fun FestivalMainWidget(
     choiceFestival: (String) -> Unit = {},
 ) {
     val festivalInfo = viewModel.festivalInfo.collectAsStateWithLifecycle()
+    var favorList by remember { mutableStateOf<List<FavorEntity>>(emptyList()) }
+    val context = LocalContext.current
 
-    if (festivalInfo.isSuccess()) {
-        val festivalData = festivalInfo.value.data!!
-        val recommendFestival = festivalData.recommendFestival
-        val locFestival = festivalData.localFestival
+    LaunchedEffect(Unit) {
+        launch {
+            viewModel.festivalFavorListFlow.collect {
+                favorList = it
+            }
+        }
+
+        launch {
+            viewModel.addFavorErrorFlow.collect {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
+
     Scaffold(
         topBar = {
             val context = LocalContext.current
@@ -59,7 +73,14 @@ fun FestivalMainWidget(
                 mainFestival = mainFestival,
                 areaFestival = recommendFestival,
                 myLocFestival = locFestival,
-                choiceFestival = choiceFestival
+                favorList = favorList,
+                choiceFestival = choiceFestival,
+                requestAddFavor = { contentTypeId, contentId, title, image ->
+                    viewModel.requestAddFavor(contentTypeId, contentId, title, image)
+                },
+                requestDelFavor = { contentId ->
+                    viewModel.requestDelFavor(contentId)
+                }
             )
         }
     }

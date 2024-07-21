@@ -3,16 +3,6 @@ package com.example.tourmanage.common.value
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object Config {
-
-    const val HOME = "HOME"
-    const val WISH = "WISH"
-    const val AREA = "AREA"
-
-    const val MAIN_MENU_KEY = "MENU"
-    const val STAY_INFO = "STAY_INFO"
-
-//    const val PASS_DATA = "PASS_DATA"
-
     enum class PASS_DATA(val value: String) {
         PARENT_AREA("PARENT_AREA"),
         CHILD_AREA("CHILD_AREA"),

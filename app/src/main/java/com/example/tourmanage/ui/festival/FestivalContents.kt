@@ -8,8 +8,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.tourmanage.common.data.room.FavorEntity
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.data.server.item.LocationBasedItem
+import com.example.tourmanage.common.value.Config
 
 @Composable
 fun FestivalContents(
@@ -17,7 +19,10 @@ fun FestivalContents(
     mainFestival: ArrayList<FestivalItem>,
     areaFestival: ArrayList<FestivalItem>,
     myLocFestival: ArrayList<LocationBasedItem>,
-    choiceFestival: (String) -> Unit
+    favorList: List<FavorEntity>,
+    choiceFestival: (String) -> Unit,
+    requestAddFavor: (String, String, String, String) -> Unit,
+    requestDelFavor: (String) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -32,21 +37,26 @@ fun FestivalContents(
         item {
             FestivalBanner(
                 mainFestival = mainFestival,
-                choiceFestival = choiceFestival
+                favorList = favorList,
+                choiceFestival = choiceFestival,
             )
         }
         if (myLocFestival.isNotEmpty()) {
             item {
                 MyLocationFestival(
                     myLocFestival = myLocFestival,
-                    choiceFestival = choiceFestival
+                    favorList = favorList,
+                    choiceFestival = choiceFestival,
+                    requestAddFavor = requestAddFavor,
+                    requestDelFavor = requestDelFavor,
                 )
             }
         }
         item {
             RecommendBanner(
                 areaFestival = areaFestival,
-                choiceFestival = choiceFestival
+                favorList = favorList,
+                choiceFestival = choiceFestival,
             )
         }
     }

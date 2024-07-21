@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.R
+import com.example.tourmanage.common.data.room.FavorEntity
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.FestivalViewModel
@@ -30,7 +31,10 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun RecommendBanner(areaFestival: ArrayList<FestivalItem>, choiceFestival: (String)-> Unit) {
+fun RecommendBanner(
+    areaFestival: ArrayList<FestivalItem>,
+    favorList: List<FavorEntity>,
+    choiceFestival: (String)-> Unit) {
     var imageIndex by rememberSaveable { mutableStateOf(0) }
     LaunchedEffect(Unit) {
         while(true) {
