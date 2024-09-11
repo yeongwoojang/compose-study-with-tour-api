@@ -17,5 +17,6 @@
     <string name="home_intro_more_festival">축제 더 알아보기</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="title_activity_course">CourseActivity</string>
+    <string name="title_activity_main2">MainActivity2</string>
 
 </resources>

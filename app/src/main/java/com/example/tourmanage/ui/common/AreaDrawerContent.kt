@@ -23,6 +23,7 @@ import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.R
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.*
+import timber.log.Timber
 
 @Composable
 fun AreaDrawerContent(

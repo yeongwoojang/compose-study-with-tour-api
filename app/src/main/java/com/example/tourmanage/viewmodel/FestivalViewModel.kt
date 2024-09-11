@@ -79,7 +79,7 @@ class FestivalViewModel @Inject constructor(
         }
     }
 
-    private val _festivalInfo = MutableStateFlow<UiState<Festival>>(UiState.Ready())
+    private val _festivalInfo = MutableStateFlow<UiState<Festival>>(UiState.Loading())
     val festivalInfo = _festivalInfo.asStateFlow()
 
     private val festivalResult = MutableSharedFlow<Festival>()

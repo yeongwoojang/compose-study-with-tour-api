@@ -12,7 +12,7 @@ private val ColorScheme = lightColorScheme(
     onPrimaryContainer = Color.White,
     surface = Color.Black,
     onSurface = Color.White,
-    background = background,
+    background = primaryContainer,
     onBackground = Color.White,
 )
 

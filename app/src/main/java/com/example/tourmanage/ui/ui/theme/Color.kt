@@ -3,7 +3,7 @@ package com.example.tourmanage.ui.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val primary  = Color(0xFF6c72EB)
-val primaryContainer = Color(0xFF232323)
+val primaryContainer = Color(0xFFECE6F0)
 val background = Color(0xFF232323)
 
 

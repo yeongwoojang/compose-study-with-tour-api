@@ -6,6 +6,7 @@ import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.data.server.item.StayItem
+import com.example.tourmanage.error.area.TourMangeException
 import com.example.tourmanage.usecase.domain.area.CacheAreaUseCase
 import com.example.tourmanage.usecase.domain.area.GetAreaUseCase
 import com.example.tourmanage.usecase.domain.area.GetCacheAreaUseCase
@@ -16,6 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -23,8 +25,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -45,90 +51,99 @@ class HomeViewModel @Inject constructor(
 ): ViewModel() {
      private var getSubAreaJob: Job? = null //_ 버튼을 연타하여 연속적인 조회를 막고 이전 조회는 취소하기 위한 Job
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+    private val ceh = CoroutineExceptionHandler { _, throwable ->
+        when (throwable) {
+            is TourMangeException.GetFestivalException -> {
+            }
+        }
         Timber.e("exceptionHandler:: | throwable: $throwable")
     }
 
-    private val curMainArea = MutableSharedFlow<AreaItem?>()
-    private val curSubArea = MutableSharedFlow<AreaItem?>()
-
-    val areaCodeFlow: SharedFlow<Pair<AreaItem?, AreaItem?>> = curMainArea.combine(curSubArea) { areaCode, sigunguCode ->
-        Pair(areaCode, sigunguCode)
-    }.shareIn(viewModelScope + exceptionHandler, SharingStarted.Eagerly)
-
-    private val _festivalList = MutableStateFlow<UiState<ArrayList<FestivalItem>>>(UiState.Ready())
+    private val _festivalList = MutableStateFlow<UiState<ArrayList<FestivalItem>>>(UiState.Loading())
     val festivalList = _festivalList.asStateFlow()
 
-    private val _stayList = MutableStateFlow<UiState<List<StayItem>>>(UiState.Ready())
+    private val _stayList = MutableStateFlow<UiState<List<StayItem>>>(UiState.Loading())
     val stayList = _stayList.asStateFlow()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val subAreaList: StateFlow<UiState<ArrayList<AreaItem>>> = curMainArea.flatMapLatest {
-        flow {
-            emit(UiState.Loading())
-            getAreaUseCase(it!!.code).getOrThrow()
-                .collect {
-                    emit(UiState.Success(it))
-                }
-        }
-    }.stateIn(viewModelScope + exceptionHandler, SharingStarted.Eagerly, UiState.Ready())
+    private val _subAreaList = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Loading())
+    val subAreaList = _subAreaList.asStateFlow()
+
+    private val _currentArea = MutableStateFlow<UiState<Pair<AreaItem?, AreaItem?>>>(UiState.Loading())
+    val currentArea = _currentArea.asStateFlow()
+
+
+    init {
+        fetchAllData()
+    }
 
     fun cacheArea(areaItem: AreaItem?, isSub: Boolean = false) {
         getSubAreaJob?.cancel() //_ job을 취소하면 해당 코루틴 내에서 동작중인 비동기 작업도 취소됨. 따라서 서버 조회가 취소됨.
-        getSubAreaJob = viewModelScope.launch(exceptionHandler) {
+        getSubAreaJob = viewModelScope.launch(ceh) {
             if (areaItem == null) {
                 return@launch
             }
             val result = cacheAreaUseCase(areaItem, isSub).getOrThrow()
             if (result) {
-                if (isSub) {
-                    curSubArea.emit(areaItem)
-                } else {
-                    curMainArea.emit(areaItem)
-                    val isRemoved = removeCacheAreaUseCase(true).getOrThrow()
-                    if (isRemoved) {
-                        curSubArea.emit(null)
-                    }
+                if (!isSub) {
+                    removeCacheAreaUseCase(true).getOrThrow()
                 }
+            }
+            updateArea()
+        }
+    }
+
+    private suspend fun getCachedArea(): Flow<Pair<AreaItem?, AreaItem?>> {
+        return flow {
+            val areaItem = getCacheAreaUseCase(isSub = false).getOrThrow()
+            val sigunguItem = getCacheAreaUseCase(isSub = true).getOrThrow()
+            areaItem.onEach {
+                val areaCode: ArrayList<AreaItem> = getAreaUseCase(it?.code).getOrThrow()
+                _subAreaList.value = UiState.Success(areaCode)
+            }.combine(sigunguItem) { areaItem, sigunguItem ->
+                Pair(areaItem, sigunguItem)
+            }.collect {
+                emit(it)
             }
         }
     }
 
-    fun getCachedArea() {
-        viewModelScope.launch(exceptionHandler) {
-            repeat(2) { count -> //_ 부모, 자식 지역 코드 GET 하기위해 2번 조회
-                val isSub = count == 1
-                val result = getCacheAreaUseCase.invoke(isSub)
-                result.getOrThrow().collect {
-                    if (isSub) {
-                        curSubArea.emit(it)
-                    } else {
-                        curMainArea.emit(it)
-                    }
-                }
+    private fun fetchAllData() {
+        viewModelScope.launch(ceh) {
+            getMainFestival()
+            updateArea()
+        }
+    }
+
+    private suspend fun updateArea() {
+        getCachedArea().collect {
+            _currentArea.value = UiState.Success(it)
+            val areaCode = it.first?.code
+            val sigunguCode = it.second?.code
+            requestStayInfo(
+                areaCode = areaCode,
+                sigunguCode = sigunguCode
+            )
+        }
+    }
+
+    private suspend fun getMainFestival() {
+        getFestivalUseCase(
+            areaCode = "",
+            startDate = ""
+        ).getOrThrow()
+            .onStart {
+                _festivalList.value = UiState.Loading()
             }
-        }
+            .collect {
+                _festivalList.value = UiState.Success(it)
+            }
     }
 
-    fun requestFestivalInfo(areaCode: String = "", eventStartDate: String = "") {
-        viewModelScope.launch {
-            getFestivalUseCase(areaCode, eventStartDate).getOrThrow()
-                .onStart {
-                    _festivalList.value = UiState.Loading()
-                }
-                .collect {
-                    _festivalList.value = UiState.Success(it)
-                }
-        }
-    }
-
-    fun requestStayInfo(areaCode: String?, sigunguCode: String?) {
+    private suspend fun requestStayInfo(areaCode: String?, sigunguCode: String?) {
         Timber.i("requestStayInfo() | areaCode: $areaCode | sigunguCode: $sigunguCode")
-        viewModelScope.launch(exceptionHandler) {
-            getStayUseCase(areaCode, sigunguCode).getOrThrow()
-                .collect {
-                    _stayList.value = UiState.Success(it)
-                }
-        }
+        getStayUseCase(areaCode, sigunguCode).getOrThrow()
+            .collect {
+                _stayList.value = UiState.Success(it)
+            }
     }
 }

@@ -25,12 +25,12 @@ class GetFestivalUseCaseImpl @Inject constructor(
             val response = serviceAPI.requestFestivalInfo(areaCode = areaCode, eventStartDate = date)
             val festivals = response.toFestivalItems()
             if (festivals.isEmpty()) {
-                throw TourMangeException.FestivalNullException("축제 정보를 불러올 수 없습니다.")
+                throw TourMangeException.GetFestivalException("축제 정보를 불러올 수 없습니다.")
             } else {
                 emit(festivals)
             }
         }
     }.onFailure {
-        throw TourMangeException.FestivalNullException(it.message.orEmpty())
+        throw TourMangeException.GetFestivalException(it.message.orEmpty())
     }
 }

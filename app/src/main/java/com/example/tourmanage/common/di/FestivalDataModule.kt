@@ -15,7 +15,6 @@ abstract class FestivalDataModule {
 
     @Binds
     abstract fun bindGetFestivalInfoUseCase(uc: GetFestivalUseCaseImpl): GetFestivalUseCase
-
     @Binds
     abstract fun bindGetLocationBasedUseCase(uc: GetLocationBasedUseCaseImpl): GetLocationBasedUseCase
 }
