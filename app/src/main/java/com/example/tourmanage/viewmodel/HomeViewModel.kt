@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import timber.log.Timber
@@ -109,8 +110,9 @@ class HomeViewModel @Inject constructor(
 
     private fun fetchAllData() {
         viewModelScope.launch(ceh) {
-            getMainFestival()
-            updateArea()
+            //_ 시간 단축을 위해 병령 처리
+            launch { getMainFestival() }
+            launch { updateArea() }
         }
     }
 

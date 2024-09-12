@@ -54,7 +54,8 @@ fun MainTopBar(
                 if (currentRoute == MainRoute.HOME) {
                     IconButton(
                         modifier = Modifier.padding(end = 10.dp),
-                        onClick = menuClick) {
+                        onClick = menuClick
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.Menu,
                             tint = MaterialTheme.colorScheme.onBackground,
