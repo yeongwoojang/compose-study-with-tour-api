@@ -1,43 +1,52 @@
 package com.example.tourmanage.ui.common
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
-import com.example.tourmanage.R
 import com.example.tourmanage.common.data.server.item.AreaItem
-import com.example.tourmanage.common.extension.*
 
 @Composable
 fun AreaDrawerContent(
     modifier: Modifier = Modifier,
-    curMainArea: AreaItem?,
-    curChildArea: AreaItem?,
-    mainAreaList: List<AreaItem>,
-    curChildAreaList: List<AreaItem>?,
-    onClick: (areaItem: AreaItem, isChild: Boolean) -> Unit
+    currentArea: AreaItem?,
+    currentSigungu: AreaItem?,
+    areaList: List<AreaItem>,
+    sigunguList: List<AreaItem>?,
+    onClick: (areaItem: AreaItem, isSigungu: Boolean) -> Unit
 ) {
 
     val listState = rememberLazyListState()
 
+    var selectedArea by remember {
+        mutableStateOf(currentArea)
+    }
+    var selectedSigungu by remember {
+        mutableStateOf(currentSigungu)
+    }
+
     LaunchedEffect(Unit) {
-        var scrollPosition = mainAreaList.indexOf(curMainArea)
+        var scrollPosition = areaList.indexOf(currentArea)
         if (scrollPosition == -1) scrollPosition = 0
         listState.scrollToItem(scrollPosition)
     }
@@ -45,7 +54,6 @@ fun AreaDrawerContent(
     Box(
         modifier = modifier
             .navigationBarsPadding()
-            .statusBarsPadding()
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp),
         contentAlignment = Alignment.Center
@@ -59,18 +67,23 @@ fun AreaDrawerContent(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(
-                    count = mainAreaList.size,
+                    count = areaList.size,
                     key = { index ->
-                        mainAreaList[index]
+                        areaList[index]
                     }
                 ) { index ->
-                    val mainArea = mainAreaList[index]
-                    AreaItemLayout(
+                    val areaItem = areaList[index]
+                    val iconColor = if (areaItem.code == selectedArea?.code && areaItem.name == selectedArea?.name) 0xFFFFB6C1 else 0xFFDCDCDC
+                    AreaIcon(
                         modifier = Modifier.width(80.dp),
-                        areaItem = mainArea,
-                        curMainArea = curMainArea,
-                        onClick = {
-                            onClick(mainArea, false)
+                        areaItem = areaItem,
+                        color = iconColor,
+                        onClick = { selectedItem ->
+                            selectedArea = selectedItem
+                            //TODO 해당 부분 테스트 및 검토 필요
+                            if (currentSigungu?.code != areaItem.code && currentSigungu?.name != areaItem.name) {
+                                onClick(areaItem, false)
+                            }
                         }
                     )
                 }
@@ -82,83 +95,32 @@ fun AreaDrawerContent(
             )
             Spacer(modifier = Modifier.width(10.dp))
 
-            if (curChildAreaList != null) {
+            if (sigunguList != null) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(
-                        items = curChildAreaList,
-                        itemContent = { childArea ->
-                            AreaItemLayout(
+                        items = sigunguList,
+                        itemContent = { sigungu ->
+                            val iconColor = if (sigungu.code == selectedSigungu?.code && sigungu.name == selectedSigungu?.name) 0xFFF08080 else 0xFFDCDCDC
+                            AreaIcon(
                                 modifier = Modifier.width(80.dp),
-                                areaItem = childArea,
-                                isSub = true,
-                                curMainArea = curMainArea,
-                                curSubArea = curChildArea,
-                                onClick = {
-                                    onClick(childArea, true)
+                                areaItem = sigungu,
+                                color = iconColor,
+                                onClick = { selectedItem ->
+                                    selectedSigungu = selectedItem
+                                    //TODO 해당 부분 테스트 및 검토 필요
+                                    if (currentSigungu?.code != sigungu.code && currentSigungu?.name != sigungu.name) {
+                                        onClick(sigungu, true)
+                                    }
                                 }
                             )
                         }
                     )
                 }
             }
-
         }
-    }
-}
-
-@Composable
-fun AreaItemLayout(
-    modifier: Modifier = Modifier,
-    areaItem: AreaItem?,
-    isSub: Boolean = false,
-    curMainArea: AreaItem?,
-    curSubArea: AreaItem? = null,
-    onClick: () -> Unit
-) {
-    val backgroundColor = if (isSub) {
-        if (curSubArea?.name == areaItem?.name && curSubArea?.code == areaItem?.code) {
-            colorResource(id = R.color.cornflower_blue)
-        } else {
-            colorResource(id = R.color.gainsboro)
-        }
-    } else {
-        if (curMainArea?.name == areaItem?.name && curMainArea?.code == areaItem?.code) {
-            colorResource(id = R.color.light_coral)
-        } else {
-            colorResource(id = R.color.gainsboro)
-        }
-    }
-
-    Box(
-        modifier = modifier
-            .wrapContentHeight()
-            .background(color = backgroundColor, shape = RoundedCornerShape(6.dp))
-            .padding(10.dp)
-            .noRippleClickable {
-                if (!isSub) {
-                    if (curMainArea?.code != areaItem?.code) {
-                        onClick()
-                    }
-                } else {
-                    if (curSubArea?.code != areaItem?.code) {
-                        onClick()
-                    }
-                }
-            },
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = areaItem?.name.isEmptyString(),
-            style = TextStyle(
-                fontSize = 12.sp,
-                fontFamily = spoqaHanSansNeoFont,
-                fontWeight = FontWeight.Medium,
-                color = Color.Black
-            )
-        )
     }
 }

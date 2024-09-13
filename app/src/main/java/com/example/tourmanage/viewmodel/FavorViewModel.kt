@@ -27,7 +27,7 @@ class FavorViewModel @Inject constructor(
 
     }
 
-    private val _favorDataFlow = MutableStateFlow<UiState<List<FavorEntity>>>(UiState.Ready())
+    private val _favorDataFlow = MutableStateFlow<UiState<List<FavorEntity>>>(UiState.Loading())
     val favorDataFlow = _favorDataFlow.asStateFlow()
 
     fun getFavorAll() {

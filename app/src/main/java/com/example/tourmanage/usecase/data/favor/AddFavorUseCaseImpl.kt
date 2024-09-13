@@ -18,7 +18,7 @@ class AddFavorUseCaseImpl @Inject constructor(
         image: String?
     ): Result<Long> = runCatching {
         if (contentTypeId.isNullOrEmpty() || contentId.isNullOrEmpty() || title.isNullOrEmpty() || image.isNullOrEmpty()) {
-            throw TourMangeException.AddFavorException(Config.INSERT_ERROR)
+            throw TourMangeException.AddFavorException("DB 저장 실패")
         } else {
             dao.insert(FavorEntity(
                 contentTypeId = contentTypeId,

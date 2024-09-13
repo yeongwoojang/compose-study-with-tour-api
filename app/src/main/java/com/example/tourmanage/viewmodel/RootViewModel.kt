@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -21,23 +19,22 @@ import javax.inject.Inject
 class RootViewModel @Inject constructor(
     private val getAreaUseCase: GetAreaUseCase
 ): ViewModel() {
-    private val _areaCodesState = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Ready())
+    private val _areaCodesState = MutableStateFlow<UiState<ArrayList<AreaItem>>>(UiState.Loading())
     val areaCodesState = _areaCodesState.asStateFlow()
 
     private val _exceptionState = MutableSharedFlow<Throwable>()
     val exceptionState = _exceptionState.asSharedFlow()
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+    private val ceh = CoroutineExceptionHandler { _, throwable ->
         viewModelScope.launch {
             _exceptionState.emit(throwable)
         }
     }
-    fun getAreaList() {
-        viewModelScope.launch(exceptionHandler) {
-            getAreaUseCase().getOrThrow()
-                .onStart { _areaCodesState.value = UiState.Loading() }
-                .collect{ _areaCodesState.value = UiState.Success(it) }
+
+    fun getAreaCode() {
+        viewModelScope.launch(ceh) {
+            val data = getAreaUseCase().getOrThrow()
+            _areaCodesState.value = UiState.Success(data)
         }
     }
-
 }

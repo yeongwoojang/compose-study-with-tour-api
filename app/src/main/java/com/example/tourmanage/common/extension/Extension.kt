@@ -48,10 +48,6 @@ fun State<UiState<*>>.isLoading(): Boolean {
     return value is UiState.Loading
 }
 
-fun State<UiState<*>>.isReady(): Boolean {
-    return value is UiState.Ready
-}
-
 fun State<UiState<*>>.isSuccess(): Boolean {
     return value is UiState.Success
 }

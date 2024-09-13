@@ -25,9 +25,7 @@ class FestivalMainActivity : ComponentActivity() {
         setContent {
             TourManageTheme {
                 if (mainFestival != null) {
-                    val navController = rememberNavController()
                     FestivalNavHost(
-                        navController = navController,
                         mainFestival = mainFestival
                     )
                 }
