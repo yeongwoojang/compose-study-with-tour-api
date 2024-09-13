@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.tourmanage.common.data.server.item.AreaItem
-import timber.log.Timber
 
 @Composable
 fun AreaDrawerContent(
@@ -34,7 +33,7 @@ fun AreaDrawerContent(
     currentSigungu: AreaItem?,
     areaList: List<AreaItem>,
     sigunguList: List<AreaItem>?,
-    onClick: (areaItem: AreaItem, isChild: Boolean) -> Unit
+    onClick: (areaItem: AreaItem, isSigungu: Boolean) -> Unit
 ) {
 
     val listState = rememberLazyListState()

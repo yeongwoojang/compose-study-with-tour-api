@@ -214,11 +214,11 @@ fun HomeScreen(
                 currentSigungu = areaCodeMap.second,
                 areaList = ServerGlobal.getMainAreaList(),
                 sigunguList = subAreaList,
-                onClick = { areaItem, isChild ->
+                onClick = { areaItem, isSigungu ->
                     if (subAreaListState.isLoading()) {
                         return@AreaDrawerContent
                     }
-                    viewModel.cacheArea(areaItem, isChild)
+                    viewModel.onChangeArea(areaItem, isSigungu)
                 }
             )
         }

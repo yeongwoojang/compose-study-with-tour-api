@@ -8,16 +8,18 @@ import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.error.area.TourMangeException
 import com.example.tourmanage.usecase.domain.area.CacheAreaUseCase
 import com.google.gson.Gson
+import timber.log.Timber
 import javax.inject.Inject
 
 class CacheAreaUseCaseImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ): CacheAreaUseCase {
 
-    override suspend fun invoke(areaItem: AreaItem?, isSub: Boolean): Result<Boolean> = runCatching{
+    override suspend fun invoke(areaItem: AreaItem?, isSigungu: Boolean): Result<Boolean> = runCatching{
         requireNotNull(areaItem) { throw TourMangeException.AreaNullException("지역 데이터가 없습니다.") }
+        Timber.i("TEST_LOG |  CacheAreaUseCase() | ${areaItem.name}")
         dataStore.edit { store ->
-            val key = if (isSub) Config.CHILD_AREA else Config.PARENT_AREA
+            val key = if (isSigungu) Config.CHILD_AREA else Config.PARENT_AREA
             store[key] = Gson().toJson(areaItem)
         }
         true

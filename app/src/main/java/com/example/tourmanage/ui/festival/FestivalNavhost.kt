@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.data.FestivalNavItem
@@ -25,7 +26,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun FestivalNavHost(navController: NavHostController, mainFestival: ArrayList<FestivalItem>) {
+fun FestivalNavHost(festivalJson: String?) {
+    val mainFestival = festivalJson?.let {
+        Gson().fromJson(it, Array<FestivalItem>::class.java).toList() // JSON을 다시 객체로 변환
+     } as ArrayList<FestivalItem>
+
+    val navController = rememberNavController()
     val viewModel: FestivalViewModel = viewModel()
     NavHost(
         navController = navController,

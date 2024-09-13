@@ -1,16 +1,8 @@
 package com.example.tourmanage.ui.main
 
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.waterfallPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -21,9 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -40,7 +30,7 @@ import com.example.tourmanage.ui.stay.StayMainActivity
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
 
 @Composable
-fun MainNavHost() {
+fun MainNavHost(showOverlay: (sendData: Any?) -> Unit) {
     val context = LocalContext.current
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -72,17 +62,18 @@ fun MainNavHost() {
                             onDismissMenu = {
                                 bottomSheenOpenYn = false
                             },
-                            onClick = { homeRoute, sendData
-                                ->
+                            onClick = { homeRoute, sendData ->
                                 when (homeRoute) {
-                                    HomeRoute.FESTIVAL -> UiController
-                                        .addActivity(
-                                            context = context,
-                                            targetActivity = FestivalMainActivity::class,
-                                            data = IntentData(
-                                                mapOf(Config.PASS_DATA.DATA.value to sendData)
-                                            )
-                                        )
+                                    HomeRoute.FESTIVAL -> {
+                                        showOverlay(sendData)
+                                    }
+//                                        UiController.addActivity(
+//                                            context = context,
+//                                            targetActivity = FestivalMainActivity::class,
+//                                            data = IntentData(
+//                                                mapOf(Config.PASS_DATA.DATA.value to sendData)
+//                                            )
+//                                        )
                                     HomeRoute.STAY -> UiController
                                         .addActivity(
                                             context = context,
@@ -122,6 +113,8 @@ fun MainNavHost() {
 fun MainNavHostPreview() {
     TourManageTheme {
 
-        MainNavHost()
+//        MainNavHost(
+//            showOverlay = false
+//        )
     }
 }

@@ -15,26 +15,17 @@ import com.example.tourmanage.usecase.domain.festival.GetFestivalUseCase
 import com.example.tourmanage.usecase.domain.stay.GetStayUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import timber.log.Timber
@@ -50,8 +41,6 @@ class HomeViewModel @Inject constructor(
     private val getStayUseCase: GetStayUseCase
 
 ): ViewModel() {
-     private var getSubAreaJob: Job? = null //_ 버튼을 연타하여 연속적인 조회를 막고 이전 조회는 취소하기 위한 Job
-
     private val ceh = CoroutineExceptionHandler { _, throwable ->
         when (throwable) {
             is TourMangeException.GetFestivalException -> {
@@ -72,24 +61,35 @@ class HomeViewModel @Inject constructor(
     private val _currentArea = MutableStateFlow<UiState<Pair<AreaItem?, AreaItem?>>>(UiState.Loading())
     val currentArea = _currentArea.asStateFlow()
 
+    private val _selectedArea = MutableStateFlow<Pair<AreaItem?, Boolean>>(Pair(null, false))
+    private val selectedArea = _selectedArea.filter { it.first != null }.debounce(500).onEach {
+        val selectedArea = it.first!!
+        val isSigungu = it.second
+        cacheArea(
+            areaItem = selectedArea,
+            isSigungu = isSigungu
+        )
+    }.launchIn(viewModelScope + ceh)
 
     init {
         fetchAllData()
     }
 
-    fun cacheArea(areaItem: AreaItem?, isSub: Boolean = false) {
-        getSubAreaJob?.cancel() //_ job을 취소하면 해당 코루틴 내에서 동작중인 비동기 작업도 취소됨. 따라서 서버 조회가 취소됨.
-        getSubAreaJob = viewModelScope.launch(ceh) {
-            if (areaItem == null) {
-                return@launch
-            }
-            val result = cacheAreaUseCase(areaItem, isSub).getOrThrow()
+    private fun cacheArea(areaItem: AreaItem, isSigungu: Boolean = false) {
+        viewModelScope.launch(ceh) {
+            val result = cacheAreaUseCase(areaItem, isSigungu).getOrThrow()
             if (result) {
-                if (!isSub) {
+                if (!isSigungu) {
                     removeCacheAreaUseCase(true).getOrThrow()
                 }
             }
             updateArea()
+        }
+    }
+
+    fun onChangeArea(areaItem: AreaItem, isSigungu: Boolean) {
+        viewModelScope.launch {
+            _selectedArea.value = Pair(areaItem, isSigungu)
         }
     }
 
