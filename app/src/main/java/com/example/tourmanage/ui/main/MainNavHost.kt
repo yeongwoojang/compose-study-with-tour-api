@@ -31,7 +31,6 @@ import timber.log.Timber
 
 @Composable
 fun MainNavHost() {
-    val context = LocalContext.current
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     var bottomSheenOpenYn by remember { mutableStateOf(false) }
@@ -89,17 +88,13 @@ fun MainNavHost() {
                             navController.previousBackStackEntry?.savedStateHandle?.get<ArrayList<*>>("data")
                         }
                         val mainFestival = data as ArrayList<FestivalItem>
-                        FestivalNavHost(mainFestival = mainFestival, onDismiss = {})
+                        FestivalNavHost(
+                            mainFestival = mainFestival,
+                            onDismiss = {
+                                navController.popBackStack()
+                            }
+                        )
                     }
-//                    composable(route = "${PageRoute.FESTIVAL.route}?uri={items}") { backStackEntry ->
-//                        val itemsJson = backStackEntry.arguments?.getString("items")
-//                        val decodedJsonItems = itemsJson?.let { Uri.decode(it) } // 문자열 디코딩
-//                        isVisibleBar = false
-//                        FestivalNavHost(json = decodedJsonItems, onDismiss = {
-//                            navController.popBackStack() {}
-////                            isVisibleBar = true
-//                        })
-//                    }
                 }
             },
             bottomBar = {

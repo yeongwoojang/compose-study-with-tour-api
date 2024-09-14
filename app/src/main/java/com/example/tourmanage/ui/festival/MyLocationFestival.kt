@@ -60,17 +60,15 @@ fun MyLocationFestival(
         Spacer(modifier = Modifier.height(10.dp))
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding = PaddingValues(end = 16.dp)
         ) {
             itemsIndexed(myLocFestival) { index, item ->
                 val isFavor = favorList.find { it.contentId == item.contentId } != null
                 Timber.i("ITEM: ${item.title} | INDEX: $index | isFavor: $isFavor")
-                val isLastItem = item == myLocFestival.last()
-                val padding = if (isLastItem) 16.dp else 0.dp
                 val favorTint = if (isFavor) Color.Yellow else Color.White
                 Column(modifier = Modifier
                     .width(150.dp)
-                    .padding(end = padding)
                     .clickable { choiceFestival(item.contentId.orEmpty()) }
                 ) {
                     Box {
