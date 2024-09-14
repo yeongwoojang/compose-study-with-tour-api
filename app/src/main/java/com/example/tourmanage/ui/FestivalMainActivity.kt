@@ -25,9 +25,9 @@ class FestivalMainActivity : ComponentActivity() {
         setContent {
             TourManageTheme {
                 if (mainFestival != null) {
-                    FestivalNavHost(
-                        mainFestival = mainFestival
-                    )
+//                    FestivalNavHost(
+//                        mainFestival = mainFestival
+//                    )
                 }
             }
         }

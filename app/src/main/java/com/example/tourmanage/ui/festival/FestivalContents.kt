@@ -15,7 +15,7 @@ import com.example.tourmanage.common.value.Config
 
 @Composable
 fun FestivalContents(
-    paddingValues: PaddingValues,
+//    paddingValues: PaddingValues,
     mainFestival: ArrayList<FestivalItem>,
     areaFestival: ArrayList<FestivalItem>,
     myLocFestival: ArrayList<LocationBasedItem>,
@@ -29,8 +29,8 @@ fun FestivalContents(
             .fillMaxWidth()
             .padding(
                 start = 16.dp,
-                top = paddingValues.calculateTopPadding() + 20.dp,
-                bottom = paddingValues.calculateBottomPadding()
+//                top = paddingValues.calculateTopPadding() + 20.dp,
+//                bottom = paddingValues.calculateBottomPadding()
             ),
         verticalArrangement = Arrangement.spacedBy(40.dp)
     ) {

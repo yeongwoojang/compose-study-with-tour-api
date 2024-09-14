@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tourmanage.common.value.Config
-import com.example.tourmanage.ui.main.MainRoute
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 
 @OptIn(ExperimentalMaterial3Api::class)

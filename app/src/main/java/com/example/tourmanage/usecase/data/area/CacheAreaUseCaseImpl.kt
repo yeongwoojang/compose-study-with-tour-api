@@ -17,7 +17,6 @@ class CacheAreaUseCaseImpl @Inject constructor(
 
     override suspend fun invoke(areaItem: AreaItem?, isSigungu: Boolean): Result<Boolean> = runCatching{
         requireNotNull(areaItem) { throw TourMangeException.AreaNullException("지역 데이터가 없습니다.") }
-        Timber.i("TEST_LOG |  CacheAreaUseCase() | ${areaItem.name}")
         dataStore.edit { store ->
             val key = if (isSigungu) Config.CHILD_AREA else Config.PARENT_AREA
             store[key] = Gson().toJson(areaItem)

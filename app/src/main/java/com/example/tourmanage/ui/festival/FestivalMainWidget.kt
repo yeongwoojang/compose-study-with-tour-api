@@ -56,35 +56,25 @@ fun FestivalMainWidget(
         }
     }
 
-    Scaffold(
-        topBar = {
-            val context = LocalContext.current
-            Header(menuName = "Festival", Config.HEADER_BUTTON_TYPE.HOME) {
-                (context as Activity).finish()
+    if (festivalInfo.isSuccess()) {
+        val festivalData = festivalInfo.value.data!!
+        val recommendFestival = festivalData.recommendFestival
+        val locFestival = festivalData.localFestival
+        FestivalContents(
+//            paddingValues = it,
+            mainFestival = mainFestival,
+            areaFestival = recommendFestival,
+            myLocFestival = locFestival,
+            favorList = favorList,
+            choiceFestival = choiceFestival,
+            requestAddFavor = { contentTypeId, contentId, title, image ->
+                viewModel.requestAddFavor(contentTypeId, contentId, title, image)
+            },
+            requestDelFavor = { contentId ->
+                viewModel.requestDelFavor(contentId)
             }
-        }
-    ) {
-        if (festivalInfo.isSuccess()) {
-            val festivalData = festivalInfo.value.data!!
-            val recommendFestival = festivalData.recommendFestival
-            val locFestival = festivalData.localFestival
-            FestivalContents(
-                paddingValues = it,
-                mainFestival = mainFestival,
-                areaFestival = recommendFestival,
-                myLocFestival = locFestival,
-                favorList = favorList,
-                choiceFestival = choiceFestival,
-                requestAddFavor = { contentTypeId, contentId, title, image ->
-                    viewModel.requestAddFavor(contentTypeId, contentId, title, image)
-                },
-                requestDelFavor = { contentId ->
-                    viewModel.requestDelFavor(contentId)
-                }
-            )
-        }
+        )
     }
-
     if (festivalInfo.isLoading()) {
         LoadingWidget()
     }

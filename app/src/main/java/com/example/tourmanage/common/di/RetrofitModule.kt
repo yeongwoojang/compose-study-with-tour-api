@@ -38,33 +38,36 @@ class RetrofitModule {
         val request = it.request()
         var response: Response? = null
         var isSuccess = false
-        while(replyCount < 2) { //_ 여기서 retry는 1회 시도
-            try {
-                Timber.e("Intercept() | proceed")
-                response = it.proceed(request)
-                isSuccess = response.body?.contentType().toString() == "application/json"
-                if (isSuccess) {
-                   break
-                }
-            } catch (e: Exception) {
-                Timber.e("Intercept() | error: $e")
-            }
-            replyCount++
-        }
+        response = it.proceed(request)
 
-        if (isSuccess) {
-            val cacheControl = CacheControl.Builder()
-                .maxAge(1, TimeUnit.HOURS)
-                .build()
-
-            response!!.newBuilder()
-                .removeHeader("Cache-Control")
-                .addHeader("Cache-Control", cacheControl.toString())
-                .build()
-        } else {
-            Timber.e("Intercept() | last proceed")
-            it.proceed(request)//_ 최종적으로 retry 한번 더 시도 (총 3회 조회까지 가능)
-        }
+        response
+//        while(replyCount < 2) { //_ 여기서 retry는 1회 시도
+//            try {
+//                Timber.e("Intercept() | proceed")
+//                response = it.proceed(request)
+//                isSuccess = response.body?.contentType().toString() == "application/json"
+//                if (isSuccess) {
+//                   break
+//                }
+//            } catch (e: Exception) {
+//                Timber.e("Intercept() | error: $e")
+//            }
+//            replyCount++
+//        }
+//
+//        if (isSuccess) {
+//            val cacheControl = CacheControl.Builder()
+//                .maxAge(1, TimeUnit.HOURS)
+//                .build()
+//
+//            response!!.newBuilder()
+//                .removeHeader("Cache-Control")
+//                .addHeader("Cache-Control", cacheControl.toString())
+//                .build()
+//        } else {
+//            Timber.e("Intercept() | last proceed")
+//            it.proceed(request)//_ 최종적으로 retry 한번 더 시도 (총 3회 조회까지 가능)
+//        }
     }
 
     @Singleton

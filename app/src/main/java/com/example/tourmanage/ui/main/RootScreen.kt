@@ -3,6 +3,7 @@ package com.example.tourmanage.ui.main
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -28,12 +29,11 @@ import timber.log.Timber
 fun RootScreen(viewModel: RootViewModel = hiltViewModel()) {
 
     val areaCodes = viewModel.areaCodesState.collectAsStateWithLifecycle()
-    var showOverlay by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val overlayNavController = rememberNavController()
+    val overlayRouteState = viewModel.overlayPageFlow.collectAsStateWithLifecycle()
 
     var isInit by remember { mutableStateOf(false) }
-
     LaunchedEffect(Unit) {
         launch {
             viewModel.exceptionState.collect { throwable ->
@@ -52,22 +52,7 @@ fun RootScreen(viewModel: RootViewModel = hiltViewModel()) {
         LoadingWidget()
     }
 
-    if (areaCodes.isSuccess() && isInit) {
-        MainNavHost(
-            showOverlay = {
-                showOverlay = true
-                val mainFestival = Uri.encode(Gson().toJson(it))
-                Timber.i("TEST_LOG | data: $mainFestival")
-                Timber.i("TEST_LOG | overlayNavController: $overlayNavController")
-                overlayNavController.navigate("${OverlayRoute.FESTIVAL.route}/$mainFestival")
-//                overlayNavController.navigateToFestival(mainFestival)
-            }
-        )
-    }
-
-    if (showOverlay) {
-        OverlayNavHost(
-            navController = overlayNavController
-        )
+    if (isInit) {
+        MainNavHost()
     }
 }

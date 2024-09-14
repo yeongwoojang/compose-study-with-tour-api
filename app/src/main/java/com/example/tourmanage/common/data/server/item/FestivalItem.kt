@@ -1,7 +1,10 @@
 package com.example.tourmanage.common.data.server.item
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class FestivalItem(
     @Json(name = "addr1") val addr1: String?,
     @Json(name = "addr2") val addr2: String?,
@@ -25,4 +28,4 @@ data class FestivalItem(
     @Json(name = "sigungucode") val sigunguCode: String?,
     @Json(name = "tel") val tel: String?,
     @Json(name = "title") val title: String?,
-): CommonBodyItem()
+): CommonBodyItem(), Parcelable

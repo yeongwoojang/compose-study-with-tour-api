@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.server.item.AreaItem
+import com.example.tourmanage.ui.home.OverlayRoute
 import com.example.tourmanage.usecase.domain.area.GetAreaUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -31,10 +32,23 @@ class RootViewModel @Inject constructor(
         }
     }
 
+    private val _overlayPageFlow = MutableStateFlow<OverlayItem?>(null)
+    val overlayPageFlow = _overlayPageFlow.asStateFlow()
+
     fun getAreaCode() {
         viewModelScope.launch(ceh) {
             val data = getAreaUseCase().getOrThrow()
             _areaCodesState.value = UiState.Success(data)
         }
     }
+
+    fun setOverlayPage(route: OverlayRoute, data: Any?) {
+        _overlayPageFlow.value = OverlayItem(route = route, data = data)
+
+    }
 }
+
+data class OverlayItem(
+    val route: OverlayRoute? = null,
+    val data: Any? = null
+)

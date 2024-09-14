@@ -1,8 +1,12 @@
 package com.example.tourmanage.ui.festival
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,15 +28,11 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 @Composable
-fun FestivalNavHost(festivalJson: String?) {
-    val mainFestival = festivalJson?.let {
-        Gson().fromJson(it, Array<FestivalItem>::class.java).toList() // JSON을 다시 객체로 변환
-     } as ArrayList<FestivalItem>
-
+fun FestivalNavHost(viewModel: FestivalViewModel = hiltViewModel(), mainFestival: ArrayList<FestivalItem>, onDismiss: () -> Unit) {
     val navController = rememberNavController()
-    val viewModel: FestivalViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = FestivalNavItem.Main.route

@@ -6,12 +6,20 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.ui.graphics.vector.ImageVector
 
-enum class MainRoute(
+enum class PageRoute(
     val route: String,
     val contentDescription: String,
-    val icon: ImageVector
+    val icon: ImageVector? = null
 ) {
     HOME(route = "Home", contentDescription = "Home", Icons.Filled.Home),
     FAVORITE(route = "Favorite", contentDescription = "Favorite", Icons.Filled.Favorite),
-    AREA(route = "Area", contentDescription = "Area", Icons.Filled.LocationOn)
+    AREA(route = "Area", contentDescription = "Area", Icons.Filled.LocationOn),
+    FESTIVAL(route = "Festival", contentDescription = "Festival", null),
+    STAY(route = "Stay", contentDescription = "Stay", null);
+
+    companion object {
+        fun isBottomMenu(route: PageRoute) = route.route == HOME.route
+                || route.route == FAVORITE.route
+                || route.route == AREA.route
+    }
 }

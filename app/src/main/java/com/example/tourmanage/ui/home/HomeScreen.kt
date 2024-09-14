@@ -45,9 +45,11 @@ import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.ui.common.AreaDrawerContent
+import com.example.tourmanage.ui.main.PageRoute
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
@@ -55,7 +57,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     bottomSheenOpenYn: Boolean = false,
     onDismissMenu: () -> Unit,
-    onClick: (HomeRoute, Any?) -> Unit,
+    onClick: (PageRoute, Any?) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -99,7 +101,7 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .height(240.dp)
                         .padding(horizontal = 16.dp)
-                        .clickable { onClick(HomeRoute.FESTIVAL, festivalList) }
+                        .clickable { onClick(PageRoute.FESTIVAL, festivalList) }
                     ,
                     itemList = festivalList
                 )
@@ -134,7 +136,7 @@ fun HomeScreen(
                             )
                             .padding(5.dp)
                             .clickable {
-                                onClick(HomeRoute.STAY, null)
+                                onClick(PageRoute.STAY, null)
                             }
                     ) {
                         Text(
@@ -166,7 +168,7 @@ fun HomeScreen(
                             modifier = Modifier
                                 .padding(start = startPadding, end = endPadding)
                                 .clickable {
-                                    onClick(HomeRoute.STAY, item)
+                                    onClick(PageRoute.STAY, item)
                                 },
                             verticalArrangement = Arrangement.spacedBy(5.dp),
                         ) {

@@ -27,7 +27,7 @@ import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainTopBar(
-    currentRoute: MainRoute,
+    currentRoute: PageRoute,
     menuClick: () -> Unit = {}
 ) {
     TopAppBar(
@@ -51,7 +51,7 @@ fun MainTopBar(
                     )
                 )
 
-                if (currentRoute == MainRoute.HOME) {
+                if (currentRoute == PageRoute.HOME) {
                     IconButton(
                         modifier = Modifier.padding(end = 10.dp),
                         onClick = menuClick
@@ -72,6 +72,6 @@ fun MainTopBar(
 @Composable
 fun MainTopBarPreview() {
     TourManageTheme {
-        MainTopBar(MainRoute.HOME)
+        MainTopBar(PageRoute.HOME)
     }
 }
