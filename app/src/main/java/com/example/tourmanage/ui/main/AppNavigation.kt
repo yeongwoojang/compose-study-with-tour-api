@@ -12,10 +12,10 @@ import androidx.navigation.compose.navigation
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.ui.area.AreaScreen
 import com.example.tourmanage.ui.favorite.FavoriteScreen
-import com.example.tourmanage.ui.festival.FestivalNavHost
+import com.example.tourmanage.ui.festival.FestivalDetailScreen
+import com.example.tourmanage.ui.festival.FestivalMainScreen
 import com.example.tourmanage.ui.home.HomeScreen
 import com.example.tourmanage.ui.home.OverlayRoute
-import com.google.gson.Gson
 
 @Composable
 fun AppNavigation(
@@ -31,7 +31,6 @@ fun AppNavigation(
                     bottomSheenOpenYn = bottomSheenOpenYn,
                     onDismissMenu = onDisMissMenu,
                     onClick = { overlayRoute, sendData ->
-                        val jsonItems = Gson().toJson(sendData)
                         navController.currentBackStackEntry?.savedStateHandle?.set(
                             key = "data",
                             value = sendData
@@ -70,11 +69,27 @@ fun AppNavigation(
                     navController.previousBackStackEntry?.savedStateHandle?.get<ArrayList<*>>("data")
                 }
                 val mainFestival = data as ArrayList<FestivalItem>
-                FestivalNavHost(
+                FestivalMainScreen(
                     mainFestival = mainFestival,
-                    onDismiss = {
+                    choiceFestival = {
+                        navController.currentBackStackEntry?.savedStateHandle?.set(
+                            key = "contentId",
+                            value = it
+                        )
+                        navController.navigate(PageRoute.FESTIVAL_DEFAIL.route)
+                    },
+                    onDismissFestivalPage = {
                         navController.popBackStack()
                     }
+                )
+            }
+
+            composable(PageRoute.FESTIVAL_DEFAIL.route) { backStackEntry ->
+                val contentId = remember {
+                    navController.previousBackStackEntry?.savedStateHandle?.get<String>("contentId")
+                }
+                FestivalDetailScreen(
+                    contentId = contentId?: ""
                 )
             }
         }

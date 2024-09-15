@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.tourmanage.common.data.room.FavorEntity
 import com.example.tourmanage.common.data.server.item.FestivalItem
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FestivalMainScreen(
-    viewModel: FestivalViewModel,
+    viewModel: FestivalViewModel = hiltViewModel(),
     mainFestival: ArrayList<FestivalItem>,
     choiceFestival: (String) -> Unit = {},
     onDismissFestivalPage: () -> Unit

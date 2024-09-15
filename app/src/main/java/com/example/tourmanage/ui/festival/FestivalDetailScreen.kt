@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -30,6 +31,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
@@ -43,9 +46,16 @@ import com.example.tourmanage.viewmodel.FestivalViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FestivalDetailScreen(
-    viewModel: FestivalViewModel,
-    festivalDetailState: State<UiState<FestivalDetail>>
+    viewModel: FestivalViewModel = hiltViewModel(),
+    contentId: String
 ) {
+
+    val festivalDetailState = viewModel.festivalDetailInfo.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.requestFestivalDetail(contentId)
+    }
+
     if (festivalDetailState.isSuccess()) {
         val festivalDetail = festivalDetailState.value.data!!
 
