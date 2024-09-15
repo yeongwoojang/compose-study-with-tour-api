@@ -16,10 +16,4 @@ enum class PageRoute(
     AREA(route = "Area", contentDescription = "Area", Icons.Filled.LocationOn),
     FESTIVAL(route = "Festival", contentDescription = "Festival", null),
     STAY(route = "Stay", contentDescription = "Stay", null);
-
-    companion object {
-        fun isBottomMenu(route: PageRoute) = route.route == HOME.route
-                || route.route == FAVORITE.route
-                || route.route == AREA.route
-    }
 }

@@ -30,42 +30,44 @@ fun MainTopBar(
     currentRoute: PageRoute,
     menuClick: () -> Unit = {}
 ) {
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        title = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = currentRoute.contentDescription,
-                    style = TextStyle(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 14.sp,
-                        fontFamily = spoqaHanSansNeoFont,
-                        fontWeight = FontWeight.Medium
-                    )
-                )
-
-                if (currentRoute == PageRoute.HOME) {
-                    IconButton(
-                        modifier = Modifier.padding(end = 10.dp),
-                        onClick = menuClick
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            contentDescription = "지역 설정"
+    if (currentRoute in bottomRoutes) {
+        TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            ),
+            title = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = currentRoute.contentDescription,
+                        style = TextStyle(
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 14.sp,
+                            fontFamily = spoqaHanSansNeoFont,
+                            fontWeight = FontWeight.Medium
                         )
+                    )
+
+                    if (currentRoute == PageRoute.HOME) {
+                        IconButton(
+                            modifier = Modifier.padding(end = 10.dp),
+                            onClick = menuClick
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Menu,
+                                tint = MaterialTheme.colorScheme.onBackground,
+                                contentDescription = "지역 설정"
+                            )
+                        }
                     }
                 }
             }
-        }
-    )
+        )
+    }
 }
 
 @Preview

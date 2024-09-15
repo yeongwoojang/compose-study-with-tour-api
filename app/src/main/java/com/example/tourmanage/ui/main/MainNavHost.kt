@@ -35,77 +35,36 @@ fun MainNavHost() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     var bottomSheenOpenYn by remember { mutableStateOf(false) }
     val currentRoute = navBackStackEntry?.destination?.route?.let { currentRoute ->
-        PageRoute.values().find { route -> route.route == currentRoute }
+        PageRoute.entries.find { route -> route.route == currentRoute }
     } ?: PageRoute.HOME
 
     Surface {
         Scaffold(
             modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
             topBar = {
-                if (PageRoute.isBottomMenu(currentRoute)) {
-                    MainTopBar(
-                        currentRoute = currentRoute,
-                        menuClick = {
-                            bottomSheenOpenYn = true
-                        }
-                    )
-                }
-            },
-            content = { padding ->
-                NavHost(
-                    modifier = Modifier.padding(padding),
-                    navController = navController,
-                    startDestination = PageRoute.HOME.route,
-                    ) {
-                    composable(route = PageRoute.HOME.route) {
-                        HomeScreen(
-                            bottomSheenOpenYn = bottomSheenOpenYn,
-                            onDismissMenu = {
-                                bottomSheenOpenYn = false
-                            },
-                            onClick = { overlayRoute, sendData ->
-                                val jsonItems = Gson().toJson(sendData)
-                                val uri = Uri.parse(jsonItems)
-                                navController.currentBackStackEntry?.savedStateHandle?.set(key = "data", value = sendData)
-                                navController.navigate(overlayRoute.route)
-//                                navController.navigate("${overlayRoute.route}?uri=${uri}")
-                            },
-                        )
+                MainTopBar(
+                    currentRoute = currentRoute,
+                    menuClick = {
+                        bottomSheenOpenYn = true
                     }
-
-                    composable(route = PageRoute.FAVORITE.route) {
-                        FavoriteScreen()
-                    }
-
-                    composable(route = PageRoute.AREA.route) {
-                        AreaScreen()
-                    }
-
-
-
-                    composable(PageRoute.FESTIVAL.route) {
-                        val data = remember {
-                            navController.previousBackStackEntry?.savedStateHandle?.get<ArrayList<*>>("data")
-                        }
-                        val mainFestival = data as ArrayList<FestivalItem>
-                        FestivalNavHost(
-                            mainFestival = mainFestival,
-                            onDismiss = {
-                                navController.popBackStack()
-                            }
-                        )
-                    }
-                }
+                )
             },
             bottomBar = {
-                if (PageRoute.isBottomMenu(currentRoute)) {
-                    MainBottomBar(
-                        currentRoute = currentRoute,
-                        navController = navController
-                    )
-                }
+                MainBottomBar(
+                    currentRoute = currentRoute,
+                    navController = navController
+                )
             }
-        )
+        ) { innerPadding ->
+            AppNavigation(
+                navController = navController,
+                modifier = Modifier.padding(innerPadding),
+                bottomSheenOpenYn = bottomSheenOpenYn,
+                onDisMissMenu = {
+                    bottomSheenOpenYn = false
+                }
+            )
+        }
     }
 }
 

@@ -57,7 +57,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     bottomSheenOpenYn: Boolean = false,
     onDismissMenu: () -> Unit,
-    onClick: (PageRoute, Any?) -> Unit,
+    onClick: (OverlayRoute, Any?) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -101,7 +101,7 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .height(240.dp)
                         .padding(horizontal = 16.dp)
-                        .clickable { onClick(PageRoute.FESTIVAL, festivalList) }
+                        .clickable { onClick(OverlayRoute.FESTIVAL, festivalList) }
                     ,
                     itemList = festivalList
                 )
@@ -136,7 +136,7 @@ fun HomeScreen(
                             )
                             .padding(5.dp)
                             .clickable {
-                                onClick(PageRoute.STAY, null)
+                                onClick(OverlayRoute.STAY, null)
                             }
                     ) {
                         Text(
@@ -168,7 +168,7 @@ fun HomeScreen(
                             modifier = Modifier
                                 .padding(start = startPadding, end = endPadding)
                                 .clickable {
-                                    onClick(PageRoute.STAY, item)
+                                    onClick(OverlayRoute.STAY, item)
                                 },
                             verticalArrangement = Arrangement.spacedBy(5.dp),
                         ) {

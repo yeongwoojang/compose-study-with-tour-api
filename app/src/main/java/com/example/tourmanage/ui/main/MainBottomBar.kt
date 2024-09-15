@@ -26,26 +26,29 @@ import timber.log.Timber
 
 @Composable
 fun MainBottomBar(
-
     navController: NavController,
     currentRoute: PageRoute,
 ) {
-    MainBottomBar(
-        currentRoute = currentRoute,
-        onItemClick = { route ->
-            if(route != currentRoute) {
-                navController.navigate(route = route.route) {
-                    navController.graph.startDestinationRoute?.let {
-                        popUpTo(it) {
-                            saveState = true
+    bottomRoutes.forEach {
+    }
+    if (currentRoute in bottomRoutes) {
+        MainBottomBar(
+            currentRoute = currentRoute,
+            onItemClick = { route ->
+                if(route != currentRoute) {
+                    navController.navigate(route = route.route) {
+                        navController.graph.startDestinationRoute?.let {
+                            popUpTo(it) {
+                                saveState = true
+                            }
                         }
+                        this.launchSingleTop = true
+                        this.restoreState = true
                     }
-                    this.launchSingleTop = true
-                    this.restoreState = true
                 }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable
@@ -63,37 +66,35 @@ private fun MainBottomBar(
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            PageRoute.values().forEach { route ->
-                if (PageRoute.isBottomMenu(route)) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        IconButton(onClick = { onItemClick(route) }) {
-                            Icon(
-                                imageVector = route.icon!!,
-                                contentDescription = route.contentDescription,
-                                tint = if (currentRoute == route) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    Color.White
-                                }
-                            )
-                        }
-
-                        Text(
-                            modifier = Modifier.padding(bottom = 4.dp),
-                            text = route.contentDescription,
-                            style = TextStyle(
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Thin,
-                                color = if (currentRoute == route) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    Color.White
-                                }
-                            )
+            bottomRoutes.forEach { route ->
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    IconButton(onClick = { onItemClick(route) }) {
+                        Icon(
+                            imageVector = route.icon!!,
+                            contentDescription = route.contentDescription,
+                            tint = if (currentRoute == route) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                Color.White
+                            }
                         )
                     }
+
+                    Text(
+                        modifier = Modifier.padding(bottom = 4.dp),
+                        text = route.contentDescription,
+                        style = TextStyle(
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Thin,
+                            color = if (currentRoute == route) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                Color.White
+                            }
+                        )
+                    )
                 }
             }
         }
@@ -105,9 +106,9 @@ private fun MainBottomBar(
 @Composable
 fun MainBottomBarPreview() {
     TourManageTheme {
-        MainBottomBar(
-            currentRoute = PageRoute.HOME,
-            onItemClick = {}
-        )
+//        MainBottomBar(
+//            currentRoute = PageRoute.HOME,
+//            onItemClick = {}
+//        )
     }
 }
