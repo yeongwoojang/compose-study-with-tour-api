@@ -15,6 +15,7 @@ import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.data.server.item.LocationBasedItem
 import com.example.tourmanage.common.util.PermissionUtils
 import com.example.tourmanage.common.value.Config
+import com.example.tourmanage.data.home.PosterItem
 import com.example.tourmanage.error.area.TourMangeException
 import com.example.tourmanage.model.ServerDataRepository
 import com.example.tourmanage.usecase.data.common.GetDetailCommonUseCase
@@ -241,7 +242,7 @@ class FestivalViewModel @Inject constructor(
 }
 
 data class Festival(
-    var recommendFestival: ArrayList<FestivalItem> = ArrayList(emptyList()),
+    var recommendFestival: List<PosterItem> = ArrayList(emptyList()),
     var localFestival: ArrayList<LocationBasedItem> = ArrayList(emptyList())
 )
 

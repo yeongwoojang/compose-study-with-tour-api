@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.example.tourmanage.common.data.server.item.FestivalItem
+import com.example.tourmanage.data.home.PosterItem
 import com.example.tourmanage.ui.area.AreaScreen
 import com.example.tourmanage.ui.favorite.FavoriteScreen
 import com.example.tourmanage.ui.festival.FestivalDetailScreen
@@ -68,7 +69,7 @@ fun AppNavigation(
                 val data = remember {
                     navController.previousBackStackEntry?.savedStateHandle?.get<ArrayList<*>>("data")
                 }
-                val mainFestival = data as ArrayList<FestivalItem>
+                val mainFestival = data as List<PosterItem>
                 FestivalMainScreen(
                     mainFestival = mainFestival,
                     choiceFestival = {

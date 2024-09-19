@@ -4,7 +4,7 @@ import com.example.tourmanage.common.data.server.info.*
 import com.example.tourmanage.common.data.server.item.*
 import com.example.tourmanage.common.extension.formatCoordinate
 import com.example.tourmanage.common.extension.isBooleanYn
-import timber.log.Timber
+import com.example.tourmanage.data.home.PosterItem
 import java.util.regex.Pattern
 
 fun StayInfo.toStayInfoList(): ArrayList<StayItem> {
@@ -52,6 +52,32 @@ fun DetailInfo.toDetailItems(): ArrayList<DetailItem> {
 fun FestivalInfo.toFestivalItems(): ArrayList<FestivalItem> {
     return response?.body?.items?.item?.let {
         it as ArrayList<FestivalItem>
+    } ?: ArrayList(emptyList())
+}
+
+fun StayInfo.toPosterItem(): List<PosterItem> {
+    return response?.body?.items?.item?.let {
+        it.map { stayItem ->
+            PosterItem(
+                contentId = stayItem.contentId.orEmpty(),
+                contentTypeId = stayItem.contentTypeId.orEmpty(),
+                imgUrl = stayItem.fullImageUrl.orEmpty(),
+                title = stayItem.title.orEmpty()
+            )
+        }
+    } ?: ArrayList(emptyList())
+}
+
+fun FestivalInfo.toPosterItem(): List<PosterItem> {
+    return response?.body?.items?.item?.let {
+        it.map { festivalItem ->
+            PosterItem(
+                contentId = festivalItem.contentId.orEmpty(),
+                contentTypeId = festivalItem.contentTypeId.orEmpty(),
+                imgUrl = festivalItem.mainImage.orEmpty(),
+                title = festivalItem.title.orEmpty()
+            )
+        }
     } ?: ArrayList(emptyList())
 }
 

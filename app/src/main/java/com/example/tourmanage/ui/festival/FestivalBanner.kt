@@ -27,6 +27,7 @@ import com.example.tourmanage.R
 import com.example.tourmanage.common.data.room.FavorEntity
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.extension.isEmptyString
+import com.example.tourmanage.data.home.PosterItem
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.FestivalViewModel
 import kotlinx.coroutines.delay
@@ -34,7 +35,7 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun FestivalBanner(
-    mainFestival: ArrayList<FestivalItem>,
+    mainFestival: List<PosterItem>,
     favorList: List<FavorEntity>,
     choiceFestival: (String)-> Unit) {
     var imageIndex by rememberSaveable { mutableStateOf(0) }
@@ -75,7 +76,7 @@ fun FestivalBanner(
                         modifier = Modifier.fillMaxSize()
                         .clickable { choiceFestival(mainFestival[targetState].contentId.orEmpty()) },
                         contentScale = ContentScale.FillBounds,
-                        model = mainFestival[targetState].mainImage,
+                        model = mainFestival[targetState].imgUrl,
                         contentDescription = "")
                 }
                 Text(

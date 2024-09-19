@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,12 +37,10 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.R
 import com.example.tourmanage.common.data.server.item.DetailImageItem
-import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.extension.isEmptyString
-import com.example.tourmanage.common.value.Config
+import com.example.tourmanage.data.home.PosterItem
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
-import com.example.tourmanage.viewmodel.FestivalDetail
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -57,8 +53,8 @@ fun RollingBanner(
     itemList: List<Any> = emptyList()
 ) {
     var type = "BOTTOM"
-    val items = if (itemList.all { it is FestivalItem }) {
-        itemList as ArrayList<FestivalItem>  // 안전하게 캐스팅
+    val items = if (itemList.all { it is PosterItem }) {
+        itemList as ArrayList<PosterItem>  // 안전하게 캐스팅
     } else if (itemList.all { it is DetailImageItem}) {
         type = "TOP"
         itemList as ArrayList<DetailImageItem>  // 안전하게 캐스팅
@@ -99,13 +95,13 @@ fun RollingBanner(
             ) { index ->
                 val imageItem = items[index]
                 val imageUrl = when (imageItem) {
-                    is FestivalItem -> imageItem.mainImage
+                    is PosterItem -> imageItem.imgUrl
                     is DetailImageItem -> imageItem.originImgUrl
                     else -> ""
                 }
 
                 val title = when (imageItem) {
-                    is FestivalItem -> imageItem.title
+                    is PosterItem -> imageItem.title
                     else -> ""
                 }
                 items.getOrNull(index % (items.size))?.let { item ->
