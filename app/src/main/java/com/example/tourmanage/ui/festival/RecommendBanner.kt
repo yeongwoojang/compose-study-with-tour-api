@@ -25,6 +25,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tourmanage.R
 import com.example.tourmanage.common.data.room.FavorEntity
 import com.example.tourmanage.common.data.server.item.FestivalItem
+import com.example.tourmanage.data.home.PosterItem
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.FestivalViewModel
 import kotlinx.coroutines.delay
@@ -32,7 +33,7 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun RecommendBanner(
-    areaFestival: ArrayList<FestivalItem>,
+    areaFestival: List<PosterItem>,
     favorList: List<FavorEntity>,
     choiceFestival: (String)-> Unit) {
     var imageIndex by rememberSaveable { mutableStateOf(0) }
@@ -61,7 +62,7 @@ fun RecommendBanner(
                         GlideImage(
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.FillBounds,
-                            model = areaFestival[targetState].mainImage,
+                            model = areaFestival[targetState].imgUrl,
                             contentDescription = "")
                     }
                     Box(modifier = Modifier

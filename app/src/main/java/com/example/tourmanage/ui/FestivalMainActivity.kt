@@ -3,11 +3,9 @@ package com.example.tourmanage.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.navigation.compose.rememberNavController
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.extension.intentSerializable
 import com.example.tourmanage.common.value.Config
-import com.example.tourmanage.ui.festival.FestivalNavHost
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
 import dagger.hilt.android.AndroidEntryPoint
 

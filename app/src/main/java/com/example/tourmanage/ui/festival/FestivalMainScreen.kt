@@ -10,6 +10,7 @@ import com.example.tourmanage.common.data.room.FavorEntity
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
+import com.example.tourmanage.data.home.PosterItem
 import com.example.tourmanage.ui.components.LoadingWidget
 import com.example.tourmanage.viewmodel.FestivalViewModel
 import kotlinx.coroutines.launch
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun FestivalMainScreen(
     viewModel: FestivalViewModel = hiltViewModel(),
-    mainFestival: ArrayList<FestivalItem>,
+    mainFestival: List<PosterItem>,
     choiceFestival: (String) -> Unit = {},
     onDismissFestivalPage: () -> Unit
 ) {

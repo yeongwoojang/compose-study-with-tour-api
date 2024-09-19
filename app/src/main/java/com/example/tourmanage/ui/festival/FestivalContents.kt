@@ -14,11 +14,12 @@ import androidx.compose.ui.unit.dp
 import com.example.tourmanage.common.data.room.FavorEntity
 import com.example.tourmanage.common.data.server.item.FestivalItem
 import com.example.tourmanage.common.data.server.item.LocationBasedItem
+import com.example.tourmanage.data.home.PosterItem
 
 @Composable
 fun FestivalContents(
-    mainFestival: ArrayList<FestivalItem>,
-    areaFestival: ArrayList<FestivalItem>,
+    mainFestival: List<PosterItem>,
+    areaFestival: List<PosterItem>,
     myLocFestival: ArrayList<LocationBasedItem>,
     favorList: List<FavorEntity>,
     choiceFestival: (String) -> Unit,

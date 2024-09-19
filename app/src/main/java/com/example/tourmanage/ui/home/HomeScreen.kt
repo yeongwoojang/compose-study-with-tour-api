@@ -44,8 +44,9 @@ import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
+import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.ui.common.AreaDrawerContent
-import com.example.tourmanage.ui.main.PageRoute
+import com.example.tourmanage.ui.components.LoadingWidget
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
@@ -67,8 +68,8 @@ fun HomeScreen(
 
     val currentArea = viewModel.currentArea.collectAsStateWithLifecycle()
     val subAreaListState = viewModel.subAreaList.collectAsStateWithLifecycle()
-    val mainFestivalState = viewModel.festivalList.collectAsStateWithLifecycle()
-    val stayListState = viewModel.stayList.collectAsStateWithLifecycle()
+
+    val posterItemFlow = viewModel.posterFlow.collectAsStateWithLifecycle()
 
     if (subAreaListState.isSuccess()) {
         subAreaList = subAreaListState.value.data!!
@@ -78,11 +79,13 @@ fun HomeScreen(
         areaCodeMap = currentArea.value.data!!
     }
 
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        if (mainFestivalState.isSuccess()) {
-            val festivalList = mainFestivalState.value.data!!
+    if (posterItemFlow.isSuccess()) {
+        val posterItem = posterItemFlow.value.data!!
+        val festivalList = posterItem.filter { it.contentTypeId == Config.CONTENT_TYPE_ID.FESTIVAL.value }
+        val stayList = posterItem.filter { it.contentTypeId == Config.CONTENT_TYPE_ID.STAY.value }
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             item {
                 Text(
                     modifier = Modifier
@@ -106,10 +109,7 @@ fun HomeScreen(
                     itemList = festivalList
                 )
             }
-        }
 
-        if (stayListState.isSuccess()) {
-            val stayList = stayListState.value.data!!
             item {
                 Row(
                     modifier = Modifier
@@ -173,7 +173,7 @@ fun HomeScreen(
                             verticalArrangement = Arrangement.spacedBy(5.dp),
                         ) {
                             GlideImage(
-                                model = item.fullImageUrl,
+                                model = item.imgUrl,
                                 contentDescription = "",
                                 contentScale = ContentScale.FillBounds,
                                 modifier = Modifier
@@ -197,6 +197,8 @@ fun HomeScreen(
                 }
             }
         }
+    } else {
+        LoadingWidget()
     }
 
     if (bottomSheenOpenYn) {
