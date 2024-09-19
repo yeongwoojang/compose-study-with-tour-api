@@ -15,9 +15,10 @@ import com.example.tourmanage.usecase.domain.festival.GetFestivalUseCase
 import com.example.tourmanage.usecase.domain.stay.GetStayUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import timber.log.Timber
@@ -110,7 +112,7 @@ class HomeViewModel @Inject constructor(
 
     private fun fetchAllData() {
         viewModelScope.launch(ceh) {
-            //_ 시간 단축을 위해 병령 처리
+            //_ 시간 단축을 위해 병렬 처리
             launch { getMainFestival() }
             launch { updateArea() }
         }

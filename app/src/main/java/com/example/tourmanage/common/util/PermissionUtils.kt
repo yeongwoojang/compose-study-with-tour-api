@@ -1,6 +1,7 @@
 package com.example.tourmanage.common.util
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
@@ -10,12 +11,22 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.example.tourmanage.common.ServerGlobal
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 object PermissionUtils {
@@ -38,7 +49,8 @@ object PermissionUtils {
 
     fun requestLocation(context: Context) {
         if (Build.VERSION.SDK_INT >= 29) {
-            if (ActivityCompat.checkSelfPermission(context,
+            if (ActivityCompat.checkSelfPermission(
+                    context,
                     permissionsLocationUpApi29Impl[0]
                 ) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(
@@ -74,12 +86,13 @@ object PermissionUtils {
             }
         }
     }
+
     fun getLocation(context: Context) = callbackFlow {
         val onSuccessListener = OnSuccessListener<Location> { location ->
             location?.let {
                 Timber.i("좌표: ${it.latitude}, ${it.longitude}")
                 ServerGlobal.setGPS(it)
-                trySend(it)
+                trySend(true)
             }
         }
         val onFailureListener = OnFailureListener {

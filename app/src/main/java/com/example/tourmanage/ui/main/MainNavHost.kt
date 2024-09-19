@@ -1,6 +1,5 @@
 package com.example.tourmanage.ui.main
 
-import android.net.Uri
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
@@ -13,21 +12,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.tourmanage.common.data.server.item.FestivalItem
-import com.example.tourmanage.ui.area.AreaScreen
-import com.example.tourmanage.ui.favorite.FavoriteScreen
-import com.example.tourmanage.ui.festival.FestivalNavHost
-import com.example.tourmanage.ui.festival.TestScreen
-import com.example.tourmanage.ui.home.HomeScreen
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
-import com.google.gson.Gson
-import timber.log.Timber
 
 @Composable
 fun MainNavHost() {

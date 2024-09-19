@@ -45,7 +45,6 @@ import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.ui.common.AreaDrawerContent
-import com.example.tourmanage.ui.main.PageRoute
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
