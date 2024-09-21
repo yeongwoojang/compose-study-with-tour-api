@@ -145,4 +145,8 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version" // Kotlin 버전 확인
 
+    //_ paging
+    implementation "androidx.paging:paging-runtime:$paging_version"
+    implementation "androidx.paging:paging-compose:$paging_version"
+
 }

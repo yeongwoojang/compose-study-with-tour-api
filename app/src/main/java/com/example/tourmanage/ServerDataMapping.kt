@@ -99,6 +99,19 @@ fun DetailImageInfo.toDetailImageLise(): ArrayList<DetailImageItem> {
     } ?: ArrayList(emptyList())
 }
 
+fun TourInfo.toPosterItem(): List<PosterItem> {
+    return response?.body?.items?.item?.let {
+        it.map { tourItem ->
+            PosterItem(
+                contentId = tourItem.contentid.orEmpty(),
+                contentTypeId = tourItem.contenttypeid.orEmpty(),
+                imgUrl = tourItem.firstimage.orEmpty(),
+                title = tourItem.title.orEmpty()
+            )
+        }
+    } ?: ArrayList(emptyList())
+}
+
 fun SearchItem.convertXY(): SearchItem {
     return SearchItem(
         mapx = this.mapx.formatCoordinate(),

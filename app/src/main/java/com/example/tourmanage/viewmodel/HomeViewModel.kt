@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.server.item.AreaItem
-import com.example.tourmanage.common.data.server.item.StayItem
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.home.PosterItem
 import com.example.tourmanage.error.area.TourMangeException
@@ -12,10 +11,9 @@ import com.example.tourmanage.usecase.domain.area.CacheAreaUseCase
 import com.example.tourmanage.usecase.domain.area.GetAreaUseCase
 import com.example.tourmanage.usecase.domain.area.GetCacheAreaUseCase
 import com.example.tourmanage.usecase.domain.area.RemoveCacheAreaUseCase
-import com.example.tourmanage.usecase.domain.festival.GetFestivalUseCase
+import com.example.tourmanage.usecase.domain.common.GetTourInfoUseCase
 import com.example.tourmanage.usecase.domain.festival.GetFestivalUseCase2
 import com.example.tourmanage.usecase.domain.stay.GetStayUseCase
-import com.example.tourmanage.usecase.domain.stay.GetStayUseCase2
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +43,8 @@ class HomeViewModel @Inject constructor(
     private val getCacheAreaUseCase: GetCacheAreaUseCase,
     private val removeCacheAreaUseCase: RemoveCacheAreaUseCase,
     private val getFestivalUseCase: GetFestivalUseCase2,
-    private val getStayUseCase: GetStayUseCase2
+    private val getStayUseCase: GetStayUseCase,
+    private val getTourInfoUseCase: GetTourInfoUseCase
 
 ): ViewModel() {
     private val ceh = CoroutineExceptionHandler { _, throwable ->
@@ -71,7 +70,6 @@ class HomeViewModel @Inject constructor(
             isSigungu = isSigungu
         )
     }.launchIn(viewModelScope + ceh)
-
 
     private val _posterFlow = MutableStateFlow<UiState<List<PosterItem>>>(UiState.Loading())
     val posterFlow = _posterFlow.onStart { //_ collect를 시작하는 시점에 onStart가 실행됨.

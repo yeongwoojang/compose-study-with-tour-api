@@ -137,4 +137,15 @@ interface ServiceAPI {
         @Query("subImageYN") subImageYN: String? = "Y",
         @Query("_type") type: String = TYPE
     ): DetailImageInfo
+
+    @GET("areaBasedSyncList1")
+    suspend fun requestTourInfo(
+        @Query("MobileOS") os: String = MOBILE_OS,
+        @Query("MobileApp") app: String = MOBILE_APP,
+        @Query("serviceKey") key: String = API_KEY,
+        @Query("_type") type: String = TYPE,
+        @Query("contentTypeId") contentTypeId: String = "",
+        @Query("numOfRows") numOfRows: String,
+        @Query("pageNo") pageNo: String
+    ): TourInfo
 }
