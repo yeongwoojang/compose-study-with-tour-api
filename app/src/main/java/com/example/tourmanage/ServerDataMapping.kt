@@ -99,14 +99,14 @@ fun DetailImageInfo.toDetailImageLise(): ArrayList<DetailImageItem> {
     } ?: ArrayList(emptyList())
 }
 
-fun TourInfo.toPosterItem(): List<PosterItem> {
+fun AreaBasedInfo.toPosterItem(): List<PosterItem> {
     return response?.body?.items?.item?.let {
-        it.map { tourItem ->
+        it.map { areaBasedItem ->
             PosterItem(
-                contentId = tourItem.contentid.orEmpty(),
-                contentTypeId = tourItem.contenttypeid.orEmpty(),
-                imgUrl = tourItem.firstimage.orEmpty(),
-                title = tourItem.title.orEmpty()
+                contentId = areaBasedItem.contentId.orEmpty(),
+                contentTypeId = areaBasedItem.contentTypeId.orEmpty(),
+                imgUrl = areaBasedItem.fullImageUrl.orEmpty(),
+                title = areaBasedItem.title.orEmpty()
             )
         }
     } ?: ArrayList(emptyList())

@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import timber.log.Timber
 
 @Composable
-fun LoadingWidget() {
+fun LoadingWidget(modifier: Modifier = Modifier) {
     Timber.i("LoadingWidget() is called.")
     Box(
         modifier = Modifier

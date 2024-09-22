@@ -6,19 +6,25 @@ import androidx.paging.PagingData
 import com.example.tourmanage.common.repository.ServiceAPI
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.home.PosterItem
-import com.example.tourmanage.usecase.domain.common.GetTourInfoUseCase
-import com.example.tourmanage.usecase.domain.common.TourPagingSource
+import com.example.tourmanage.usecase.domain.common.AreaBasedPagingSource
+import com.example.tourmanage.usecase.domain.common.GetAreaBasedUseCase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetTourInfoUseCaseImpl @Inject constructor(
+class GetAreaBasedUseCaseImpl @Inject constructor(
     private val serviceAPI: ServiceAPI,
-): GetTourInfoUseCase {
-    override suspend fun invoke(contentTypeId: Config.CONTENT_TYPE_ID): Result<Flow<PagingData<PosterItem>>> = runCatching {
+): GetAreaBasedUseCase {
+    override suspend fun invoke(
+        areaCode: String,
+        sigunguCode: String,
+        contentTypeId: Config.CONTENT_TYPE_ID)
+    : Result<Flow<PagingData<PosterItem>>> = runCatching {
         val pagingSourceFactory = {
-            TourPagingSource(
+            AreaBasedPagingSource(
                 serviceAPI = serviceAPI,
                 contentTypeId = contentTypeId,
+                areaCode = areaCode,
+                sigunguCode = sigunguCode
             )
         }
 
@@ -29,6 +35,5 @@ class GetTourInfoUseCaseImpl @Inject constructor(
             ),
             pagingSourceFactory = pagingSourceFactory
         ).flow
-
     }
 }

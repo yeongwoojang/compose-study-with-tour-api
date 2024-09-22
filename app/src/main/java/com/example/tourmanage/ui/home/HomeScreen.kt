@@ -1,5 +1,8 @@
 package com.example.tourmanage.ui.home
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,11 +17,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +33,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,8 +42,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -47,11 +57,14 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.example.tourmanage.R
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
+import com.example.tourmanage.common.extension.isEmptyString
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.common.value.Config
+import com.example.tourmanage.data.DataProvider
 import com.example.tourmanage.ui.common.AreaDrawerContent
 import com.example.tourmanage.ui.components.LoadingWidget
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
@@ -73,11 +86,12 @@ fun HomeScreen(
 
     var subAreaList by remember { mutableStateOf<List<AreaItem>?>(null) }
     var areaCodeMap by remember { mutableStateOf<Pair<AreaItem?, AreaItem?>>(Pair(null, null)) }
+    var currentMenu by remember { mutableStateOf(Config.CONTENT_TYPE_ID.FESTIVAL) }
 
     val currentArea = viewModel.currentArea.collectAsStateWithLifecycle()
     val subAreaListState = viewModel.subAreaList.collectAsStateWithLifecycle()
-
-    val posterItemFlow = viewModel.posterFlow.collectAsStateWithLifecycle()
+    val posterList = viewModel.posterListFlow.collectAsLazyPagingItems()
+    val listState = rememberLazyListState()
 
     if (subAreaListState.isSuccess()) {
         subAreaList = subAreaListState.value.data!!
@@ -87,132 +101,88 @@ fun HomeScreen(
         areaCodeMap = currentArea.value.data!!
     }
 
-    if (posterItemFlow.isSuccess()) {
-        val posterItem = posterItemFlow.value.data!!
-        val festivalList = posterItem.filter { it.contentTypeId == Config.CONTENT_TYPE_ID.FESTIVAL.value }
-        val stayList = posterItem.filter { it.contentTypeId == Config.CONTENT_TYPE_ID.STAY.value }
-        LazyColumn(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            item {
-                Text(
-                    modifier = Modifier
-                        .padding(bottom = 10.dp)
-                        .padding(horizontal = 16.dp),
-                    text = "진행중인 축제",
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        fontFamily = spoqaHanSansNeoFont,
-                        fontWeight = FontWeight.Medium,
-                    ),
-                )
+    LaunchedEffect(currentMenu) {
+        viewModel.changeMenu(currentMenu)
+    }
+    LaunchedEffect(areaCodeMap) {
+        listState.scrollToItem(0)
+    }
 
-                RollingBanner(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(240.dp)
-                        .padding(horizontal = 16.dp)
-                        .clickable { onClick(OverlayRoute.FESTIVAL, festivalList) }
-                    ,
-                    itemList = festivalList
-                )
+    Column(modifier = modifier.fillMaxSize()) {
+        MenuItem(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            currentMenu = currentMenu,
+            onClickMenu = {
+                currentMenu = it
             }
+        )
 
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 10.dp)
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-                    Text(
-                        text = "숙소 정보",
-                        color = Color.White,
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            fontFamily = spoqaHanSansNeoFont,
-                            fontWeight = FontWeight.Normal,
-                        ))
-                    Box(
+        LazyColumn(
+            state = listState,
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            items(posterList.itemCount) { index ->
+                val item = posterList[index] // index를 통해 아이템을 가져옴
+                item?.let {
+                    Column(
                         modifier = Modifier
-                            .background(color = Color.Transparent, shape = RoundedCornerShape(8.dp))
-                            .border(
-                                width = 1.dp,
-                                color = Color.White,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(5.dp)
-                            .clickable {
-                                onClick(OverlayRoute.STAY, null)
-                            }
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .fillMaxWidth()
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = RoundedCornerShape(16.dp)
+                            ),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text(
-                            text = "더보기",
-                            color = Color.White,
-                            style = TextStyle(
-                                fontSize = 11.sp,
-                                fontFamily = spoqaHanSansNeoFont,
-                                fontWeight = FontWeight.Normal,
-                            ))
-                    }
-
-                }
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(
-                        count = stayList.size,
-                        key = { index ->
-                            stayList[index].contentId.orEmpty()
-                        }
-                    ) { index ->
-                        val item = stayList[index]
-                        val isLast = index == stayList.size - 1
-                        val isFirst = index == 0
-                        val startPadding = if (isFirst) 16.dp else 0.dp
-                        val endPadding = if (isLast) 16.dp else 0.dp
-                        Column(
-                            modifier = Modifier
-                                .padding(start = startPadding, end = endPadding)
-                                .clickable {
-                                    onClick(OverlayRoute.STAY, item)
-                                },
-                            verticalArrangement = Arrangement.spacedBy(5.dp),
+                        Card(
+                            modifier = Modifier.fillMaxWidth().height(250.dp)
                         ) {
                             GlideImage(
-                                model = item.imgUrl,
-                                contentDescription = "",
-                                contentScale = ContentScale.FillBounds,
                                 modifier = Modifier
-                                    .size(150.dp)
-                                    .clip(RoundedCornerShape(10.dp))
+                                    .fillMaxSize()
+                                    .clickable { },
+                                contentScale = ContentScale.FillBounds,
+                                model = item.imgUrl,
+                                contentDescription = ""
                             )
-                            Text(
-                                modifier = Modifier.width(150.dp),
-                                text = item.title.toString(),
-                                color = Color.White,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                                style = TextStyle(
-                                    fontSize = 11.sp,
-                                    fontFamily = spoqaHanSansNeoFont,
-                                    fontWeight = FontWeight.Normal,
-                                )
+                        }
+
+                        Text(
+                            text = item.title,
+                            style = TextStyle(
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = spoqaHanSansNeoFont,
                             )
+                        )
+                    }
+                }
+            }
+
+            posterList.apply {
+                when {
+                    loadState.refresh is LoadState.Loading -> {
+                        item{
+                            PageLoader()
+                        }
+                    }
+
+                    loadState.append is LoadState.Loading -> {
+                        item{
+                            LoadingNextPageItem()
                         }
                     }
                 }
             }
         }
-    } else {
-        LoadingWidget()
+
+
     }
 
     if (bottomSheenOpenYn) {
         ModalBottomSheet(
-//            modifier = Modifier.height(600.dp),
             sheetState = sheetState,
             windowInsets = WindowInsets(0, 0, 0, 0),
             onDismissRequest = {
@@ -237,4 +207,31 @@ fun HomeScreen(
             )
         }
     }
+}
+
+@Composable
+fun PageLoader(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "로딩중",
+            color = MaterialTheme.colorScheme.primary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        CircularProgressIndicator(Modifier.padding(top = 10.dp))
+    }
+}
+
+@Composable
+fun LoadingNextPageItem(modifier: Modifier = Modifier) {
+    CircularProgressIndicator(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .wrapContentWidth(Alignment.CenterHorizontally)
+    )
 }

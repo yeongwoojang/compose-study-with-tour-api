@@ -1,5 +1,6 @@
 package com.example.tourmanage.ui.main
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,11 +17,16 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tourmanage.R
 import com.example.tourmanage.ui.ui.theme.TourManageTheme
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 
@@ -36,14 +42,20 @@ fun MainTopBar(
                 containerColor = MaterialTheme.colorScheme.background
             ),
             title = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
+                Text(
+                    text = currentRoute.contentDescription,
+                    style = TextStyle(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 14.sp,
+                        fontFamily = spoqaHanSansNeoFont,
+                        fontWeight = FontWeight.Medium
+                    )
+                )
+            },
+            actions = {
+                if (currentRoute == PageRoute.HOME) {
                     Text(
-                        text = currentRoute.contentDescription,
+                        text = "지역 변경",
                         style = TextStyle(
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 14.sp,
@@ -51,18 +63,15 @@ fun MainTopBar(
                             fontWeight = FontWeight.Medium
                         )
                     )
-
-                    if (currentRoute == PageRoute.HOME) {
-                        IconButton(
-                            modifier = Modifier.padding(end = 10.dp),
-                            onClick = menuClick
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Menu,
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                contentDescription = "지역 설정"
-                            )
-                        }
+                    IconButton(
+                        modifier = Modifier.padding(end = 10.dp),
+                        onClick = menuClick
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            tint = MaterialTheme.colorScheme.onBackground,
+                            contentDescription = "지역 설정"
+                        )
                     }
                 }
             }

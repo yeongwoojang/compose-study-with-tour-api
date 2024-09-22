@@ -82,8 +82,10 @@ interface ServiceAPI {
         @Query("areaCode") areaCode: String?,
         @Query("sigunguCode") sigunguCode: String? = "",
         @Query("_type") type: String = TYPE,
-        @Query("contentTypeId") contentType: String? = "12",
-        @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.value
+        @Query("contentTypeId") contentTypeId: String? = "",
+        @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.value,
+        @Query("numOfRows") numOfRows: String,
+        @Query("pageNo") pageNo: String
     ): AreaBasedInfo
 
     @GET("locationBasedList1")
