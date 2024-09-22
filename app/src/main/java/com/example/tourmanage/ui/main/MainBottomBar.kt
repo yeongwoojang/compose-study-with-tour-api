@@ -10,6 +10,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,8 +31,6 @@ fun MainBottomBar(
     navController: NavController,
     currentRoute: PageRoute,
 ) {
-    bottomRoutes.forEach {
-    }
     if (currentRoute in bottomRoutes) {
         MainBottomBar(
             currentRoute = currentRoute,
@@ -56,6 +56,7 @@ private fun MainBottomBar(
     currentRoute: PageRoute,
     onItemClick: (PageRoute) -> Unit
 ) {
+
     Column {
         HorizontalDivider()
         Row(
@@ -106,9 +107,9 @@ private fun MainBottomBar(
 @Composable
 fun MainBottomBarPreview() {
     TourManageTheme {
-//        MainBottomBar(
-//            currentRoute = PageRoute.HOME,
-//            onItemClick = {}
-//        )
+        MainBottomBar(
+            currentRoute = PageRoute.HOME,
+            onItemClick = {}
+        )
     }
 }

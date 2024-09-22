@@ -33,7 +33,7 @@ fun MainTopBar(
     if (currentRoute in bottomRoutes) {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
+                containerColor = MaterialTheme.colorScheme.background
             ),
             title = {
                 Row(

@@ -18,8 +18,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -29,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -59,6 +62,7 @@ import timber.log.Timber
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
     bottomSheenOpenYn: Boolean = false,
     onDismissMenu: () -> Unit,
@@ -88,6 +92,7 @@ fun HomeScreen(
         val festivalList = posterItem.filter { it.contentTypeId == Config.CONTENT_TYPE_ID.FESTIVAL.value }
         val stayList = posterItem.filter { it.contentTypeId == Config.CONTENT_TYPE_ID.STAY.value }
         LazyColumn(
+            modifier = modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item {
@@ -202,7 +207,7 @@ fun HomeScreen(
             }
         }
     } else {
-    LoadingWidget()
+        LoadingWidget()
     }
 
     if (bottomSheenOpenYn) {
@@ -214,7 +219,8 @@ fun HomeScreen(
                 scope.launch {
                     sheetState.hide()
                 }.invokeOnCompletion { onDismissMenu() }
-            }, dragHandle = { BottomSheetDefaults.DragHandle()},
+            },
+            dragHandle = { BottomSheetDefaults.DragHandle() },
         ) {
             AreaDrawerContent(
                 modifier = Modifier.height(600.dp),

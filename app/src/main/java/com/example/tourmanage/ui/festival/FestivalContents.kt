@@ -2,12 +2,17 @@ package com.example.tourmanage.ui.festival
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -57,18 +62,20 @@ fun FestivalContents(
         )
     }
 
+
     Scaffold(
+        modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
         topBar = {
             FestivalHeader(
                 onDismiss = onDismiss
             )
         }
-    ) { padding ->
+    ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(padding)
-                .padding(start = 16.dp),
+                .padding(start = 16.dp)
+                .padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(40.dp),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
