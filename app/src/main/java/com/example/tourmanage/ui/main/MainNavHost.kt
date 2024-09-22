@@ -26,8 +26,7 @@ fun MainNavHost() {
         PageRoute.entries.find { route -> route.route == currentRoute }
     } ?: PageRoute.HOME
 
-    Surface {
-        Scaffold(
+    Scaffold(
             modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
             topBar = {
                 MainTopBar(
@@ -37,22 +36,21 @@ fun MainNavHost() {
                     }
                 )
             },
-            bottomBar = {
-                MainBottomBar(
-                    currentRoute = currentRoute,
-                    navController = navController
-                )
-            }
-        ) { innerPadding ->
-            AppNavigation(
-                navController = navController,
-                modifier = Modifier.padding(innerPadding),
-                bottomSheenOpenYn = bottomSheenOpenYn,
-                onDisMissMenu = {
-                    bottomSheenOpenYn = false
-                }
-            )
+        bottomBar = {
+//            MainBottomBar(
+//                currentRoute = currentRoute,
+//                navController = navController
+//            )
         }
+    ) {innerPadding ->
+        AppNavigation(
+            navController = navController,
+            modifier = Modifier.padding(innerPadding),
+            bottomSheenOpenYn = bottomSheenOpenYn,
+            onDisMissMenu = {
+                bottomSheenOpenYn = false
+            }
+        )
     }
 }
 

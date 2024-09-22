@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.material3.Surface
 import androidx.lifecycle.lifecycleScope
 import com.example.tourmanage.common.util.PermissionUtils
 import com.example.tourmanage.ui.main.RootScreen
@@ -28,7 +29,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             TourManageTheme {
-                RootScreen()
+                Surface {
+                    RootScreen()
+                }
             }
         }
     }

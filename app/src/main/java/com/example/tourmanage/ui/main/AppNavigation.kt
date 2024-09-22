@@ -1,7 +1,10 @@
 package com.example.tourmanage.ui.main
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -15,28 +18,33 @@ import com.example.tourmanage.ui.area.AreaScreen
 import com.example.tourmanage.ui.favorite.FavoriteScreen
 import com.example.tourmanage.ui.festival.FestivalDetailScreen
 import com.example.tourmanage.ui.festival.FestivalMainScreen
+import com.example.tourmanage.ui.festival.TestScreen
 import com.example.tourmanage.ui.home.HomeScreen
 import com.example.tourmanage.ui.home.OverlayRoute
+import com.example.tourmanage.ui.stay.StayScreen
 
 @Composable
 fun AppNavigation(
     navController: NavHostController,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     bottomSheenOpenYn: Boolean,
     onDisMissMenu: () -> Unit
 ) {
-    NavHost(navController = navController, modifier = modifier, startDestination = "bottom_menu") {
+    NavHost(navController = navController, startDestination = "bottom_menu") {
         navigation(startDestination = PageRoute.HOME.route, route = "bottom_menu") {
             composable(route = PageRoute.HOME.route) {
                 HomeScreen(
+                    modifier = modifier,
                     bottomSheenOpenYn = bottomSheenOpenYn,
                     onDismissMenu = onDisMissMenu,
                     onClick = { overlayRoute, sendData ->
-                        navController.currentBackStackEntry?.savedStateHandle?.set(
-                            key = "data",
-                            value = sendData
-                        )
-                        navController.navigate(overlayRoute.route)
+                        navController.apply {
+                            currentBackStackEntry?.savedStateHandle?.set(
+                                key = "data",
+                                value = sendData
+                            )
+                            navigate(overlayRoute.route)
+                        }
                     },
                 )
             }
@@ -55,14 +63,7 @@ fun AppNavigation(
                 OverlayRoute.FESTIVAL.route,
                 enterTransition = {
                     slideIntoContainer(
-                        AnimatedContentTransitionScope.SlideDirection.Up,
-                        animationSpec = tween(700)
-                    )
-                },
-                exitTransition = {
-                    slideOutOfContainer(
-                        AnimatedContentTransitionScope.SlideDirection.Down,
-                        animationSpec = tween(700)
+                        AnimatedContentTransitionScope.SlideDirection.Up
                     )
                 },
             ) {
@@ -93,13 +94,18 @@ fun AppNavigation(
                     contentId = contentId?: ""
                 )
             }
+
+            composable(PageRoute.STAY.route) { backStackEntry ->
+                val data = remember {
+                    navController.previousBackStackEntry?.savedStateHandle?.get<ArrayList<*>>("data")
+                }
+                val stayItem = data as List<PosterItem>
+                StayScreen()
+
+            }
         }
     }
 
 }
 
 val bottomRoutes = setOf(PageRoute.HOME, PageRoute.FAVORITE, PageRoute.AREA)
-
-val bottomNavigationItems = listOf(
-    PageRoute.HOME, PageRoute.FAVORITE, PageRoute.AREA
-)

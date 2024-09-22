@@ -82,8 +82,10 @@ interface ServiceAPI {
         @Query("areaCode") areaCode: String?,
         @Query("sigunguCode") sigunguCode: String? = "",
         @Query("_type") type: String = TYPE,
-        @Query("contentTypeId") contentType: String? = "12",
-        @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.value
+        @Query("contentTypeId") contentTypeId: String? = "",
+        @Query("arrange") arrange: String? = Config.ARRANGE_TYPE.O.value,
+        @Query("numOfRows") numOfRows: String,
+        @Query("pageNo") pageNo: String
     ): AreaBasedInfo
 
     @GET("locationBasedList1")
@@ -137,4 +139,15 @@ interface ServiceAPI {
         @Query("subImageYN") subImageYN: String? = "Y",
         @Query("_type") type: String = TYPE
     ): DetailImageInfo
+
+    @GET("areaBasedSyncList1")
+    suspend fun requestTourInfo(
+        @Query("MobileOS") os: String = MOBILE_OS,
+        @Query("MobileApp") app: String = MOBILE_APP,
+        @Query("serviceKey") key: String = API_KEY,
+        @Query("_type") type: String = TYPE,
+        @Query("contentTypeId") contentTypeId: String = "",
+        @Query("numOfRows") numOfRows: String,
+        @Query("pageNo") pageNo: String
+    ): TourInfo
 }

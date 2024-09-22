@@ -9,10 +9,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import timber.log.Timber
 
 @Composable
-fun LoadingWidget() {
+fun LoadingWidget(modifier: Modifier = Modifier) {
     Timber.i("LoadingWidget() is called.")
     Box(
         modifier = Modifier
