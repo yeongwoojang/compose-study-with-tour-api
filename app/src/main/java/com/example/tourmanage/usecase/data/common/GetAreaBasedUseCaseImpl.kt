@@ -9,6 +9,7 @@ import com.example.tourmanage.data.home.PosterItem
 import com.example.tourmanage.usecase.domain.common.AreaBasedPagingSource
 import com.example.tourmanage.usecase.domain.common.GetAreaBasedUseCase
 import kotlinx.coroutines.flow.Flow
+import timber.log.Timber
 import javax.inject.Inject
 
 class GetAreaBasedUseCaseImpl @Inject constructor(
@@ -27,11 +28,10 @@ class GetAreaBasedUseCaseImpl @Inject constructor(
                 sigunguCode = sigunguCode
             )
         }
-
         Pager(
             config = PagingConfig(
                 pageSize = 10,
-                initialLoadSize = 10
+//                initialLoadSize = 10
             ),
             pagingSourceFactory = pagingSourceFactory
         ).flow
