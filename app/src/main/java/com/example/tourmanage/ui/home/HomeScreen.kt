@@ -1,30 +1,19 @@
 package com.example.tourmanage.ui.home
 
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,11 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,16 +42,12 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.tourmanage.R
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
-import com.example.tourmanage.common.extension.isEmptyString
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.common.value.Config
-import com.example.tourmanage.data.DataProvider
 import com.example.tourmanage.ui.common.AreaDrawerContent
-import com.example.tourmanage.ui.components.LoadingWidget
 import com.example.tourmanage.ui.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
@@ -93,6 +74,10 @@ fun HomeScreen(
     val posterList = viewModel.posterListFlow.collectAsLazyPagingItems()
     val listState = rememberLazyListState()
 
+    var loadingState by remember {
+        mutableStateOf(false)
+    }
+
     if (subAreaListState.isSuccess()) {
         subAreaList = subAreaListState.value.data!!
     }
@@ -104,8 +89,11 @@ fun HomeScreen(
     LaunchedEffect(currentMenu) {
         viewModel.changeMenu(currentMenu)
     }
-    LaunchedEffect(areaCodeMap) {
-        listState.scrollToItem(0)
+
+    LaunchedEffect(loadingState) {
+        if (loadingState) {
+            listState.scrollToItem(0)
+        }
     }
 
     Column(modifier = modifier.fillMaxSize()) {
@@ -119,64 +107,57 @@ fun HomeScreen(
             }
         )
 
-        LazyColumn(
-            state = listState,
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            items(posterList.itemCount) { index ->
-                val item = posterList[index] // index를 통해 아이템을 가져옴
-                item?.let {
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .fillMaxWidth()
-                            .background(
-                                color = MaterialTheme.colorScheme.primaryContainer,
-                                shape = RoundedCornerShape(16.dp)
-                            ),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Card(
-                            modifier = Modifier.fillMaxWidth().height(250.dp)
+        if (posterList.loadState.refresh is LoadState.Loading) {
+            loadingState = true
+            PageLoader(modifier = Modifier.fillMaxSize())
+        } else {
+            loadingState = false
+            LazyColumn(
+                state = listState,
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                items(posterList.itemCount) { index ->
+                    val item = posterList[index] // index를 통해 아이템을 가져옴
+                    item?.let {
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .fillMaxWidth()
+                                .background(
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = RoundedCornerShape(16.dp)
+                                ),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            GlideImage(
+                            Card(
                                 modifier = Modifier
-                                    .fillMaxSize()
-                                    .clickable { },
-                                contentScale = ContentScale.FillBounds,
-                                model = item.imgUrl,
-                                contentDescription = ""
+                                    .fillMaxWidth()
+                                    .height(250.dp)
+                            ) {
+                                GlideImage(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clickable { },
+                                    contentScale = ContentScale.FillBounds,
+                                    model = item.imgUrl,
+                                    contentDescription = ""
+                                )
+                            }
+
+                            Text(
+                                text = item.title,
+                                style = TextStyle(
+                                    fontSize = 17.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    fontFamily = spoqaHanSansNeoFont,
+                                )
                             )
-                        }
-
-                        Text(
-                            text = item.title,
-                            style = TextStyle(
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Medium,
-                                fontFamily = spoqaHanSansNeoFont,
-                            )
-                        )
-                    }
-                }
-            }
-
-            posterList.apply {
-                when {
-                    loadState.refresh is LoadState.Loading -> {
-                        item{
-                            PageLoader()
-                        }
-                    }
-
-                    loadState.append is LoadState.Loading -> {
-                        item{
-                            LoadingNextPageItem()
                         }
                     }
                 }
             }
         }
+
 
 
     }
@@ -211,6 +192,7 @@ fun HomeScreen(
 
 @Composable
 fun PageLoader(modifier: Modifier = Modifier) {
+    Timber.i("YW | PageLoader")
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,

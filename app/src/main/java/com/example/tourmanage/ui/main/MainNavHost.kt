@@ -37,10 +37,10 @@ fun MainNavHost() {
                 )
             },
         bottomBar = {
-//            MainBottomBar(
-//                currentRoute = currentRoute,
-//                navController = navController
-//            )
+            MainBottomBar(
+                currentRoute = currentRoute,
+                navController = navController
+            )
         }
     ) {innerPadding ->
         AppNavigation(
