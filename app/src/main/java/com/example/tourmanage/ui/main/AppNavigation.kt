@@ -22,6 +22,7 @@ import com.example.tourmanage.ui.festival.TestScreen
 import com.example.tourmanage.ui.home.HomeScreen
 import com.example.tourmanage.ui.home.OverlayRoute
 import com.example.tourmanage.ui.stay.StayScreen
+import timber.log.Timber
 
 @Composable
 fun AppNavigation(
@@ -37,11 +38,11 @@ fun AppNavigation(
                     modifier = modifier,
                     bottomSheenOpenYn = bottomSheenOpenYn,
                     onDismissMenu = onDisMissMenu,
-                    onClick = { overlayRoute, sendData ->
+                    onClick = { overlayRoute, contentId ->
                         navController.apply {
                             currentBackStackEntry?.savedStateHandle?.set(
-                                key = "data",
-                                value = sendData
+                                key = "contentId",
+                                value = contentId
                             )
                             navigate(overlayRoute.route)
                         }
@@ -58,7 +59,7 @@ fun AppNavigation(
             }
         }
 
-        navigation(startDestination = OverlayRoute.FESTIVAL.route, route = "festival_page") {
+        navigation(startDestination = OverlayRoute.FESTIVAL.route, route = "detail_page") {
             composable(
                 OverlayRoute.FESTIVAL.route,
                 enterTransition = {
@@ -67,26 +68,6 @@ fun AppNavigation(
                     )
                 },
             ) {
-                val data = remember {
-                    navController.previousBackStackEntry?.savedStateHandle?.get<ArrayList<*>>("data")
-                }
-                val mainFestival = data as List<PosterItem>
-                FestivalMainScreen(
-                    mainFestival = mainFestival,
-                    choiceFestival = {
-                        navController.currentBackStackEntry?.savedStateHandle?.set(
-                            key = "contentId",
-                            value = it
-                        )
-                        navController.navigate(PageRoute.FESTIVAL_DEFAIL.route)
-                    },
-                    onDismissFestivalPage = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-
-            composable(PageRoute.FESTIVAL_DEFAIL.route) { backStackEntry ->
                 val contentId = remember {
                     navController.previousBackStackEntry?.savedStateHandle?.get<String>("contentId")
                 }
@@ -95,12 +76,17 @@ fun AppNavigation(
                 )
             }
 
-            composable(PageRoute.STAY.route) { backStackEntry ->
-                val data = remember {
-                    navController.previousBackStackEntry?.savedStateHandle?.get<ArrayList<*>>("data")
+            composable(PageRoute.STAY.route,
+                enterTransition = {
+                    slideIntoContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Up
+                    )
                 }
-                val stayItem = data as List<PosterItem>
-                StayScreen()
+            ) { backStackEntry ->
+                val contentId = remember {
+                    navController.previousBackStackEntry?.savedStateHandle?.get<String>("contentId")
+                }
+                StayScreen(modifier = modifier, contentId = contentId)
 
             }
         }

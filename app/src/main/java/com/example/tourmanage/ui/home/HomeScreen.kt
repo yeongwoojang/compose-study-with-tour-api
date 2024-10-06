@@ -60,7 +60,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     bottomSheenOpenYn: Boolean = false,
     onDismissMenu: () -> Unit,
-    onClick: (OverlayRoute, Any?) -> Unit,
+    onClick: (OverlayRoute, String) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -137,7 +137,19 @@ fun HomeScreen(
                                 GlideImage(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .clickable { },
+                                        .clickable {
+                                            val overlayRoute = when (currentMenu) {
+                                                Config.CONTENT_TYPE_ID.FESTIVAL -> OverlayRoute.FESTIVAL
+                                                Config.CONTENT_TYPE_ID.STAY -> OverlayRoute.STAY
+                                                Config.CONTENT_TYPE_ID.TOUR_COURSE -> OverlayRoute.TOUR_COURSE
+                                                Config.CONTENT_TYPE_ID.FOOD -> OverlayRoute.FOOD
+                                                Config.CONTENT_TYPE_ID.TOUR_SPOT -> OverlayRoute.TOUR_SPOT
+                                                Config.CONTENT_TYPE_ID.CULTURE -> OverlayRoute.CULTURE
+                                                Config.CONTENT_TYPE_ID.LEISURE_SPORTS -> OverlayRoute.LEISURE_SPORTS
+                                                Config.CONTENT_TYPE_ID.SHOPPING -> OverlayRoute.SHOPPING
+                                            }
+                                            onClick(overlayRoute, item.contentId)
+                                        },
                                     contentScale = ContentScale.FillBounds,
                                     model = item.imgUrl,
                                     contentDescription = ""
@@ -157,7 +169,6 @@ fun HomeScreen(
                 }
             }
         }
-
 
 
     }

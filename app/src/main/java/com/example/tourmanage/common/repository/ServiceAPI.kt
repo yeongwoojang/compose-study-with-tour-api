@@ -150,4 +150,14 @@ interface ServiceAPI {
         @Query("numOfRows") numOfRows: String,
         @Query("pageNo") pageNo: String
     ): TourInfo
+
+    @GET("detailIntro1")
+    suspend fun requestDetailIntro(
+        @Query("MobileOS") os: String = MOBILE_OS,
+        @Query("MobileApp") app: String = MOBILE_APP,
+        @Query("serviceKey") key: String = API_KEY,
+        @Query("_type") type: String = TYPE,
+        @Query("contentId") contentId: String = "",
+        @Query("contentTypeId") contentTypeId: String = "",
+    ): DetailIntroInfo
 }

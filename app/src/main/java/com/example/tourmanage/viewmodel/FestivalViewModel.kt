@@ -144,7 +144,7 @@ class FestivalViewModel @Inject constructor(
 
             val detailInfoFlow = async { getDetailInfoUseCase(contentId, Config.CONTENT_TYPE_ID.FESTIVAL).getOrThrow() }
             val detailCommonFlow = async { getDetailCommonUseCase(contentId, Config.CONTENT_TYPE_ID.FESTIVAL).getOrThrow() }
-            val detailImageFlow = async { getDetailImageUseCase(contentId).getOrThrow() }
+            val detailImageFlow = async { getDetailImageUseCase(contentId).getOrNull() }
 
             detailInfoFlow.await()
                 .catch {
@@ -183,17 +183,10 @@ class FestivalViewModel @Inject constructor(
                     })
 
                 }
-            detailImageFlow.await()
-                .catch {
-                    festivalDetailFlow.emit(festivalDetail.apply {
-                        images = ArrayList(emptyList())
-                    })
-                }
-                .collect {
-                    festivalDetailFlow.emit(festivalDetail.apply {
-                        images = it
-                    })
-                }
+            val imageData = detailImageFlow.await()
+            festivalDetailFlow.emit(festivalDetail.apply {
+                images = imageData ?: ArrayList(emptyList<DetailImageItem>())
+            })
         }
 
     }
