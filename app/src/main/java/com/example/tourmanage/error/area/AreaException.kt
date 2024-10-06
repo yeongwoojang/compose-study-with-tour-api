@@ -13,4 +13,6 @@ sealed class TourMangeException(message: String): Exception(message) {
     class AddFavorException(message: String) : Exception(message)
     class GetFavorException(message: String) : Exception(message)
     class TourInfoException(message: String) : Exception(message)
+    class DetailIntroNullException(message: String) : Exception(message)
+
 }

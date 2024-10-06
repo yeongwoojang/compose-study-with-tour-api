@@ -59,7 +59,6 @@ fun FestivalDetailScreen(
     if (festivalDetailState.isSuccess()) {
         val festivalDetail = festivalDetailState.value.data!!
 
-
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState())
 

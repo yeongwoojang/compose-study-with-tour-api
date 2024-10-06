@@ -93,7 +93,7 @@ fun LocationBasedInfo.toLocationBasedList(): ArrayList<LocationBasedItem> {
     } ?: ArrayList(emptyList())
 }
 
-fun DetailImageInfo.toDetailImageLise(): ArrayList<DetailImageItem> {
+fun DetailImageInfo.toDetailImageList(): ArrayList<DetailImageItem> {
     return response?.body?.items?.item?.let {
         it as ArrayList<DetailImageItem>
     } ?: ArrayList(emptyList())
@@ -109,6 +109,12 @@ fun AreaBasedInfo.toPosterItem(): List<PosterItem> {
                 title = areaBasedItem.title.orEmpty()
             )
         }
+    } ?: ArrayList(emptyList())
+}
+
+fun DetailIntroInfo.toDetailInfoList(): List<DetailIntroItem> {
+    return response?.body?.items?.item?.let {
+        it as ArrayList<DetailIntroItem>
     } ?: ArrayList(emptyList())
 }
 
