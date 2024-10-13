@@ -86,7 +86,9 @@ fun AppNavigation(
                 val contentId = remember {
                     navController.previousBackStackEntry?.savedStateHandle?.get<String>("contentId")
                 }
-                StayScreen(modifier = modifier, contentId = contentId)
+                StayScreen(modifier = modifier, contentId = contentId, close = {
+                    navController.popBackStack()
+                })
 
             }
         }
