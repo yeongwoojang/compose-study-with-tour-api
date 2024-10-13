@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,9 +21,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -67,118 +72,135 @@ fun StayScreen(modifier: Modifier, contentId: String?, close: () -> Unit) {
 
     val scrollState = rememberLazyListState()
     val stayDataFlow = viewModel.stayDataFlow.collectAsStateWithLifecycle()
-    if (stayDataFlow.isSuccess()) {
-        val stayData = stayDataFlow.value.data!!
-        val images = stayData.images
-        val common = stayData.common
-        val info = stayData.info
-        LazyColumn(state = scrollState, modifier = Modifier.fillMaxSize()) {
-            item {
-                Box(modifier = Modifier.fillMaxWidth().height(250.dp)) {
-                    GlideImage(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        model = if (images.isEmpty()) "" else images[0].originImgUrl ?: "",
-                        contentScale = ContentScale.FillBounds,
-                        contentDescription = ""
-                    )
-                }
-            }
 
-            item {
-                Column(
-                    modifier = Modifier.padding(vertical = 15.dp, horizontal = 16.dp)
-                ) {
-                    Text(
-                        text = common?.title.orEmpty()
-                    )
-                    Text(
-                        text = common?.addr1.orEmpty(),
-                        style = TextStyle(
-                            fontSize = 11.sp,
-                            fontFamily = spoqaHanSansNeoFont,
-                            fontWeight = FontWeight.Medium,
-                        ),
-                    )
-                }
-                HorizontalDivider(thickness = 5.dp,)
-            }
+    val isVisibleAppBar by remember {
+        derivedStateOf {
+            scrollState.firstVisibleItemIndex > 0
+        }
+    }
 
-            items(
-                count = info.size,
-                key = { index ->
-                    info.get(index).roomTitle.orEmpty()
+    if (isVisibleAppBar) {
+        Toast.makeText(context, "rr", Toast.LENGTH_SHORT).show()
+    }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        if (stayDataFlow.isSuccess()) {
+            val stayData = stayDataFlow.value.data!!
+            val images = stayData.images
+            val common = stayData.common
+            val info = stayData.info
+            LazyColumn(state = scrollState, modifier = Modifier.fillMaxSize()) {
+                item {
+                    Box(modifier = Modifier.fillMaxWidth().height(250.dp)) {
+                        GlideImage(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            model = if (images.isEmpty()) "" else images[0].originImgUrl ?: "",
+                            contentScale = ContentScale.FillBounds,
+                            contentDescription = ""
+                        )
+                    }
                 }
-            ) { index ->
-                val infoData = info[index]
-                Column() {
-                    GlideImage(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .padding(horizontal = 16.dp, vertical = 10.dp)
-                            .clip(RoundedCornerShape(10.dp)),
-                        model = infoData.roomImg1.orEmpty(),
-                        contentScale = ContentScale.FillBounds,
-                        contentDescription = "",
-                    )
-                    Text(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        text = infoData.roomTitle.orEmpty())
-                    Text(
-                        text = "기준 ${infoData.roomBaseCount.isEmptyString("0")}인 (최대 ${infoData.roomMaxCount}인)",
-                        style = TextStyle(
-                            fontSize = 11.sp,
-                            fontFamily = spoqaHanSansNeoFont,
-                            fontWeight = FontWeight.Medium,
-                        ),
-                        modifier = Modifier
-                            .padding(top = 3.dp, bottom = 10.dp)
-                            .padding(horizontal = 16.dp)
-                    )
-                    Text(
-                        text = infoData.getOptionString(),
-                        style = TextStyle(
-                            fontSize = 11.sp,
-                            fontFamily = spoqaHanSansNeoFont,
-                            fontWeight = FontWeight.Medium,
-                        ),
-                        modifier = Modifier
-                            .padding(vertical = 3.dp)
-                            .padding(horizontal = 16.dp)
-                    )
-                    Text(
-                        text = "비수기: ${infoData.offWeekDayFee}원",
-                        style = TextStyle(
-                            fontSize = 12.sp,
-                            fontFamily = spoqaHanSansNeoFont,
-                            fontWeight = FontWeight.Medium,
-                        ),
-                        modifier = Modifier
-                            .padding(vertical = 3.dp)
-                            .padding(horizontal = 16.dp)
-                    )
-                    Text(
-                        text = "성수기: ${infoData.peakWeekDayFee}원",
-                        style = TextStyle(
-                            fontSize = 12.sp,
-                            fontFamily = spoqaHanSansNeoFont,
-                            fontWeight = FontWeight.Medium,
-                        ),
-                        modifier = Modifier
-                            .padding(top = 3.dp, bottom = 10.dp)
-                            .padding(horizontal = 16.dp)
+
+                item {
+                    Column(
+                        modifier = Modifier.padding(vertical = 15.dp, horizontal = 16.dp)
+                    ) {
+                        Text(
+                            text = common?.title.orEmpty()
+                        )
+                        Text(
+                            text = common?.addr1.orEmpty(),
+                            style = TextStyle(
+                                fontSize = 11.sp,
+                                fontFamily = spoqaHanSansNeoFont,
+                                fontWeight = FontWeight.Medium,
+                            ),
+                        )
+                    }
+                    HorizontalDivider(thickness = 5.dp,)
+                }
+
+                items(
+                    count = info.size,
+                    key = { index ->
+                        info.get(index).roomTitle.orEmpty()
+                    }
+                ) { index ->
+                    val infoData = info[index]
+                    Column() {
+                        GlideImage(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .padding(horizontal = 16.dp, vertical = 10.dp)
+                                .clip(RoundedCornerShape(10.dp)),
+                            model = infoData.roomImg1.orEmpty(),
+                            contentScale = ContentScale.FillBounds,
+                            contentDescription = "",
+                        )
+                        Text(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            text = infoData.roomTitle.orEmpty())
+                        Text(
+                            text = "기준 ${infoData.roomBaseCount.isEmptyString("0")}인 (최대 ${infoData.roomMaxCount}인)",
+                            style = TextStyle(
+                                fontSize = 11.sp,
+                                fontFamily = spoqaHanSansNeoFont,
+                                fontWeight = FontWeight.Medium,
+                            ),
+                            modifier = Modifier
+                                .padding(top = 3.dp, bottom = 10.dp)
+                                .padding(horizontal = 16.dp)
+                        )
+                        Text(
+                            text = infoData.getOptionString(),
+                            style = TextStyle(
+                                fontSize = 11.sp,
+                                fontFamily = spoqaHanSansNeoFont,
+                                fontWeight = FontWeight.Medium,
+                            ),
+                            modifier = Modifier
+                                .padding(vertical = 3.dp)
+                                .padding(horizontal = 16.dp)
+                        )
+                        Text(
+                            text = "비수기: ${infoData.offWeekDayFee}원",
+                            style = TextStyle(
+                                fontSize = 12.sp,
+                                fontFamily = spoqaHanSansNeoFont,
+                                fontWeight = FontWeight.Medium,
+                            ),
+                            modifier = Modifier
+                                .padding(vertical = 3.dp)
+                                .padding(horizontal = 16.dp)
+                        )
+                        Text(
+                            text = "성수기: ${infoData.peakWeekDayFee}원",
+                            style = TextStyle(
+                                fontSize = 12.sp,
+                                fontFamily = spoqaHanSansNeoFont,
+                                fontWeight = FontWeight.Medium,
+                            ),
+                            modifier = Modifier
+                                .padding(top = 3.dp, bottom = 10.dp)
+                                .padding(horizontal = 16.dp)
                         )
 
 
-                    HorizontalDivider()
+                        HorizontalDivider()
+                    }
+
+
                 }
-
-
             }
+        } else {
+            LoadingWidget()
         }
-    } else {
-        LoadingWidget()
+
+//        Row(modifier = Modifier.fillMaxWidth().height(80.dp).background(Color.Yellow)) {
+//            Text("탑바")
+//        }
     }
 
 
