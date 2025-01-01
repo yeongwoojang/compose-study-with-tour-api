@@ -3,7 +3,6 @@ package com.example.tourmanage.domain.area.usecase
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.domain.area.repository.CacheAreaRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class GetCacheAreaUseCase @Inject constructor(

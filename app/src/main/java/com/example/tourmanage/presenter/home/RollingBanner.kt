@@ -30,6 +30,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +46,7 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
 @Composable
@@ -90,43 +92,48 @@ fun RollingBanner(
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Box {
-            HorizontalPager(
-                state = pagerState
-            ) { index ->
-                val imageItem = items[index]
-                val imageUrl = when (imageItem) {
-                    is PosterItem -> imageItem.imgUrl
-                    is DetailImageItem -> imageItem.originImgUrl
-                    else -> ""
-                }
+            if (items.isNotEmpty()) {
+                HorizontalPager(
+                    state = pagerState
+                ) { index ->
+                    val imageItem = items[index]
+                    val imageUrl = when (imageItem) {
+                        is PosterItem -> imageItem.imgUrl
+                        is DetailImageItem -> imageItem.originImgUrl
+                        else -> ""
+                    }
 
-                val title = when (imageItem) {
-                    is PosterItem -> imageItem.title
-                    else -> ""
-                }
-                items.getOrNull(index % (items.size))?.let { item ->
-                    Box {
-                        GlideImage(
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.FillBounds,
-                            model = imageUrl, contentDescription = ""
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .shadow(10.dp, shape = RoundedCornerShape(8.dp))
-                                .align(Alignment.TopStart),
-                            color = Color.White,
-                            text = title.isEmptyString(),
-                            style = TextStyle(
-                                fontSize = 14.sp,
-                                fontFamily = spoqaHanSansNeoFont,
-                                fontWeight = FontWeight.Medium,
-                            ),
-                        )
+                    val title = when (imageItem) {
+                        is PosterItem -> imageItem.title
+                        else -> ""
+                    }
+                    items.getOrNull(index % (items.size))?.let { item ->
+                        Box {
+                            GlideImage(
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.FillBounds,
+                                model = imageUrl, contentDescription = ""
+                            )
+                        }
                     }
                 }
+            } else {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "이미지를 불러올 수 없습니다.",
+                        textAlign = TextAlign.Center,
+                        style = TextStyle(
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = spoqaHanSansNeoFont,
+                        )
+                    )
+                }
             }
+
             val alignment = when (type) {
                 "BOTTOM" -> Alignment.BottomCenter
                 "TOP" -> Alignment.TopCenter
@@ -151,30 +158,6 @@ fun RollingBanner(
                             .size(8.dp)
                     )
                 }
-            }
-
-
-            Box(modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 10.dp, bottom = 10.dp)
-                .background(
-                    color = colorResource(
-                        id = R.color.black_4d
-                    ), shape = RoundedCornerShape(12.dp)
-                )
-                .width(80.dp)
-                .height(30.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "더 알아보기",
-                    style = TextStyle(
-                        fontSize = 9.sp,
-                        fontFamily = spoqaHanSansNeoFont,
-                        fontWeight = FontWeight.Medium,
-                        color = colorResource(id = R.color.white_smoke)
-                    ),
-                )
             }
         }
     }

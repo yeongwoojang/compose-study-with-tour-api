@@ -94,9 +94,7 @@ class HomeViewModel @Inject constructor(
 
     private fun cacheArea(areaItem: AreaItem, isSigungu: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO + ceh) {
-//            val result = cacheAreaUseCase(areaItem, isSigungu).getOrThrow()
             val result = cacheAreaUseCase(areaItem, isSigungu).getOrThrow()
-            Timber.i("TEST_LOG | cacheArea: result: $result")
             if (result) {
                 if (!isSigungu) {
                     removeCacheAreaUseCase(true).getOrThrow()

@@ -40,7 +40,7 @@ fun IconText(
             style = TextStyle(
                 fontFamily = spoqaHanSansNeoFont,
                 fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colorScheme.primaryContainer
+                color = Color.Black
             )
         )
     }
