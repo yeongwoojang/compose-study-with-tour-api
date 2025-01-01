@@ -8,5 +8,5 @@ interface GetDetailCommonUseCase {
     suspend operator fun invoke(
         contentId: String,
         contentTypeId: Config.CONTENT_TYPE_ID,
-    ): Result<Flow<DetailCommonItem?>>
+    ): Result<DetailCommonItem?>
 }

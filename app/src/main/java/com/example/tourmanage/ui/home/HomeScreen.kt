@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,7 +68,7 @@ fun HomeScreen(
 
     var subAreaList by remember { mutableStateOf<List<AreaItem>?>(null) }
     var areaCodeMap by remember { mutableStateOf<Pair<AreaItem?, AreaItem?>>(Pair(null, null)) }
-    var currentMenu by remember { mutableStateOf(Config.CONTENT_TYPE_ID.FESTIVAL) }
+    var currentMenu by rememberSaveable { mutableStateOf(Config.CONTENT_TYPE_ID.FESTIVAL) }
 
     val currentArea = viewModel.currentArea.collectAsStateWithLifecycle()
     val subAreaListState = viewModel.subAreaList.collectAsStateWithLifecycle()
@@ -87,6 +88,7 @@ fun HomeScreen(
     }
 
     LaunchedEffect(currentMenu) {
+        Timber.i("TEST_LOG | currentMenu: $currentMenu")
         viewModel.changeMenu(currentMenu)
     }
 

@@ -16,12 +16,10 @@ class GetDetailCommonUseCaseImpl @Inject constructor(
     override suspend fun invoke(
         contentId: String,
         contentTypeId: Config.CONTENT_TYPE_ID
-    ): Result<Flow<DetailCommonItem?>> = runCatching<Flow<DetailCommonItem?>> {
-        flow {
-            val response = serviceAPI.requestDetailCommonInfo(contentId = contentId, contentTypeId = contentTypeId.value)
-            val detailCommon = response.toDetailCommonItem()
-            emit(detailCommon)
-        }
+    ): Result<DetailCommonItem?> = runCatching<DetailCommonItem?> {
+        val response = serviceAPI.requestDetailCommonInfo(contentId = contentId, contentTypeId = contentTypeId.value)
+        val detailCommon = response.toDetailCommonItem()
+        detailCommon
 
     }.onFailure {
         throw TourMangeException.DetailCommonInfoNullException(it.message.orEmpty())

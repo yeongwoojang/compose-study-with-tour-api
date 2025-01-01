@@ -142,48 +142,28 @@ class FestivalViewModel @Inject constructor(
                 }
             }
 
-            val detailInfoFlow = async { getDetailInfoUseCase(contentId, Config.CONTENT_TYPE_ID.FESTIVAL).getOrThrow() }
-            val detailCommonFlow = async { getDetailCommonUseCase(contentId, Config.CONTENT_TYPE_ID.FESTIVAL).getOrThrow() }
-            val detailImageFlow = async { getDetailImageUseCase(contentId).getOrNull() }
+            val detailInfo = async { getDetailInfoUseCase(contentId, Config.CONTENT_TYPE_ID.FESTIVAL).getOrThrow() }
+            val detailCommon = async { getDetailCommonUseCase(contentId, Config.CONTENT_TYPE_ID.FESTIVAL).getOrThrow() }
+            val imageList = async { getDetailImageUseCase(contentId).getOrNull() }
 
-            detailInfoFlow.await()
-                .catch {
-                    festivalDetailFlow.emit(festivalDetail.apply {
-                        overview = ""
-                        infoText = ""
-                    })
-                }
-                .collect {
-                    festivalDetailFlow.emit(festivalDetail.apply {
-                        overview = it[0]?.infoText.orEmpty()
-                        infoText = it[1]?.infoText.orEmpty()
-                    })
-                }
-            detailCommonFlow.await()
-                .catch {
-                    festivalDetailFlow.emit(festivalDetail.apply {
-                        mainImage = ""
-                        homePageUrl = ""
-                        tel = ""
-                        mapX = ""
-                        mapY = ""
-                        addr1 = ""
-                        addr2 = ""
-                    })
-                }
-                .collect {
-                    festivalDetailFlow.emit(festivalDetail.apply {
-                        mainImage = it?.mainImage.orEmpty()
-                        homePageUrl = it?.hompageUrl.orEmpty()
-                        tel = it?.tel.orEmpty()
-                        mapX = it?.mapX.orEmpty()
-                        mapY = it?.mapY.orEmpty()
-                        addr1 = it?.addr1.orEmpty()
-                        addr2 = it?.addr2.orEmpty()
-                    })
+            val info = detailInfo.await()
+            festivalDetailFlow.emit(festivalDetail.apply {
+                overview = info[0]?.infoText.orEmpty()
+                infoText = info[1]?.infoText.orEmpty()
+            })
 
-                }
-            val imageData = detailImageFlow.await()
+            val common = detailCommon.await()
+            festivalDetailFlow.emit(festivalDetail.apply {
+                mainImage = common?.mainImage.orEmpty()
+                homePageUrl = common?.hompageUrl.orEmpty()
+                tel = common?.tel.orEmpty()
+                mapX = common?.mapX.orEmpty()
+                mapY = common?.mapY.orEmpty()
+                addr1 = common?.addr1.orEmpty()
+                addr2 = common?.addr2.orEmpty()
+            })
+
+            val imageData = imageList.await()
             festivalDetailFlow.emit(festivalDetail.apply {
                 images = imageData ?: ArrayList(emptyList<DetailImageItem>())
             })
