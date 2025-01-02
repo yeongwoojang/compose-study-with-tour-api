@@ -48,6 +48,7 @@ import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.common.value.Config
+import com.example.tourmanage.data.home.PosterItem
 import com.example.tourmanage.presenter.common.AreaDrawerContent
 import com.example.tourmanage.presenter.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.presenter.viewmodel.HomeViewModel
@@ -61,7 +62,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     bottomSheenOpenYn: Boolean = false,
     onDismissMenu: () -> Unit,
-    onClick: (OverlayRoute, String) -> Unit,
+    onClick: (OverlayRoute, PosterItem) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -88,7 +89,6 @@ fun HomeScreen(
     }
 
     LaunchedEffect(currentMenu) {
-        Timber.i("TEST_LOG | currentMenu: $currentMenu")
         viewModel.changeMenu(currentMenu)
     }
 
@@ -150,7 +150,7 @@ fun HomeScreen(
                                                 Config.CONTENT_TYPE_ID.LEISURE_SPORTS -> OverlayRoute.LEISURE_SPORTS
                                                 Config.CONTENT_TYPE_ID.SHOPPING -> OverlayRoute.SHOPPING
                                             }
-                                            onClick(overlayRoute, item.contentId)
+                                            onClick(overlayRoute, item)
                                         },
                                     contentScale = ContentScale.FillBounds,
                                     model = item.imgUrl,

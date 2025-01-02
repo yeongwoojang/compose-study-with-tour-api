@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,19 +41,21 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.example.tourmanage.UiState
 import com.example.tourmanage.di.ViewModelFactoryProvider
 import com.example.tourmanage.common.extension.isEmptyString
 import com.example.tourmanage.common.extension.isSuccess
+import com.example.tourmanage.data.home.PosterItem
 import com.example.tourmanage.getOptionString
 import com.example.tourmanage.presenter.components.LoadingWidget
 import com.example.tourmanage.presenter.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.presenter.viewmodel.StayViewModel
 import dagger.hilt.android.EntryPointAccessors
+import timber.log.Timber
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun StayScreen(modifier: Modifier, contentId: String?, close: () -> Unit) {
-
+fun StayScreen(modifier: Modifier, posterItem: PosterItem?, close: () -> Unit) {
     val context = LocalContext.current
     val factory = EntryPointAccessors.fromActivity(
         context as Activity,
@@ -60,7 +63,7 @@ fun StayScreen(modifier: Modifier, contentId: String?, close: () -> Unit) {
     ).StayViewModelFactory()
 
     val viewModel: StayViewModel = viewModel(
-        factory = StayViewModel.provideStayViewModelFactory(factory, contentId ?: "")
+        factory = StayViewModel.provideStayViewModelFactory(factory, posterItem?.contentId ?: "")
     )
 
     LaunchedEffect(Unit) {
@@ -70,8 +73,24 @@ fun StayScreen(modifier: Modifier, contentId: String?, close: () -> Unit) {
         }
     }
 
+    val isFavorited = remember { mutableStateOf(false) }
+
     val scrollState = rememberLazyListState()
     val stayDataFlow = viewModel.stayDataFlow.collectAsStateWithLifecycle()
+
+    val toggleFavor = viewModel.toggleFavorFlow.collectAsStateWithLifecycle()
+
+    LaunchedEffect(toggleFavor.value) {
+        when(toggleFavor.value) {
+            is UiState.Success -> {
+                if (!toggleFavor.value.data!!) {
+                    Toast.makeText(context, "다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                    isFavorited.value = false
+                }
+            }
+            else ->{}
+        }
+    }
 
     val isVisibleAppBar by remember {
         derivedStateOf {
@@ -79,9 +98,6 @@ fun StayScreen(modifier: Modifier, contentId: String?, close: () -> Unit) {
         }
     }
 
-    if (isVisibleAppBar) {
-        Toast.makeText(context, "rr", Toast.LENGTH_SHORT).show()
-    }
 
     Box(modifier = modifier.fillMaxSize()) {
         if (stayDataFlow.isSuccess()) {
@@ -89,6 +105,7 @@ fun StayScreen(modifier: Modifier, contentId: String?, close: () -> Unit) {
             val images = stayData.images
             val common = stayData.common
             val info = stayData.info
+            isFavorited.value= stayData.isFavor
             LazyColumn(state = scrollState, modifier = Modifier.fillMaxSize()) {
                 item {
                     Box(modifier = Modifier.fillMaxWidth().height(250.dp)) {
@@ -213,15 +230,48 @@ fun StayScreen(modifier: Modifier, contentId: String?, close: () -> Unit) {
                     contentDescription = ""
                 )
             }
-            Text("탑바")
+            //TODO 탑바 타이틀 지정 필요
+//            Text(
+//                text = item.title,
+//                style = TextStyle(
+//                    fontSize = 17.sp,
+//                    fontWeight = FontWeight.Medium,
+//                    fontFamily = spoqaHanSansNeoFont,
+//                )
+//            )
 
+            Timber.i("TEST_LOG | isFavorited: $isFavorited")
             IconButton(
                 modifier = Modifier.size(50.dp),
-                onClick = {}
+                onClick = {
+                    if (posterItem != null) {
+                        if (isFavorited.value) {
+                            isFavorited.value = false
+                            viewModel.requestDelFavor(posterItem)
+                        } else {
+                            isFavorited.value = true
+                            viewModel.requestToggleFavor(posterItem)
+                        }
+                    } else {
+                        Toast.makeText(context, "다시 요청해주세요.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Favorite,
-                    tint = if (isVisibleAppBar) Color.Black else Color.White,
+                    tint = if (isVisibleAppBar) {
+                        if (isFavorited.value) {
+                            Color.Red
+                        } else {
+                            Color.Black
+                        }
+                    } else {
+                        if (isFavorited.value) {
+                            Color.Red
+                        } else {
+                            Color.White
+                        }
+                    },
                     contentDescription = ""
                 )
             }

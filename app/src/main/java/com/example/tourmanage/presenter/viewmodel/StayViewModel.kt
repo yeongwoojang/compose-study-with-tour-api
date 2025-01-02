@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
-import com.example.tourmanage.common.data.server.info.DetailCommonInfo
 import com.example.tourmanage.common.data.server.item.DetailCommonItem
 import com.example.tourmanage.common.data.server.item.DetailImageItem
 import com.example.tourmanage.common.data.server.item.DetailIntroItem
@@ -13,7 +12,12 @@ import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.common.GetDetailCommonUseCase
 import com.example.tourmanage.data.common.GetDetailImageUseCase
 import com.example.tourmanage.data.common.GetDetailInfoUseCase
+import com.example.tourmanage.data.home.PosterItem
 import com.example.tourmanage.domain.common.GetDetailIntroUseCase
+import com.example.tourmanage.domain.favor.AddFavorUseCase
+import com.example.tourmanage.domain.favor.DelFavorUseCase
+import com.example.tourmanage.domain.favor.GetFavorUseCase
+import com.example.tourmanage.domain.favor.IsFavorUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -31,6 +35,11 @@ class StayViewModel @AssistedInject constructor(
     private val getDetailCommonUseCase: GetDetailCommonUseCase,
     private val getDetailImageUseCase: GetDetailImageUseCase,
     private val getDetailIntroUseCase: GetDetailIntroUseCase,
+    private val addFavorUseCase: AddFavorUseCase,
+    private val delFavorUseCase: DelFavorUseCase,
+    private val getFavorUseCase: GetFavorUseCase,
+    private val isFavorUseCase: IsFavorUseCase,
+
     @Assisted private val contentId: String,
 ) : ViewModel() {
     private val _stayDataFlow = MutableStateFlow<UiState<StayPageItem>>(UiState.Loading())
@@ -46,6 +55,10 @@ class StayViewModel @AssistedInject constructor(
         }
 
     }
+
+    private val _toggleFavorFlow = MutableStateFlow<UiState<Boolean>>(UiState.Loading())
+    val toggleFavorFlow = _toggleFavorFlow.asStateFlow()
+
     init {
         fetchData()
     }
@@ -54,6 +67,7 @@ class StayViewModel @AssistedInject constructor(
     private fun fetchData() {
         viewModelScope.launch(ceh) {
             _stayDataFlow.value = UiState.Loading()
+            val isFavor = async { isFavorUseCase(contentId).getOrElse { false } }
             val detailImage = async { getDetailImageUseCase(contentId = contentId).getOrNull() }
             val detailIntro = async { getDetailIntroUseCase(contentId = contentId, contentTypeId = Config.CONTENT_TYPE_ID.STAY).getOrNull() }
             val detailCommonInfo = async { getDetailCommonUseCase(contentId = contentId, contentTypeId = Config.CONTENT_TYPE_ID.STAY).getOrNull() }
@@ -66,41 +80,29 @@ class StayViewModel @AssistedInject constructor(
                     intro = detailIntro.await() ?: emptyList()
                     common = detailCommonInfo.await()
                     info = detailInfo.await() ?: ArrayList(emptyList())
+                    this.isFavor = isFavor.await()
                 }
             )
         }
     }
 
-    fun requestDetailIntro(contentId: String) {
+    fun requestDelFavor(posterItem: PosterItem) {
+        Timber.i("TEST_LOG | requestDelFavor")
         viewModelScope.launch {
-            getDetailIntroUseCase(
-                contentId = contentId,
-                contentTypeId = Config.CONTENT_TYPE_ID.STAY
-            )
+            delFavorUseCase(posterItem.contentId)
         }
     }
 
-    fun requestDetailCommonInfo(contentId: String) {
-        viewModelScope.launch {
-            getDetailCommonUseCase(
-                contentId = contentId,
-                contentTypeId = Config.CONTENT_TYPE_ID.STAY
-            )
-        }
-    }
-
-    fun requestDetailImage(contentId: String) {
-        viewModelScope.launch {
-            getDetailImageUseCase(contentId = contentId)
-        }
-    }
-
-    fun requestDetailInfo(contentId: String) {
-        viewModelScope.launch {
-            getDetailInfoUseCase(
-                contentId = contentId,
-                contentTypeId = Config.CONTENT_TYPE_ID.STAY
-            )
+    fun requestToggleFavor(posterItem: PosterItem) {
+        Timber.i("TEST_LOG | requestToggleFavor")
+        viewModelScope.launch(ceh) {
+            val isSuccess = addFavorUseCase(
+                Config.CONTENT_TYPE_ID.STAY.value,
+                posterItem.contentId,
+                posterItem.title,
+                posterItem.imgUrl
+            ).getOrElse { false }
+            _toggleFavorFlow.value = UiState.Success(isSuccess)
         }
     }
 
@@ -126,6 +128,7 @@ class StayViewModel @AssistedInject constructor(
         var images: ArrayList<DetailImageItem> = ArrayList(emptyList()),
         var intro: List<DetailIntroItem> = emptyList(),
         var common: DetailCommonItem? = null,
-        var info: ArrayList<DetailItem> = ArrayList(emptyList())
+        var info: ArrayList<DetailItem> = ArrayList(emptyList()),
+        var isFavor: Boolean = false,
     )
 }

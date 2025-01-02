@@ -22,4 +22,7 @@ interface FavorDao {
 
     @Query("DELETE FROM FAVORENTITY")
     suspend fun deleteFavorAll()
+
+    @Query("SELECT * FROM FavorEntity WHERE contentId = :contentId")
+    suspend fun isFavor(contentId: String): FavorEntity?
 }

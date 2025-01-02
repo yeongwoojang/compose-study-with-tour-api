@@ -34,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.tourmanage.common.extension.isLoading
 import com.example.tourmanage.common.extension.isSuccess
+import com.example.tourmanage.data.home.PosterItem
 import com.example.tourmanage.presenter.components.LoadingWidget
 import com.example.tourmanage.presenter.home.RollingBanner
 import com.example.tourmanage.presenter.ui.theme.spoqaHanSansNeoFont
@@ -44,13 +45,13 @@ import com.example.tourmanage.presenter.viewmodel.FestivalViewModel
 @Composable
 fun FestivalDetailScreen(
     viewModel: FestivalViewModel = hiltViewModel(),
-    contentId: String
+    posterItem: PosterItem?
 ) {
 
     val festivalDetailState = viewModel.festivalDetailInfo.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.requestFestivalDetail(contentId)
+        viewModel.requestFestivalDetail(posterItem?.contentId)
     }
 
     if (festivalDetailState.isSuccess()) {
@@ -99,7 +100,7 @@ fun FestivalDetailScreen(
                                 if (festivalDetail.tel.isNotEmpty()) {
                                     IconText(
                                         text = festivalDetail.tel,
-                                        icon = Icons.Filled.Call
+                                        icon = Icons.Filled.Call,
                                     )
                                 }
                                 if (festivalDetail.homePageUrl.isNotEmpty()) {

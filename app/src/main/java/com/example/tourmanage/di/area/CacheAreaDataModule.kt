@@ -20,7 +20,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 
 @Module
 @InstallIn(ViewModelComponent::class)
-class CacheAreaModule2 {
+class CacheAreaModule {
 
     @Provides
     @ViewModelScoped
