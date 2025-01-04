@@ -62,7 +62,7 @@ private fun MainBottomBar(
                 .fillMaxWidth()
                 .padding(bottom = 2.dp)
                 .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
             bottomRoutes.forEach { route ->
                 Column(

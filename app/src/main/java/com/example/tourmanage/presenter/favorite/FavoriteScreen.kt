@@ -1,8 +1,10 @@
 package com.example.tourmanage.presenter.favorite
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -11,12 +13,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,7 +37,10 @@ import com.example.tourmanage.presenter.viewmodel.FavorViewModel
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun FavoriteScreen(viewModel: FavorViewModel = hiltViewModel()) {
+fun FavoriteScreen(
+    modifier: Modifier,
+    viewModel: FavorViewModel = hiltViewModel()
+) {
 
     LaunchedEffect(Unit) {
         viewModel.getFavorAll()
@@ -45,7 +52,7 @@ fun FavoriteScreen(viewModel: FavorViewModel = hiltViewModel()) {
         val data = favorList.value.data!!
 
         LazyColumn(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -60,18 +67,35 @@ fun FavoriteScreen(viewModel: FavorViewModel = hiltViewModel()) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    GlideImage(
-                        model = item.image,
-                        contentDescription = "",
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier
-                            .size(150.dp)
-                            .clip(RoundedCornerShape(12.dp)),
+                    if (item.image.isNotEmpty()) {
+                        GlideImage(
+                            model = item.image,
+                            contentDescription = "",
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier
+                                .size(150.dp)
+                                .clip(RoundedCornerShape(12.dp)),
                         )
+                    } else {
+                        Box(modifier = Modifier
+                            .height(150.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "이미지를 불러올 수 없습니다.",
+                                textAlign = TextAlign.Center,
+                                style = TextStyle(
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    fontFamily = spoqaHanSansNeoFont,
+                                )
+                            )
+                        }
+                    }
                     Text(
                         modifier = Modifier.width(150.dp),
                         text = item.title,
-                        color = Color.White,
+                        color = Color.Black,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         style = TextStyle(

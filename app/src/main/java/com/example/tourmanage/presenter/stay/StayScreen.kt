@@ -1,8 +1,13 @@
 package com.example.tourmanage.presenter.stay
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.widget.Toast
-import androidx.compose.foundation.Image
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -91,6 +97,8 @@ fun StayScreen(modifier: Modifier, posterItem: PosterItem?, close: () -> Unit) {
 
     val toggleFavor = viewModel.toggleFavorFlow.collectAsStateWithLifecycle()
 
+    val telNumber = remember { mutableStateOf("") }
+
     LaunchedEffect(toggleFavor.value) {
         when(toggleFavor.value) {
             is UiState.Success -> {
@@ -111,12 +119,31 @@ fun StayScreen(modifier: Modifier, posterItem: PosterItem?, close: () -> Unit) {
         }
     }
 
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            makePhoneCall(context, telNumber.value)
+        } else {
+            Toast.makeText(context, "전화걸기 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun requestCallPermission(tel: String) {
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            makePhoneCall(context, tel)
+        } else {
+            permissionLauncher.launch(android.Manifest.permission.CALL_PHONE)
+        }
+    }
+
     val isVisibleAppBar by remember {
         derivedStateOf {
             scrollState.firstVisibleItemIndex > 0
         }
     }
-
 
     Box(modifier = modifier.fillMaxSize()) {
         if (stayDataFlow.isSuccess()) {
@@ -124,6 +151,7 @@ fun StayScreen(modifier: Modifier, posterItem: PosterItem?, close: () -> Unit) {
             val images = stayData.images
             val common = stayData.common
             val info = stayData.info
+            telNumber.value = stayData.common?.tel.orEmpty()
             LazyColumn(state = scrollState, modifier = Modifier.fillMaxSize()) {
                 item {
                     Box(modifier = Modifier.fillMaxWidth().height(250.dp)) {
@@ -288,7 +316,9 @@ fun StayScreen(modifier: Modifier, posterItem: PosterItem?, close: () -> Unit) {
         ) {
             IconButton(
                 modifier = Modifier.size(50.dp),
-                onClick = {}
+                onClick = {
+                    requestCallPermission(telNumber.value)
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.Call,
@@ -347,6 +377,24 @@ fun StayScreen(modifier: Modifier, posterItem: PosterItem?, close: () -> Unit) {
             }
         }
     }
-
-
+}
+fun makePhoneCall(context: Context, phoneNumber: String) {
+    if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE)
+        == PackageManager.PERMISSION_GRANTED
+    ) {
+        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber"))
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            if (phoneNumber.isNotEmpty()) {
+                context.startActivity(intent)
+            } else {
+                Toast.makeText(context, "전화번호가 공개되지 않았습니다.", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(context, "전화걸기 권한이 없습니다.", Toast.LENGTH_SHORT).show()
+        }
+    } else {
+        Toast.makeText(context, "전화걸기 권한이 없습니다.", Toast.LENGTH_SHORT).show()
+    }
 }
