@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.value.Config
-import com.example.tourmanage.domain.area.repository.CacheAreaRepository
+import com.example.tourmanage.domain.area.CacheAreaRepository
 import com.example.tourmanage.error.area.TourMangeException
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow

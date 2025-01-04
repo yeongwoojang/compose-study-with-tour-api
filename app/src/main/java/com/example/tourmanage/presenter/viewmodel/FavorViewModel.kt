@@ -7,7 +7,9 @@ import com.example.tourmanage.common.data.room.FavorEntity
 import com.example.tourmanage.domain.favor.GetAllFavorUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -20,8 +22,13 @@ class FavorViewModel @Inject constructor(
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Timber.e("exceptionHandler:: | throwable: $throwable")
-
+        viewModelScope.launch {
+            _noDataFlow.emit(true)
+        }
     }
+
+    private val _noDataFlow: MutableSharedFlow<Boolean> = MutableSharedFlow<Boolean>()
+    val noDataFlow = _noDataFlow.asSharedFlow()
 
     private val _favorDataFlow = MutableStateFlow<UiState<List<FavorEntity>>>(UiState.Loading())
     val favorDataFlow = _favorDataFlow.asStateFlow()

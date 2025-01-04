@@ -2,8 +2,8 @@ package com.example.tourmanage.di.area
 
 import com.example.tourmanage.data.area.CacheAreaRepositoryImpl
 import com.example.tourmanage.data.area.ServerAreaRepositoryImpl
-import com.example.tourmanage.domain.area.repository.CacheAreaRepository
-import com.example.tourmanage.domain.area.repository.ServerAreaRepository
+import com.example.tourmanage.domain.area.CacheAreaRepository
+import com.example.tourmanage.domain.area.ServerAreaRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

@@ -1,7 +1,7 @@
 package com.example.tourmanage.di.area
 
-import com.example.tourmanage.domain.area.repository.ServerAreaRepository
-import com.example.tourmanage.domain.area.usecase.GetAreaUseCase
+import com.example.tourmanage.domain.area.ServerAreaRepository
+import com.example.tourmanage.domain.area.GetAreaUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

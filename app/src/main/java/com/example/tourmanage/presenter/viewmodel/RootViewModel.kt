@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.tourmanage.UiState
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
-import com.example.tourmanage.domain.area.usecase.GetAreaUseCase
+import com.example.tourmanage.domain.area.GetAreaUseCase
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.OnFailureListener

@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.tourmanage.domain.area.repository.CacheAreaRepository
-import com.example.tourmanage.domain.area.usecase.CacheAreaUseCase
-import com.example.tourmanage.domain.area.usecase.GetCacheAreaUseCase
-import com.example.tourmanage.domain.area.usecase.RemoveCacheAreaUseCase
+import com.example.tourmanage.domain.area.CacheAreaRepository
+import com.example.tourmanage.domain.area.CacheAreaUseCase
+import com.example.tourmanage.domain.area.GetCacheAreaUseCase
+import com.example.tourmanage.domain.area.RemoveCacheAreaUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
