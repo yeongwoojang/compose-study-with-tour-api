@@ -1,6 +1,5 @@
-package com.example.tourmanage.domain.area.usecase
+package com.example.tourmanage.domain.area
 
-import com.example.tourmanage.domain.area.repository.CacheAreaRepository
 import javax.inject.Inject
 
 class RemoveCacheAreaUseCase @Inject constructor(

@@ -1,5 +1,6 @@
 package com.example.tourmanage.presenter.favorite
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,17 +36,30 @@ import com.example.tourmanage.common.extension.isSuccess
 import com.example.tourmanage.presenter.components.LoadingWidget
 import com.example.tourmanage.presenter.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.presenter.viewmodel.FavorViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun FavoriteScreen(
     modifier: Modifier,
-    viewModel: FavorViewModel = hiltViewModel()
+    viewModel: FavorViewModel = hiltViewModel(),
+    close: () -> Unit
 ) {
-
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.getFavorAll()
+
+        launch {
+            viewModel.noDataFlow.collect {
+                if (it) {
+                    Toast.makeText(context, "데이터가 없습니다.", Toast.LENGTH_SHORT).show()
+                    close()
+                }
+            }
+        }
     }
+
+
 
     val favorList = viewModel.favorDataFlow.collectAsStateWithLifecycle()
 

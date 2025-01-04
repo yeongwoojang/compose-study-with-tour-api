@@ -3,7 +3,7 @@ package com.example.tourmanage.data.area
 import com.example.tourmanage.common.ServerGlobal
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.repository.ServiceAPI
-import com.example.tourmanage.domain.area.repository.ServerAreaRepository
+import com.example.tourmanage.domain.area.ServerAreaRepository
 import com.example.tourmanage.error.area.TourMangeException
 import com.example.tourmanage.toAreaInfoList
 import javax.inject.Inject

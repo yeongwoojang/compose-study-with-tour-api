@@ -45,7 +45,10 @@ fun AppNavigation(
             }
 
             composable(route = PageRoute.FAVORITE.route) {
-                FavoriteScreen(modifier = modifier)
+                FavoriteScreen(modifier = modifier, close = {
+                    navController.popBackStack()
+                    navController.navigate(PageRoute.HOME.route)
+                })
             }
 
         }

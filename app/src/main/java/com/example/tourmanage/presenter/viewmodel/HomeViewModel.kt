@@ -8,10 +8,10 @@ import com.example.tourmanage.UiState
 import com.example.tourmanage.common.data.server.item.AreaItem
 import com.example.tourmanage.common.value.Config
 import com.example.tourmanage.data.home.PosterItem
-import com.example.tourmanage.domain.area.usecase.CacheAreaUseCase
-import com.example.tourmanage.domain.area.usecase.GetAreaUseCase
-import com.example.tourmanage.domain.area.usecase.GetCacheAreaUseCase
-import com.example.tourmanage.domain.area.usecase.RemoveCacheAreaUseCase
+import com.example.tourmanage.domain.area.CacheAreaUseCase
+import com.example.tourmanage.domain.area.GetAreaUseCase
+import com.example.tourmanage.domain.area.GetCacheAreaUseCase
+import com.example.tourmanage.domain.area.RemoveCacheAreaUseCase
 import com.example.tourmanage.domain.common.GetAreaBasedUseCase
 import com.example.tourmanage.error.area.TourMangeException
 import dagger.hilt.android.lifecycle.HiltViewModel
