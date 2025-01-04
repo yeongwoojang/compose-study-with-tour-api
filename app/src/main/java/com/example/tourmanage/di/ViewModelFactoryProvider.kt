@@ -9,7 +9,7 @@ import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.components.SingletonComponent
 
 @EntryPoint
-@InstallIn(ActivityRetainedComponent::class)
+@InstallIn(ActivityComponent::class)
 interface ViewModelFactoryProvider {
     fun StayViewModelFactory(): StayViewModel.StayViewModelFactory
 }

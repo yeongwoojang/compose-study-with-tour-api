@@ -59,6 +59,9 @@ class StayViewModel @AssistedInject constructor(
     private val _toggleFavorFlow = MutableStateFlow<UiState<Boolean>>(UiState.Loading())
     val toggleFavorFlow = _toggleFavorFlow.asStateFlow()
 
+    private val _isFavor = MutableSharedFlow<Boolean>(replay = 1)
+    val isFavor = _isFavor.asSharedFlow()
+
     init {
         fetchData()
     }
@@ -67,34 +70,32 @@ class StayViewModel @AssistedInject constructor(
     private fun fetchData() {
         viewModelScope.launch(ceh) {
             _stayDataFlow.value = UiState.Loading()
-            val isFavor = async { isFavorUseCase(contentId).getOrElse { false } }
             val detailImage = async { getDetailImageUseCase(contentId = contentId).getOrNull() }
             val detailIntro = async { getDetailIntroUseCase(contentId = contentId, contentTypeId = Config.CONTENT_TYPE_ID.STAY).getOrNull() }
             val detailCommonInfo = async { getDetailCommonUseCase(contentId = contentId, contentTypeId = Config.CONTENT_TYPE_ID.STAY).getOrNull() }
             val detailInfo = async { getDetailInfoUseCase(contentId = contentId, contentTypeId = Config.CONTENT_TYPE_ID.STAY).getOrThrow() }
 
+            val isFavor = async { isFavorUseCase(contentId).getOrElse { false } }
+            _isFavor.emit(isFavor.await())
             _stayDataFlow.value = UiState.Success(
-
                 StayPageItem().apply {
                     images = detailImage.await() ?: ArrayList(emptyList())
                     intro = detailIntro.await() ?: emptyList()
                     common = detailCommonInfo.await()
                     info = detailInfo.await() ?: ArrayList(emptyList())
-                    this.isFavor = isFavor.await()
                 }
             )
+
         }
     }
 
     fun requestDelFavor(posterItem: PosterItem) {
-        Timber.i("TEST_LOG | requestDelFavor")
         viewModelScope.launch {
             delFavorUseCase(posterItem.contentId)
         }
     }
 
     fun requestToggleFavor(posterItem: PosterItem) {
-        Timber.i("TEST_LOG | requestToggleFavor")
         viewModelScope.launch(ceh) {
             val isSuccess = addFavorUseCase(
                 Config.CONTENT_TYPE_ID.STAY.value,

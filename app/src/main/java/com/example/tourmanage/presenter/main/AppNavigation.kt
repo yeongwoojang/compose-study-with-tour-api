@@ -9,13 +9,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.example.tourmanage.data.home.PosterItem
-import com.example.tourmanage.presenter.area.AreaScreen
 import com.example.tourmanage.presenter.favorite.FavoriteScreen
 import com.example.tourmanage.presenter.festival.FestivalDetailScreen
 import com.example.tourmanage.presenter.home.HomeScreen
 import com.example.tourmanage.presenter.home.OverlayRoute
 import com.example.tourmanage.presenter.stay.StayScreen
-import timber.log.Timber
 
 @Composable
 fun AppNavigation(
@@ -47,12 +45,9 @@ fun AppNavigation(
             }
 
             composable(route = PageRoute.FAVORITE.route) {
-                FavoriteScreen()
+                FavoriteScreen(modifier = modifier)
             }
 
-            composable(route = PageRoute.AREA.route) {
-                AreaScreen()
-            }
         }
 
         navigation(startDestination = OverlayRoute.FESTIVAL.route, route = "detail_page") {
@@ -92,4 +87,4 @@ fun AppNavigation(
 
 }
 
-val bottomRoutes = setOf(PageRoute.HOME, PageRoute.FAVORITE, PageRoute.AREA)
+val bottomRoutes = setOf(PageRoute.HOME, PageRoute.FAVORITE)

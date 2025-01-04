@@ -13,7 +13,6 @@ enum class PageRoute(
 ) {
     HOME(route = "Home", contentDescription = "Home", Icons.Filled.Home),
     FAVORITE(route = "Favorite", contentDescription = "Favorite", Icons.Filled.Favorite),
-    AREA(route = "Area", contentDescription = "Area", Icons.Filled.LocationOn),
     FESTIVAL(route = "Festival", contentDescription = "Festival"),
     STAY(route = "Stay", contentDescription = "Stay"),
     FESTIVAL_DEFAIL(route = "FestivalDetail", contentDescription = "FestivalDetail")
