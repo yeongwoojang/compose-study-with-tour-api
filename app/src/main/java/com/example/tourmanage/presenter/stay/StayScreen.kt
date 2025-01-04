@@ -2,11 +2,13 @@ package com.example.tourmanage.presenter.stay
 
 import android.app.Activity
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +19,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,13 +35,16 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,6 +61,7 @@ import com.example.tourmanage.presenter.components.LoadingWidget
 import com.example.tourmanage.presenter.ui.theme.spoqaHanSansNeoFont
 import com.example.tourmanage.presenter.viewmodel.StayViewModel
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -92,6 +103,14 @@ fun StayScreen(modifier: Modifier, posterItem: PosterItem?, close: () -> Unit) {
         }
     }
 
+    LaunchedEffect(Unit) {
+        launch {
+            viewModel.isFavor.collect {
+                isFavorited.value = it
+            }
+        }
+    }
+
     val isVisibleAppBar by remember {
         derivedStateOf {
             scrollState.firstVisibleItemIndex > 0
@@ -105,37 +124,65 @@ fun StayScreen(modifier: Modifier, posterItem: PosterItem?, close: () -> Unit) {
             val images = stayData.images
             val common = stayData.common
             val info = stayData.info
-            isFavorited.value= stayData.isFavor
             LazyColumn(state = scrollState, modifier = Modifier.fillMaxSize()) {
                 item {
                     Box(modifier = Modifier.fillMaxWidth().height(250.dp)) {
-                        GlideImage(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            model = if (images.isEmpty()) "" else images[0].originImgUrl ?: "",
-                            contentScale = ContentScale.FillBounds,
-                            contentDescription = ""
-                        )
+                        if (images.isNotEmpty() && !images[0].originImgUrl.isNullOrEmpty()) {
+                            GlideImage(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                model = images[0].originImgUrl,
+                                contentScale = ContentScale.FillBounds,
+                                contentDescription = "",
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "이미지를 불러올 수 없습니다.",
+                                    textAlign = TextAlign.Center,
+                                    style = TextStyle(
+                                        fontSize = 17.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        fontFamily = spoqaHanSansNeoFont,
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
 
                 item {
-                    Column(
-                        modifier = Modifier.padding(vertical = 15.dp, horizontal = 16.dp)
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 10.dp)
+                            .fillMaxWidth()
+                            .background(color = Color.White, shape = RoundedCornerShape(8.dp))
                     ) {
-                        Text(
-                            text = common?.title.orEmpty()
-                        )
-                        Text(
-                            text = common?.addr1.orEmpty(),
-                            style = TextStyle(
-                                fontSize = 11.sp,
-                                fontFamily = spoqaHanSansNeoFont,
-                                fontWeight = FontWeight.Medium,
-                            ),
-                        )
+                        Column(
+                            modifier = Modifier.padding(vertical = 15.dp, horizontal = 16.dp)
+                        ) {
+                            Text(
+                                text = common?.addr1.orEmpty(),
+                                style = TextStyle(
+                                    fontSize = 9.sp,
+                                    fontFamily = spoqaHanSansNeoFont,
+                                    fontWeight = FontWeight.Medium,
+                                ),
+                            )
+                            Text(
+                                text = common?.tel.orEmpty(),
+                                style = TextStyle(
+                                    fontSize = 9.sp,
+                                    fontFamily = spoqaHanSansNeoFont,
+                                    fontWeight = FontWeight.Medium,
+                                ),
+                            )
+                        }
                     }
-                    HorizontalDivider(thickness = 5.dp,)
                 }
 
                 items(
@@ -146,16 +193,35 @@ fun StayScreen(modifier: Modifier, posterItem: PosterItem?, close: () -> Unit) {
                 ) { index ->
                     val infoData = info[index]
                     Column() {
-                        GlideImage(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp)
-                                .padding(horizontal = 16.dp, vertical = 10.dp)
-                                .clip(RoundedCornerShape(10.dp)),
-                            model = infoData.roomImg1.orEmpty(),
-                            contentScale = ContentScale.FillBounds,
-                            contentDescription = "",
-                        )
+                        if (!infoData.roomImg1.isNullOrEmpty()) {
+                            GlideImage(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                                    .padding(horizontal = 16.dp, vertical = 10.dp)
+                                    .clip(RoundedCornerShape(10.dp)),
+                                model = infoData.roomImg1.orEmpty(),
+                                contentScale = ContentScale.FillBounds,
+                                contentDescription = "",
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "이미지를 불러올 수 없습니다.",
+                                    textAlign = TextAlign.Center,
+                                    style = TextStyle(
+                                        fontSize = 17.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        fontFamily = spoqaHanSansNeoFont,
+                                    )
+                                )
+                            }
+                        }
                         Text(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             text = infoData.roomTitle.orEmpty())
@@ -173,7 +239,7 @@ fun StayScreen(modifier: Modifier, posterItem: PosterItem?, close: () -> Unit) {
                         Text(
                             text = infoData.getOptionString(),
                             style = TextStyle(
-                                fontSize = 11.sp,
+                                fontSize = 10.sp,
                                 fontFamily = spoqaHanSansNeoFont,
                                 fontWeight = FontWeight.Medium,
                             ),
@@ -184,7 +250,7 @@ fun StayScreen(modifier: Modifier, posterItem: PosterItem?, close: () -> Unit) {
                         Text(
                             text = "비수기: ${infoData.offWeekDayFee}원",
                             style = TextStyle(
-                                fontSize = 12.sp,
+                                fontSize = 10.sp,
                                 fontFamily = spoqaHanSansNeoFont,
                                 fontWeight = FontWeight.Medium,
                             ),
@@ -195,7 +261,7 @@ fun StayScreen(modifier: Modifier, posterItem: PosterItem?, close: () -> Unit) {
                         Text(
                             text = "성수기: ${infoData.peakWeekDayFee}원",
                             style = TextStyle(
-                                fontSize = 12.sp,
+                                fontSize = 10.sp,
                                 fontFamily = spoqaHanSansNeoFont,
                                 fontWeight = FontWeight.Medium,
                             ),
@@ -231,16 +297,20 @@ fun StayScreen(modifier: Modifier, posterItem: PosterItem?, close: () -> Unit) {
                 )
             }
             //TODO 탑바 타이틀 지정 필요
-//            Text(
-//                text = item.title,
-//                style = TextStyle(
-//                    fontSize = 17.sp,
-//                    fontWeight = FontWeight.Medium,
-//                    fontFamily = spoqaHanSansNeoFont,
-//                )
-//            )
+            Box(
+                modifier = Modifier.fillMaxHeight(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = posterItem?.title.isEmptyString("타이틀"),
+                    style = TextStyle(
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = spoqaHanSansNeoFont,
+                    )
+                )
+            }
 
-            Timber.i("TEST_LOG | isFavorited: $isFavorited")
             IconButton(
                 modifier = Modifier.size(50.dp),
                 onClick = {

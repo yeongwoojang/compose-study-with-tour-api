@@ -3,6 +3,7 @@ package com.example.tourmanage.presenter.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -136,26 +138,56 @@ fun HomeScreen(
                                     .fillMaxWidth()
                                     .height(250.dp)
                             ) {
-                                GlideImage(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clickable {
-                                            val overlayRoute = when (currentMenu) {
-                                                Config.CONTENT_TYPE_ID.FESTIVAL -> OverlayRoute.FESTIVAL
-                                                Config.CONTENT_TYPE_ID.STAY -> OverlayRoute.STAY
-                                                Config.CONTENT_TYPE_ID.TOUR_COURSE -> OverlayRoute.TOUR_COURSE
-                                                Config.CONTENT_TYPE_ID.FOOD -> OverlayRoute.FOOD
-                                                Config.CONTENT_TYPE_ID.TOUR_SPOT -> OverlayRoute.TOUR_SPOT
-                                                Config.CONTENT_TYPE_ID.CULTURE -> OverlayRoute.CULTURE
-                                                Config.CONTENT_TYPE_ID.LEISURE_SPORTS -> OverlayRoute.LEISURE_SPORTS
-                                                Config.CONTENT_TYPE_ID.SHOPPING -> OverlayRoute.SHOPPING
-                                            }
-                                            onClick(overlayRoute, item)
-                                        },
-                                    contentScale = ContentScale.FillBounds,
-                                    model = item.imgUrl,
-                                    contentDescription = ""
-                                )
+                                if (item.imgUrl.isNotEmpty()) {
+                                    GlideImage(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clickable {
+                                                val overlayRoute = when (currentMenu) {
+                                                    Config.CONTENT_TYPE_ID.FESTIVAL -> OverlayRoute.FESTIVAL
+                                                    Config.CONTENT_TYPE_ID.STAY -> OverlayRoute.STAY
+                                                    Config.CONTENT_TYPE_ID.TOUR_COURSE -> OverlayRoute.TOUR_COURSE
+                                                    Config.CONTENT_TYPE_ID.FOOD -> OverlayRoute.FOOD
+                                                    Config.CONTENT_TYPE_ID.TOUR_SPOT -> OverlayRoute.TOUR_SPOT
+                                                    Config.CONTENT_TYPE_ID.CULTURE -> OverlayRoute.CULTURE
+                                                    Config.CONTENT_TYPE_ID.LEISURE_SPORTS -> OverlayRoute.LEISURE_SPORTS
+                                                    Config.CONTENT_TYPE_ID.SHOPPING -> OverlayRoute.SHOPPING
+                                                }
+                                                onClick(overlayRoute, item)
+                                            },
+                                        contentScale = ContentScale.FillBounds,
+                                        model = item.imgUrl,
+                                        contentDescription = ""
+                                    )
+                                } else {
+                                    Box(
+                                        modifier = Modifier.fillMaxSize()
+                                            .clickable {
+                                                val overlayRoute = when (currentMenu) {
+                                                    Config.CONTENT_TYPE_ID.FESTIVAL -> OverlayRoute.FESTIVAL
+                                                    Config.CONTENT_TYPE_ID.STAY -> OverlayRoute.STAY
+                                                    Config.CONTENT_TYPE_ID.TOUR_COURSE -> OverlayRoute.TOUR_COURSE
+                                                    Config.CONTENT_TYPE_ID.FOOD -> OverlayRoute.FOOD
+                                                    Config.CONTENT_TYPE_ID.TOUR_SPOT -> OverlayRoute.TOUR_SPOT
+                                                    Config.CONTENT_TYPE_ID.CULTURE -> OverlayRoute.CULTURE
+                                                    Config.CONTENT_TYPE_ID.LEISURE_SPORTS -> OverlayRoute.LEISURE_SPORTS
+                                                    Config.CONTENT_TYPE_ID.SHOPPING -> OverlayRoute.SHOPPING
+                                                }
+                                                onClick(overlayRoute, item)
+                                            },
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "이미지를 불러올 수 없습니다.",
+                                            textAlign = TextAlign.Center,
+                                            style = TextStyle(
+                                                fontSize = 17.sp,
+                                                fontWeight = FontWeight.Medium,
+                                                fontFamily = spoqaHanSansNeoFont,
+                                            )
+                                        )
+                                    }
+                                }
                             }
 
                             Text(

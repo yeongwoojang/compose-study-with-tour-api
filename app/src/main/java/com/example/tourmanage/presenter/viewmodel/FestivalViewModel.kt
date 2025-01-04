@@ -74,6 +74,7 @@ class FestivalViewModel @Inject constructor(
     private val _festivalFavorListFow = MutableSharedFlow<List<FavorEntity>>(replay = 1)
     val festivalFavorListFlow = _festivalFavorListFow.asSharedFlow()
 
+
     init {
         load()
     }
