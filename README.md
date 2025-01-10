@@ -9,7 +9,7 @@
 <img width="276" alt="image" src="https://github.com/user-attachments/assets/d193a5cd-f0da-4444-9c67-6861c9c28334" />
 
 ----------
-### Stack, Lib
+### Skill, Lib
 1. Base on Kotlin + Coroutines + Flow
 2. Compose -> View
 3. Hilt -> dependency injection
